@@ -1,0 +1,187 @@
+
+# 2009.6 - 2009.12  半年的代码，3天看完。我开心的蹦起来。
+
+## 2018-02-08 
+
+###  f200be3 - PHONY 
+What is the purpose of .PHONY in a makefile?
+
+### 2052075 - js-oo as submodule 这个玩法具体怎么做？ google : how to git submodule ++  git submodule update
+	.gitmodule
+	[submodule "lib/support/js-oo"]
+		path = lib/support/js-oo
+		url = git://github.com/visionmedia/js-oo.git
+  
+### vs. sinatra
+  Currently Express can chew through a request with a two Haml views (_page and layout_) 
+  requested *2000* times with concurrency of *80* in *2.7* seconds and *723* 
+    An identical Sinatra application was served with the *Thin* HTTP server
+  and scored *8.3* seconds and *238* requests per second. In this situation
+  Express is currently *68%* faster than Sinatra.
+
+### Google Group ec00ccb - Added Google Groups link
+	http://groups.google.com/group/express-js
+### f1ce393 - Started Cookie support
+	//'expires=Fri, 31-Dec-2010 23:59:59 GMT; data="some ;.= random data"; path=/; domain=.example.net'
+	function(cookie) {
+	  return $(cookie.split(/ *; */)).reduce({}, function(hash, pair){
+	    var parts = pair.split(/ *= */)
+	    hash[parts[0].toLowerCase()] = parts[1]
+	    return hash
+	  })
+	}
+
+### 39719af - Started haml-js support
+
+### 190ddaa - Removed view specs for now
+
+	使用伪装的class，重新编写插件，视图渲染，集合等
+
+	get('/user', function(){
+      render('user.html.ejs', { context: user }, function(content){
+        halt(200, content)
+      })
+    })
+    p(get('/user').body)
+
+### 忙忙碌碌的做了一个Collection 460c2a0 - Collection readme 09-12-4 - 09-12-10 6天
+
+	支持这样的使用方法：
+
+	    $(['tj', 'matt', 'taylor'])
+      .select(function(name){ return name.charAt(0) == 't' })
+      .reject(function(name){ return name.length < 4 })
+      .first()
+	
+	
+### parseNestedParams
+
+	function parseNestedParams(params) {
+	  var parts, key
+	  for (key in params)
+	    if (parts = key.split('['))
+	      if (parts.length > 1)
+	        for (var i = 0, prop = params, len = parts.length; i < len; ++i) {
+	          var name = parts[i].replace(']', '')
+	          if (i == len - 1)
+	            prop[name] = params[key],
+	            prop = params, 
+	            delete params[key]
+	          else
+	            prop = prop[name] = prop[name] || {}
+	        }
+	            
+	  return params
+	}
+	var parseParams = function(string) {
+	  var params = {}, pairs = string.split('&'), pair
+	  for (var i = 0, len = pairs.length; i < len; ++i)
+	    pair = pairs[i].split('='),
+	    params[pair[0]] = pair[1]
+	  return parseNestedParams(params)
+	}
+	function test(){
+		var user = { user: { name: 'tj', email: 'tj@vision-media.ca' }}
+      	// assert(parseParams('user[name]=tj&user[email]=tj@vision-media.ca') ==  user)
+      	// parseParams('foo=bar&baz=1').should.eql { foo: 'bar', baz: '1' }
+	}
+	test()
+
+### dirname()实现很简单嘛
+
+	dirname = function(path) {
+	  return path.split('/').slice(0, -1).join('/')
+	}
+
+### 共用参数的做法很常见，我不会这么做，但是必须得看得懂
+	function route(method) {
+	  return function(path, options, fn){
+	    if (options instanceof Function)
+	      fn = options, options = {}
+	    Express.routes.push(new Route(method, path, fn, options))
+	  }
+	}
+
+
+### arguments像是数组，但是不是数组（可以通过console.log验证），因此不能直接argument.slice ,而必须这样：
+
+	function toArray(arr, offset) {
+	  return Array.prototype.slice.call(arr, offset)
+	}
+
+# Milestone 2603bb4 - Starting fresh
+	这里开始完全重写，还引入了class方法，做一个伪装的类，以此为基础开始，以伪类的方式重写代码。因为我知道最终代码的样子，所以，隔段时间还得重写
+	新开发者csausdev 进来，把TJ的文件命名的前缀去掉，放到一个新的目录内，感觉符合我的审美
+	就是express.core.js,express.util.js -> express/core.js ,express/util.js
+	类似jquery的函数命名，header(key,value),只是传入key的话，就做getter，key和value都传入的话，那么就作为setter来用
+
+### 现成可用的escape
+
+	function escape(html) {
+	  if (html instanceof String)
+	    return html
+	      .replace(/&/g, '&amp;')
+	      .replace(/"/g, '&quot;')
+	      .replace(/</g, '&lt;')
+	      .replace(/>/g, '&gt;')
+	}
+
+##  2018-02-07 学到了对user/:id类型的url的剖析方法 ，一段带自测试的代码
+
+
+
+    // * Routing (string matching, regexp with captures, param key substitution, etc)
+	// * commit d3023dafcfa4a9e51199a828e1c6aa7ff1507f84
+	class RouteParam {
+	  constructor(){
+	    this.regexpKeys=[]
+	  }
+	  escapeRegexp(string, chars) {
+	    var specials = (chars || '/ . * + ? | ( ) [ ] { } \\').split(' ').join('|\\')
+	    return string.replace(new RegExp('(\\' + specials + ')', 'g'), '\\$1')
+	  } 
+	  pathToRegexp(path) {
+	    var self = this
+	    path = path.replace(/:(\w+)/g, function(_, key){
+	      self.regexpKeys.push(key)
+	      return '(.*?)'
+	    })
+	    return new RegExp('^' + this.escapeRegexp(path, '/ [ ]') + '$', 'i')
+	  }
+	  getParam(route,url){
+	    var route = this.pathToRegexp(route)
+	    var path = url
+	    var f = path.match(route)
+	    var out = {}
+	    for (var i = 0; i < this.regexpKeys.length; i++) {
+	      out[this.regexpKeys[i]] = f[i+1]
+	    }
+	    return out
+	  }
+	}
+	function test(){
+	  var r = new RouteParam()
+	  var p = r.getParam("/user/:id/edit/:eid","/user/1/edit/2")
+	  assert(p.id == 1)
+	  assert(p.eid == 2)
+	}
+	test()
+
+# 2018年02月06日
+
+## 原因
+
+看apracjs，觉得得看看express才能搞懂。
+
+## 方法
+
+然后看了下，代码不多，有点难以阅读，于是决定拉下git repo，然后从第一天开始看。
+
+## 感受
+
+提交每次都不大，甚至几分钟的修改，只要说一个颗粒度的，也会提交到git内。这样就导致从最初代码到现在的代码，每次变化都不大，并且都有spec的补充，因此比较容易看懂。
+我就是一个个的commit的看差异，不但可以看到整个编码的过程，感受到高手编码的特点，也从中学到不少js的技巧。TJ是真正的高手，技能全面，思维敏捷，看着代码，沉浸其中，好像高手就在我的身边写代码。它的commit log的写法是可以拿来就用的。
+
+
+
+

@@ -1,10 +1,8 @@
 <html>
     <head>
-        <link rel="stylesheet" href="index.css">
     </head>
     <body>
-        <canvas id="game" width="450" height="450"></canvas>
-        <script src="index.pack.js"></script>
+        <canvas id="game" width="300" height="300"></canvas>
     </body>
     <script type="text/javascript">
     class Point{
@@ -23,13 +21,14 @@
         }
     }
     const SQU = 10
+    const AREA = 30
+    const LEVEL = 10
+    const SNAKELEN = 5
     class Snake{
         constructor(g){
           this.g = g
           this.ui = []   
-          this.SNAKELEN = 5
-          
-          for(var i = 0 ;i<this.SNAKELEN;i++){
+          for(var i = 0 ;i<SNAKELEN;i++){
               this.ui.push(new Point(i,0))
           }
         }
@@ -43,9 +42,7 @@
             for(var i = 0 ;i< this.ui.length;i++){
                 ctx.fillStyle ="green"
                 var p = this.ui[i]
-                ctx.fillRect(p.x*10,p.y*10,SQU,SQU)
-                // ctx.fillStyle ="red"
-                // ctx.fillText(i,p.x*10,p.y*10,SQU*10,SQU*100)
+                ctx.fillRect(p.x*SQU,p.y*SQU,SQU,SQU)
             }
         }
         toString(){
@@ -87,7 +84,7 @@
         }
         isOut(){
             var p = this.getNextPosition()
-            if (p.x < 0 || p.x > 45 || p.y < 0 || p.y > 45)
+            if (p.x < 0 || p.x > AREA || p.y < 0 || p.y > AREA)
                return true
             return false
         }
@@ -101,21 +98,21 @@
     }
     class Food{
         constructor(){
-          var x = Math.floor(Math.random() * 45) + 1 
-          var y = Math.floor(Math.random() * 45) + 1 
+          var x = Math.floor(Math.random() * AREA) 
+          var y = Math.floor(Math.random() * AREA) 
           this.ui = {x:x,y:y}   
         }
         paint(ctx){
             ctx.fillStyle ="red"
             var x = this.ui.x
             var y = this.ui.y
-            ctx.fillRect(x*10,y*10,10,10)
+            ctx.fillRect(x*SQU,y*SQU,SQU,SQU)
         }
     }
     class Game{
         paint(ctx){
             ctx.fillStyle ="black"
-            ctx.fillRect(0,0,450,450)
+            ctx.fillRect(0,0,AREA*SQU,AREA*SQU)
         }
         resetFood(){
             this.food = new Food()
@@ -132,32 +129,8 @@
             this.ctx = canvas.getContext("2d")
             this.snake = new Snake(this)
             this.food = new Food()
-            var self = this
-            this.level = 10
-            setInterval(function(){
-               self.rock()
-            },1000/this.level)
+            this.level = LEVEL
             this.direction = "right"
-        }
-        simulate(){
-            if (this.food.ui.x > this.snake.head().x && this.direction !="left"){
-                this.direction = "right"
-                return 
-            }
-            if (this.food.ui.y > this.snake.head().y && this.direction !="up"){
-                this.direction = "down"
-                return 
-            }
-            if (this.food.ui.y < this.snake.head().y && this.direction !="down"){
-                this.direction = "up"
-                return 
-            }
-            if (this.food.ui.x < this.snake.head().x && this.direction !="right"){
-                this.direction = "left"
-                return 
-            }
-            var dir = {"left":"up","right":"down","down":"left","up":"right"}
-            this.direction = dir[this.direction]
         }
         simulate(){}
         rock(){
@@ -196,20 +169,81 @@
             return offset
         }
     }
-    var g = new Game()
+    class AutoGame extends Game{
+        constructor(){
+            super()
+            this.timeRock()
+        }
+        timeRock(){
+            var self = this
+            setInterval(function(){
+               self.rock()
+            },1000/this.level)
+        }
+        onkeydown(e){
+            var keymap = {37:"left" ,38:"up",39:"right",40:"down"}
+            var key = e.which
+            var nd = keymap[key]
+            var g = this
+            if (g.direction == "left" && nd == "right")
+              return 
+            if (g.direction == "right" && nd == "left")
+              return   
+            if (g.direction == "up" && nd == "down")
+              return 
+            if (g.direction == "down" && nd == "up")
+              return 
+            g.direction = keymap[key]
+        }
+    }
+    class ManualGame extends Game{
+        constructor(){
+            super()
+            this.rock()
+        }
+        onkeydown(e){
+            var keymap = {37:"left" ,38:"up",39:"right",40:"down"}
+            var key = e.which
+            var nd = keymap[key]
+            var g = this
+            if (g.direction == "left" && nd == "right")
+              return 
+            if (g.direction == "right" && nd == "left")
+              return   
+            if (g.direction == "up" && nd == "down")
+              return 
+            if (g.direction == "down" && nd == "up")
+              return 
+            g.direction = keymap[key]
+            g.rock()
+        }
+    }
+    class SimulateGame extends AutoGame{
+        simulate(){
+            if (this.food.ui.x > this.snake.head().x && this.direction !="left"){
+                this.direction = "right"
+                return 
+            }
+            if (this.food.ui.y > this.snake.head().y && this.direction !="up"){
+                this.direction = "down"
+                return 
+            }
+            if (this.food.ui.y < this.snake.head().y && this.direction !="down"){
+                this.direction = "up"
+                return 
+            }
+            if (this.food.ui.x < this.snake.head().x && this.direction !="right"){
+                this.direction = "left"
+                return 
+            }
+            var dir = {"left":"up","right":"down","down":"left","up":"right"}
+            this.direction = dir[this.direction]
+        }
+    }
+    var g = new AutoGame()
+    // var g = new SimulateGame()
     document.onkeydown = function(e){
-        var keymap = {37:"left" ,38:"up",39:"right",40:"down"}
-        var key = e.which
-        var nd = keymap[key]
-        if (g.direction == "left" && nd == "right")
-          return 
-        if (g.direction == "right" && nd == "left")
-          return   
-        if (g.direction == "up" && nd == "down")
-          return 
-        if (g.direction == "down" && nd == "up")
-          return 
-        g.direction = keymap[key]
+        g.onkeydown(e)
         // console.log(g.direction) // 
     }        
     </script>
