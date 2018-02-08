@@ -1,4 +1,22 @@
 
+
+# 3天来的代码阅读统计，共400~的提交次数
+
+ git shortlog -sne --since="01 Jun 2009" --before="31 Dec 2009"
+   359  visionmedia <tj@vision-media.ca>
+    34  csausdev <gareth.jones@sensis.com.au>
+     1  Justin Lilly <justinlilly@gmail.com>
+
+总数：
+	$ git shortlog -sne --since="01 Jun 2009" --before="31 Nov 2019"
+	  1891  Tj Holowaychuk <tj@vision-media.ca>
+	  1285  visionmedia <tj@vision-media.ca>
+	   950  Douglas Christopher Wilson <doug@somethingdoug.com>
+	   705  TJ Holowaychuk <tj@vision-media.ca>
+	    84  Jonathan Ong <jonathanrichardong@gmail.com>
+
+硬看的话，得看一个月去了 ：）
+
 # 2009.6 - 2009.12  半年的代码，3天看完。我开心的蹦起来。
 
 ## 2018-02-08 
