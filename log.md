@@ -1,4 +1,45 @@
+##  调试express的方法
+	
+1. 激活inspector protocol
 
+    mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/app.router.js --inspect-brk -g 'should decode correct params'
+
+2. 打印调试信息：
+
+    DEBUG=express:* mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/app.router.js -g 'should decode correct params
+3. vs code 
+
+首先安装mocha
+
+	npm i mocha
+
+点击到debug标签，添加一个配置，内容为：
+
+	{
+	    "version": "0.2.0",
+	    "configurations": [
+	        {
+	            "type": "node",
+	            "request": "launch",
+	            "name": "mocha",
+	            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+	            "args": ["test/unit.js"],
+	        }
+	    ]
+	}
+
+代码unit test
+
+	var assert = require('assert')
+	describe('app', function(){
+	  it('should be callable', function(){
+	    assert.equal(1,1);
+	  })
+	})
+
+点击debug，点击运行按钮
+
+##  node debug article
 
 # 3天来的代码阅读统计，共400~的提交次数
 
