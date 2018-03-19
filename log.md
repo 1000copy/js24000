@@ -1,3 +1,11 @@
+## 
+版本调整到4.16.2 。更简单。
+
+## 单独跑某个testcase
+
+mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit  
+mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/ test/acceptance/
+mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/ test/acceptance/ -g ' Router should support .use of other' 
 
 ## 挖出 expressjs-obj-model.md
 
@@ -16,10 +24,11 @@ The Unbelievable History of the Express JavaScript Framework
 ## 99e3130f3c90a129ab443db853d4698fc6529d60 无法更新js-oo submoduel，估计已经删除了。所以，需要一直向head前进，找到不依赖js-oo的版本了。
 
 ##  调试express的方法
-	
+
 1. 激活inspector protocol
 
     mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/app.router.js --inspect-brk -g 'should decode correct params'
+    打开chrome ，到这里：chrome://inspect
 
 2. 打印调试信息：
 
