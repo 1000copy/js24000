@@ -2,7 +2,7 @@
 var http = require('http');
 class App{
    constructor(){
-   	 this.paths = []
+   	 this.paths = new Paths()
    	 this.uses = []
    	 var self = this
    	 this.server = http.createServer(function(req,res){
@@ -25,7 +25,7 @@ class App{
    	  if (arguments.length > 3){
    	  	 handles = Array.prototype.slice.call(arguments,2)
    	  }
-   	  this.paths.push(new Method(path,method,handles))
+   	  this.paths.add(new Path(path,method,handles))
    }
    get(path,handles){
    	  this.HTTPMETHOD(path,'GET',handles)
@@ -44,7 +44,24 @@ class App{
    		var use = this.uses[i]
    		use && use(req,res)
    	}
-   	for (var i=0;i<this.paths.length;i++) {
+   	this.paths.dispatch(req,res)
+   }
+   listen(port,cb){
+		this.server.listen(port, cb);
+   }
+}
+function createApp(){
+	return new App()
+}
+class Paths{
+	constructor(){
+		this.paths = []
+	}
+	add(path){
+		this.paths.push(path)
+	}
+	dispatch(req,res){
+	  for (var i=0;i<this.paths.length;i++) {
    	 	var path = this.paths[i]
    	 	if (req.method == path.method && req.url == path.path){
    	 		var handles = path.handles
@@ -56,16 +73,10 @@ class App{
 			   	 	handle(req,res)
 		   	 	}
 	   	}
-   	 }
-   }
-   listen(port,cb){
-		this.server.listen(port, cb);
-   }
+   	  }
+	}
 }
-function createApp(){
-	return new App()
-}
-class Method{
+class Path{
 	constructor(path,method,handles){
 		this.path = path
 		this.method = method
