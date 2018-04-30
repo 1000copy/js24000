@@ -6,8 +6,8 @@ class App{
    	 this.uses = new Uses()
    	 var self = this
    	 this.server = http.createServer(function(req,res){
-   	 	res.statusCode = 200;
-		self.dispatch(req,res)
+   	 	 res.statusCode = 200;
+		    self.dispatch(req,res)
    	 });
    }
    use(handles){
@@ -28,7 +28,9 @@ class App{
    	  this.paths.add(new Path(path,method,handles))
    }
    get(path,handles){
-   	  this.HTTPMETHOD(path,'GET',handles)
+     var handles1 = typeof arguments.length >= 3?handles:Array.prototype.slice.call(arguments,1)
+     // console.log(handles1)
+	  this.HTTPMETHOD(path,'GET',handles1)
    }
    post(path,handles){
    	this.HTTPMETHOD(path,'POST',handles)
@@ -40,6 +42,7 @@ class App{
    	  this.HTTPMETHOD(path,'DELETE',handles)
    }
    dispatch(req,res){
+     console.log(this.paths.paths)
 	  this.uses.dispatch(req,res)
 	  this.paths.dispatch(req,res)
    }
@@ -72,17 +75,18 @@ class Paths{
 		this.paths.push(path)
 	}
 	dispatch(req,res){
-	  for (var i=0;i<this.paths.length;i++) {
+     for (var i=0;i<this.paths.length;i++) {
    	 	var path = this.paths[i]
    	 	if (req.method == path.method && req.url == path.path){
    	 		var handles = path.handles
-   	 		if (typeof handles == 'function')
+      		if (typeof handles == 'function')
    	 			handles(req,res)
-   	 		else
+   	 		else{
 		   	 	for (var j=0;j<handles.length;j++) {
 		   	 		var handle = handles[j]
 			   	 	handle(req,res)
 		   	 	}
+             }
 	   	}
    	  }
 	}

@@ -26,8 +26,8 @@ var hs = [
 			res.end('multihandler')
 		}
 	]
+app.get('/multihandler1',function(){console.log('m2')},function(req,res){console.log('m3');res.end('multihandler1')})
 app.get('/multihandler',hs)
-app.get('/multihandler1',function(){},function(req,res){res.end('multihandler1')})
 app.get('/',function(req,res){
 	res.end('get')
 })
@@ -46,53 +46,3 @@ exports = module.exports = app
 // app.listen(3000,function(){
 // 	console.log('listen on 3000')
 // })
-request(app.server)
-  .get('/multihandler1')
-  .expect(200)
-  .expect('multihandler1')
-  .end(function(err, res) {
-    if (err) throw err;
-    console.log('OK')
-  });
-
-request(app.server)
-  .get('/multihandler')
-  .expect(200)
-  .expect('multihandler')
-  .end(function(err, res) {
-    if (err) throw err;
-    console.log(res.header.x)
-    console.log('OK')
-  });
-request(app.server)
-  .get('/')
-  .expect(200)
-  .expect('get')
-  .end(function(err, res) {
-    if (err) throw err;
-    console.log('OK')
-  });
-request(app.server)
-  .post('/')
-  .expect(200)
-  .expect('post')
-  .end(function(err, res) {
-    if (err) throw err;
-    console.log('OK')
-  });
-request(app.server)
-  .put('/')
-  .expect(200)
-  .expect('put')
-  .end(function(err, res) {
-    if (err) throw err;
-    console.log('OK')
-  });
-  request(app.server)
-    .delete('/')
-    .expect(200)
-    .expect('delete')
-    .end(function(err, res) {
-      if (err) throw err;
-      console.log('OK')
-    });
