@@ -3,7 +3,7 @@ var http = require('http');
 class App{
    constructor(){
    	 this.paths = new Paths()
-   	 this.uses = []
+   	 this.uses = new Uses()
    	 var self = this
    	 this.server = http.createServer(function(req,res){
    	 	res.statusCode = 200;
@@ -18,7 +18,7 @@ class App{
    	  }
    	  for (var i = 0; i < handles.length; i++) {
    	  	var handle = handles[i]
-   	  	this.uses.push(handle)
+   	  	this.uses.add(handle)
    	  }
    }
    HTTPMETHOD(path,method,handles){
@@ -40,11 +40,8 @@ class App{
    	  this.HTTPMETHOD(path,'DELETE',handles)
    }
    dispatch(req,res){
-   	for (var i = 0; i < this.uses.length; i++) {
-   		var use = this.uses[i]
-   		use && use(req,res)
-   	}
-   	this.paths.dispatch(req,res)
+	  this.uses.dispatch(req,res)
+	  this.paths.dispatch(req,res)
    }
    listen(port,cb){
 		this.server.listen(port, cb);
@@ -52,6 +49,20 @@ class App{
 }
 function createApp(){
 	return new App()
+}
+class Uses{
+	constructor(){
+		this.uses = []
+	}
+	add(use){
+		this.uses.push(use)
+	}
+	dispatch(req,res){
+		for (var i = 0; i < this.uses.length; i++) {
+	   		var use = this.uses[i]
+	   		use && use(req,res)
+	   	}
+	}
 }
 class Paths{
 	constructor(){
