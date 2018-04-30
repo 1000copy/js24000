@@ -1,8 +1,34 @@
+## 
+版本调整到4.16.2 。更简单。
+
+## 单独跑某个testcase
+
+mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit  
+mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/ test/acceptance/
+mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/ test/acceptance/ -g ' Router should support .use of other' 
+
+## 挖出 expressjs-obj-model.md
+
+
+## 2018年03月05日
+The Unbelievable History of the Express JavaScript Framework
+
+## 原来5.0.0-alpha.1 / 2014-11-06也在开发了。
+
+## 2.0 可以clone了。终于...
+
+感觉2.0代码超级简洁，从这里开始？
+
+## 1.0.1 依赖connect-form.git，也找不到了。
+
+## 99e3130f3c90a129ab443db853d4698fc6529d60 无法更新js-oo submoduel，估计已经删除了。所以，需要一直向head前进，找到不依赖js-oo的版本了。
+
 ##  调试express的方法
-	
+
 1. 激活inspector protocol
 
     mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/app.router.js --inspect-brk -g 'should decode correct params'
+    打开chrome ，到这里：chrome://inspect
 
 2. 打印调试信息：
 
@@ -240,7 +266,3 @@ What is the purpose of .PHONY in a makefile?
 
 提交每次都不大，甚至几分钟的修改，只要说一个颗粒度的，也会提交到git内。这样就导致从最初代码到现在的代码，每次变化都不大，并且都有spec的补充，因此比较容易看懂。
 我就是一个个的commit的看差异，不但可以看到整个编码的过程，感受到高手编码的特点，也从中学到不少js的技巧。TJ是真正的高手，技能全面，思维敏捷，看着代码，沉浸其中，好像高手就在我的身边写代码。它的commit log的写法是可以拿来就用的。
-
-
-
-
