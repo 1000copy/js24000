@@ -1,0 +1,144 @@
+<input id="todo-input"/>
+<ul id="todo-list">
+    <!-- template inserted -->
+</ul>
+<!-- template -->
+<script id="todo-template" type="text/x-handlebars-template">
+    {{#each view_list}}
+        <li class="todo-item">
+            <input class="input" type="checkbox" {{checked}}>
+            <div class="{{checked}}">{{val}}</div>
+            <div class="remove">X</div>
+        </li>
+    {{/each}}
+</script>
+
+
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+<script src="handlebars-v4.0.11.js"></script>
+
+<script type="text/javascript">
+	function Subject() {
+	    const observers = [];
+	    return {    
+	        add: function(item) {
+	            observers.push(item);
+	        },
+	        removeAll: function() {
+	            observers.length = 0;
+	        },
+	        notifyObservers() {
+	        	observers.forEach(elem => {
+	                elem.notify && elem.notify();
+	            });
+	        }
+	    };
+	}
+	const model = ToDoModel(),
+      view = ToDoView(model),
+      ctrl = new ToDoCtrl(view, model);
+
+    function ToDoCtrl(view, model) {
+	    const DOM = view.getDOM();
+	    // input handler
+	    DOM.input.blur(() => {
+	        model.add(DOM.input.val());
+	    });
+	    DOM.input.keyup((ev) => {
+	        if (ev.which == 13 || ev.keyCode == 13) {
+	            DOM.input.blur();
+	        }
+	    });
+	    model.register(view, this);
+	    this.model = model
+	    this.
+	        notify= function() {
+	            const that = this;
+	            // checkbox handlers
+	            DOM.list.find('.input').each(function(index) {
+	                $(this).click(() => {
+	                    that.model.complete(index, $(this).is(':checked')); 
+	                });
+	            });
+	            // remove handlers
+	            DOM.list.find('.remove').each(function(index) {
+	            	// console.log(index)
+	                $(this).click(() => {
+	                    that.model.remove(index); 
+	                });
+	            });
+	        }
+	    // };
+	}
+	function ToDoView(model) {
+		const DOM = {
+	        input: $('#todo-input'),
+	        list: $('#todo-list')
+	    },
+	    templateFnc = 
+	             Handlebars.compile($('#todo-template').html());
+
+	    function getData() {
+	         // presentation logic
+	         function isChecked(elem) {
+	              return elem.complete === true ? 'checked': '';
+	         }
+	         return model.getList().map(function(elem, index) {
+	             return {
+	                val: elem.val,
+	                checked: isChecked(elem)
+	            };
+	        });
+	    }
+	    return {
+	        getDOM: function() {
+	            return DOM;
+	        },
+	        notify: function() {
+	            const html = templateFnc({ view_list: getData() });
+	            DOM.list.html(html);
+	         }
+	    };          
+	}
+	function ToDoModel() {
+	    const subject = Subject(),
+	        list = [];
+	    return {
+	        getList: function() {
+	            return list;
+	        },
+	        add: function (text) {
+	            list.push({ 
+	                val: text, 
+	                complete: false
+	            });
+	            subject.notifyObservers();
+	        },
+	        remove: function(index) {
+	            list.splice(index, 1);
+	            subject.notifyObservers();
+	        },
+	        complete: function(index, isComplete) {
+
+	            isComplete === true ?
+	                list[index].complete = true :
+	                list[index].complete = false;
+	            subject.notifyObservers();
+	            console.log(list)
+	        },
+	        // observer
+	        register: function(...args) {
+	            subject.removeAll();
+	            args.forEach(elem => {
+	            	console.log(elem)
+	                subject.add(elem);
+	            });
+	        }
+	    };
+	}
+</script>
+
