@@ -20,6 +20,22 @@ describe('app.server', function(){
         if (err) throw err;
       });
     })
+    
+    it('param multi', function(){
+      (function(){
+        app = express()
+        app.get('/user/:id/name/:name',function(req,res){
+          res.end(req.params.id+req.params.name)
+        })
+      })()
+      request(app.server)
+      .get('/user/1/name/reco')
+      .expect(200)
+      .expect('1reco')
+      .end(function(err, res) {
+        if (err) throw err;
+      });
+    })
   })
   describe('regexp', function(){
  

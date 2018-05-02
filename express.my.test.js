@@ -7,7 +7,27 @@ var express = require('../')
   , methods = require('methods');
 
 describe('mytest', function(){
-  it('handle router in router', function(done){
+  it('jump route', function(done){
+      var app = express();
+      var router = new express.Router()
+      router.get("/r1",function(req,res,next){
+        console.log('should run here')
+        next("route")
+      },function(req,res,next){
+        console.log('should not run here')
+      },function(req,res,next){
+        console.log('trap here')
+        res.send("tj")
+      }
+      )
+      router.use(r2)
+      app.use("/user",router)
+      // console.log()
+      request(app)
+      .get('/user')
+      .expect('tj', done);
+    })
+    xit('handle router in router', function(done){
       var app = express();
       var r2 = new express.Router()
       r2.get('/user', function(req, res,next){
