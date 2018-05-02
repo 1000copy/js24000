@@ -1,6 +1,6 @@
 <input id = "count" type="text" value="0">
-$:<span id="dollar">0</span>
-Mile:<span id="mile">0</span>
+<div>$:<span id="dollar">0</span></div>
+<div>Mile:<span id="mile">0</span></div>
 <button id="inc">inc</button>
 <script type="text/javascript">
 	window.onload = function(){
@@ -45,16 +45,15 @@ Mile:<span id="mile">0</span>
 	        }
 	    };
 	}
-	class ModelCount{
+	class Model{
 		constructor(){
-			this.count = 0
 			this.observer = Subject()
 		}
-		inc(){
-			this.count ++
+		notifyObservers(){
 			this.observer.notifyObservers()
 		}
 	}
+	
 	class View{
 		constructor(m){
 			this.m = m
@@ -63,15 +62,6 @@ Mile:<span id="mile">0</span>
 		notify(){
 
 		}
-	}
-	class ViewDollar extends View{
-		constructor(m){
-			super(m)
-			this.dollar = document.getElementById('dollar')
-		}
-		notify(){
-			this.dollar.innerHTML = this.m.count 
-		}	
 	}
 	class Controller{
 		constructor(m,v){
@@ -84,8 +74,15 @@ Mile:<span id="mile">0</span>
 			}
 		}
 	}
-	class ControllerDollar extends Controller{
-		
+	class ModelCount extends Model{
+		constructor(){
+			super()
+			this.count = 0
+		}
+		inc(){
+			this.count ++
+			this.notifyObservers()
+		}
 	}
 	class ViewMile extends View{
 		constructor(m){
@@ -96,8 +93,14 @@ Mile:<span id="mile">0</span>
 			this.mile.innerHTML = this.m.count 
 		}
 	}
-	class ControllerCount extends Controller{
-		
+	class ViewDollar extends View{
+		constructor(m){
+			super(m)
+			this.dollar = document.getElementById('dollar')
+		}
+		notify(){
+			this.dollar.innerHTML = this.m.count 
+		}	
 	}
 	class ViewCount extends View{
 		constructor(m){
@@ -108,8 +111,8 @@ Mile:<span id="mile">0</span>
 			this.count.value = this.m.count 
 		}
 	}
-	class ControllerMile extends Controller{
-		
-	}
+	class ControllerMile extends Controller{}
+	class ControllerCount extends Controller{}
+	class ControllerDollar extends Controller{}
 </script>
 
