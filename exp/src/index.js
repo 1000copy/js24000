@@ -1,5 +1,6 @@
 "use strict"
 var http = require('http');
+var rparam = require('./rparam')
 class App{
    constructor(){
    	 this.paths = new Paths()
@@ -42,7 +43,7 @@ class App{
    	  this.HTTPMETHOD(path,'DELETE',handles)
    }
    dispatch(req,res){
-     console.log(this.paths.paths)
+     // console.log(this.paths.paths)
 	  this.uses.dispatch(req,res)
 	  this.paths.dispatch(req,res)
    }
@@ -74,11 +75,15 @@ class Paths{
 	add(path){
 		this.paths.push(path)
 	}
+   match(req,path){
+      return req.method == path.method && (req.url == path.path || rparam.match(path.path,req.url) )//req.url == '/user/reco')
+   }
 	dispatch(req,res){
      for (var i=0;i<this.paths.length;i++) {
    	 	var path = this.paths[i]
-   	 	if (req.method == path.method && req.url == path.path){
-   	 		var handles = path.handles
+   	 	if (this.match(req,path)){
+            req.params = rparam.getParam(path.path,req.url)
+            var handles = path.handles
       		if (typeof handles == 'function')
    	 			handles(req,res)
    	 		else{
@@ -98,4 +103,5 @@ class Path{
 		this.handles = handles
 	}
 }
+// return true if route is /user/:id and url is /user/reco
 exports = module.exports = createApp
