@@ -3,11 +3,6 @@
 
 ## todo 
 
-* url paramters parse 
-
-  when given url /use/:id and /use/1 ,got id = 1 
-  when given url /use/:fn and /use/main.gspx ,get fn = main.gspx
-  when given url /use/:fn.gspx ,then filter func is gspxHandler
 
   make a middle ware as extension filter ,when :
   	
@@ -27,3 +22,8 @@
    app.get(path,f1,f2)
    app.get(path,[f1,f2])
 
+1.3 url paramters parse 2018-05-04
+
+  when given url /use/:id and /use/1 ,got id = 1 
+  when given url /use/:fn and /use/main.gspx ,get fn = main.gspx
+  when given url /use/:fn.gspx ,then filter func is gspxHandler

@@ -76,13 +76,22 @@ class Paths{
 		this.paths.push(path)
 	}
    match(req,path){
-      return req.method == path.method && (req.url == path.path || rparam.match(path.path,req.url) )//req.url == '/user/reco')
+      return req.method == path.method &&
+       (req.url == path.path || req.url.indexOf(path.path) == 0 || rparam.match(path.path,req.url) )
+      
+   }
+   normal(url){
+      return url.slice(-1) == '/'?url.slice(0,-1):url
    }
 	dispatch(req,res){
+     // console.log(this.paths,req.url)
+     var url = this.normal(req.url)
      for (var i=0;i<this.paths.length;i++) {
    	 	var path = this.paths[i]
+      console.log(this.match(req,path))
    	 	if (this.match(req,path)){
-            req.params = rparam.getParam(path.path,req.url)
+            console.log('match')
+            req.params = rparam.getParam(path.path,url)
             var handles = path.handles
       		if (typeof handles == 'function')
    	 			handles(req,res)

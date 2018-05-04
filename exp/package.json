@@ -8,13 +8,16 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/1.js",
-    "test1": "nodemon example/1.js"
+    "test": "mocha test/*.js",
+    "test1": "nodemon example/*.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "supertest": "^3.0.0"
+  },
+  "dependencies": {
+    "chai": "^4.1.2"
   }
 }
