@@ -84,13 +84,10 @@ class Paths{
       return url.slice(-1) == '/'?url.slice(0,-1):url
    }
 	dispatch(req,res){
-     // console.log(this.paths,req.url)
      var url = this.normal(req.url)
      for (var i=0;i<this.paths.length;i++) {
    	 	var path = this.paths[i]
-      console.log(this.match(req,path))
-   	 	if (this.match(req,path)){
-            console.log('match')
+      if (this.match(req,path)){
             req.params = rparam.getParam(path.path,url)
             var handles = path.handles
       		if (typeof handles == 'function')
@@ -98,6 +95,7 @@ class Paths{
    	 		else{
 		   	 	for (var j=0;j<handles.length;j++) {
 		   	 		var handle = handles[j]
+            req.basePath = path.path
 			   	 	handle(req,res)
 		   	 	}
              }

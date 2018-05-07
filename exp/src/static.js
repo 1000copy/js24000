@@ -3,38 +3,21 @@ const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
-
+const mimeType =require('./mimeType')
 function static(options){
-  console.log('static')
+  // console.log('static')
   this.options = options
   var root = options.root
-  var public = options.public
+  
   return function static(req, res) {
-    console.log('static1')
-    console.log(`${req.method} ${req.url}`);
+    var public = req.basePath
+    // console.log(`${req.method} ${req.url}`);
     // parse URL
     const parsedUrl = url.parse(req.url);
     parsedUrl.pathname = parsedUrl.pathname.slice(public.length)
     // extract URL path
     let pathname = `${root}${parsedUrl.pathname}`;
-    console.log('bac:',pathname)
-    // maps file extention to MIME types
-    const mimeType = {
-      '.ico': 'image/x-icon',
-      '.html': 'text/html',
-      '.js': 'text/javascript',
-      '.json': 'application/json',
-      '.css': 'text/css',
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.wav': 'audio/wav',
-      '.mp3': 'audio/mpeg',
-      '.svg': 'image/svg+xml',
-      '.pdf': 'application/pdf',
-      '.doc': 'application/msword',
-      '.eot': 'appliaction/vnd.ms-fontobject',
-      '.ttf': 'aplication/font-sfnt'
-    };
+    // console.log('bac:',pathname)
     fs.exists(pathname, function (exist) {
       if(!exist) {
         // if the file is not found, return 404
@@ -53,8 +36,9 @@ function static(options){
           res.end(`Error getting the file: ${err}.`);
         } else {
           // based on the URL path, extract the file extention. e.g. .js, .doc, ...
-          const ext = path.parse(pathname).ext;
+          const ext = path.parse(pathname).ext.slice(1);
           // if the file is found, set Content-type and send data
+          // console.log(mimeType,ext)
           res.setHeader('Content-type', mimeType[ext] || 'text/plain' );
           res.end(data);
         }
