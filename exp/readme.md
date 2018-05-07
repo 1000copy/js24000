@@ -1,16 +1,4 @@
-# expross
-
-
-## todo 
-
-
-  make a middle ware as extension filter ,when :
-  	
-  	app.registExt ('gspx',handler)	
-  
-  all url whose ext is gspx will route to this handler
-
-##  done 
+# exp
 
 1.1 use
    app.use(f)
@@ -27,3 +15,10 @@
   when given url /use/:id and /use/1 ,got id = 1 
   when given url /use/:fn and /use/main.gspx ,get fn = main.gspx
   when given url /use/:fn.gspx ,then filter func is gspxHandler
+
+1.4 add static file serve 2018-05-07
+1.5 make a middle ware as extension filter ,when :2018-05-07
+    
+    app.registExt ('gspx',handler)  
+  
+  all url whose ext is gspx will route to this handler

@@ -4,41 +4,49 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const mimeType =require('./mimeType')
-function static(options){
-  // console.log('static')
-  this.options = options
-  var root = options.root
-  
-  return function static(req, res) {
-    var public = req.basePath
-    // console.log(`${req.method} ${req.url}`);
-    // parse URL
-    const parsedUrl = url.parse(req.url);
-    parsedUrl.pathname = parsedUrl.pathname.slice(public.length)
-    // extract URL path
-    let pathname = `${root}${parsedUrl.pathname}`;
-    // console.log('bac:',pathname)
+const MagicFilter =require('./filter/')
+class Static{
+  constructor(options){
+    this.options = options
+    this.root = options.root
+    this.filters = []
+    this.addFilter(new MagicFilter())
+  }
+  addFilter(filter){
+    this.filters.push(filter)
+  }
+  getStatic(){
+    return this.pipe.bind(this)
+  }
+  pipe(req, res) {
+    var options = this.options
+    var basePath = req.basePath
+    var filters = this.filters
+    const parsedUrl = url.parse(req.url)
+    parsedUrl.pathname = parsedUrl.pathname.slice(basePath.length)
+    let pathname = `${this.root}${parsedUrl.pathname}`
     fs.exists(pathname, function (exist) {
       if(!exist) {
-        // if the file is not found, return 404
         res.statusCode = 404;
         res.end(`File ${pathname} not found!`);
         return;
       }
-      // if is a directory, then look for index.html
       if (fs.statSync(pathname).isDirectory()) {
         pathname += '/index.html';
       }
-      // read file from file system
       fs.readFile(pathname, function(err, data){
         if(err){
           res.statusCode = 500;
           res.end(`Error getting the file: ${err}.`);
         } else {
-          // based on the URL path, extract the file extention. e.g. .js, .doc, ...
           const ext = path.parse(pathname).ext.slice(1);
-          // if the file is found, set Content-type and send data
-          // console.log(mimeType,ext)
+          for (var i = 0; i < filters.length; i++) {
+            var filter = filters[i]
+            if (ext == filter.ext){
+              if (filter.pipe(req,res,ext))
+                return
+            }
+          }
           res.setHeader('Content-type', mimeType[ext] || 'text/plain' );
           res.end(data);
         }
@@ -46,7 +54,4 @@ function static(options){
     });
   }
 }
-exports = module.exports = static
-// var port = 3000
-// http.createServer(static({port:port,root:"./src"})).listen(parseInt(port));
-// console.log(`Server listening on port ${port}`);
+exports = module.exports = Static
