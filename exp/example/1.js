@@ -2,10 +2,6 @@ var exp = require('../src')
 var Static1 = require('../src/static')
 var app = exp()
 var option = {root:"."}
-
-option.extensionFilter = function(req,res,ext){
-	
-}
 var s = new Static1(option)
 
 app.get('/public',s.getStatic())
