@@ -1,87 +1,26 @@
-<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
-<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-<script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
-<div id="head">
-  <div class="nav" >
-    <div class="ui grid">
-      <div class="four wide column"></div>
+<div id="content">
+    <div class="nav" >
+      <div class="ui grid">
+        <div class="four wide column"></div>
 
-      <div class="eight wide column">
-        <a href="/posts"><h1>myblog</h1></a>
-        <p>my first blog</p>
-      </div>
-    </div>
-  </div>
-  <div class="navmenu">
-    <div class="ui buttons">
-      <div class="ui  dropdown " tabindex="0">
-        <i class="icon bars"></i>
-        <div class="menu" tabindex="-1">
-            <a class="item" href="/signin">登录</a>
-            <a class="item" href="/signup">注册</a>
+        <div class="eight wide column">
+          <a href="/posts"><h1>myblog</h1></a>
+          <p>my first blog</p>
         </div>
       </div>
     </div>
-  </div>
-  <div class ="ui grid"></div>
+    <div class="navmenu">
+      <div class="ui buttons">
+        <div class="ui  dropdown " tabindex="0">
+          <i class="icon bars"></i>
+          <div class="menu" tabindex="-1">
+              <a class="item" href="/signin">登录</a>
+              <a class="item" href="/signup">注册</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class ="ui grid"></div>
 </div>
-<style type="text/css">
-/* ---------- global-setting ---------- */
-body {
-  margin: 0 auto;
-  padding-top: 40px;
-}
 
-a:hover {
-  border-bottom: 3px solid #4fc08d;
-}
 
-.button {
-  background-color: #4fc08d !important;
-  color: #fff !important;
-}
-
-/* ---------- nav ---------- */
-.nav {
-  margin-bottom: 20px;
-  color: #999;
-  text-align: center;
-}
-
-.nav h1 {
-  color: #4fc08d;
-  display: inline-block;
-  margin: 10px 0;
-}
-
-/* ---------- navmenu ---------- */
-
-.navmenu {
-  position: fixed;
-  right: 30px;
-  top: 35px;
-  z-index: 999;
-}
-
-.navmenu .ui.dropdown.button {
-  padding: 10px 10px 0 10px;
-  background-color: #fff !important;
-}
-
-.navmenu .icon.bars {
-  /*color: #000;*/
-  font-size: 18px;
-}
-.avatar {
-  border-radius: 3px;
-  width: 48px;
-  height: 48px;
-  float: right;
-}
-
-</style>
-<script type="text/javascript">
-   $(document).ready(function () {
-      $('.ui.dropdown').dropdown();
-    })
-  </script>
