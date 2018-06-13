@@ -1,0 +1,30 @@
+<!-- <link rel="import" href="post.html"> -->
+<script src  = "include.js"></script>
+<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
+<link id="blog" rel="import" href="blog.html">
+<style type="text/css">
+
+</style>
+<div w3-include-html="head.html">efg</div>
+<div id="blog-post"></div>
+
+<script type="text/javascript">
+   $(document).ready(function () {
+      // var link = document.querySelector('link[rel=import]');
+      var link = document.querySelector('#blog');
+      var content = link.import.querySelector('#blog');
+      var placeholder = document.querySelector('#blog-post');
+      placeholder.appendChild(document.importNode(content, true));
+      // document.body.appendChild(document.importNode(content, true));
+   	  includeHTML(function (){ 
+	      // 点击按钮弹出下拉框
+	      $('.ui.dropdown').dropdown();
+      })
+   	  
+    })
+  </script>
+   <script>
+    
+  </script>

@@ -1,26 +1,29 @@
 <link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
 <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
-<div class="nav">
-  <div class="ui grid">
-    <div class="four wide column"></div>
+<div id="head">
+  <div class="nav" >
+    <div class="ui grid">
+      <div class="four wide column"></div>
 
-    <div class="eight wide column">
-      <a href="/posts"><h1>myblog</h1></a>
-      <p>my first blog</p>
-    </div>
-  </div>
-</div>
-<div class="navmenu">
-  <div class="ui buttons">
-    <div class="ui  dropdown " tabindex="0">
-      <i class="icon bars"></i>
-      <div class="menu" tabindex="-1">
-          <a class="item" href="/signin">登录</a>
-          <a class="item" href="/signup">注册</a>
+      <div class="eight wide column">
+        <a href="/posts"><h1>myblog</h1></a>
+        <p>my first blog</p>
       </div>
     </div>
   </div>
+  <div class="navmenu">
+    <div class="ui buttons">
+      <div class="ui  dropdown " tabindex="0">
+        <i class="icon bars"></i>
+        <div class="menu" tabindex="-1">
+            <a class="item" href="/signin">登录</a>
+            <a class="item" href="/signup">注册</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class ="ui grid"></div>
 </div>
 <style type="text/css">
 /* ---------- global-setting ---------- */
@@ -69,6 +72,13 @@ a:hover {
   /*color: #000;*/
   font-size: 18px;
 }
+.avatar {
+  border-radius: 3px;
+  width: 48px;
+  height: 48px;
+  float: right;
+}
+
 </style>
 <script type="text/javascript">
    $(document).ready(function () {
