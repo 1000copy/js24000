@@ -1,0 +1,75 @@
+<!-- <link rel="import" href="post.html"> -->
+<script src  = "include.js"></script>
+<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
+<style type="text/css">
+.avatar {
+  border-radius: 3px;
+  width: 48px;
+  height: 48px;
+  float: right;
+}
+.post-content h3 a {
+  color: #4fc08d !important;
+}
+
+.post-content .tag {
+  font-size: 13px;
+  margin-right: 5px;
+  color: #999;
+}
+
+.post-content .tag.right {
+  float: right;
+  margin-right: 0;
+}
+
+.post-content .tag.right a {
+  color: #999;
+}
+</style>
+<div w3-include-html="head.html">efg</div>
+<div class ="ui grid"></div>
+<div class="post-content">
+  <div class="ui grid">
+    <div class="four wide column">
+      <a class="avatar avatar-link" href="avatar.png" data-title="rita | 女" data-content="dfa">
+        <img class="avatar" src="avatar.png">
+      </a>
+    </div>
+    <div class="eight wide column">
+      <div class="ui segment">
+        <h3><a href="">rita 1</a></h3>
+        <pre><p>1</p></pre>
+        <div>
+          <span class="tag">2018-06-11 14:50</span>
+          <span class="tag right">
+            <span>浏览(22)</span>
+            <span>留言(6)</span>
+            <div class="ui inline dropdown" tabindex="0">
+                <div class="text"></div>
+                <i class="dropdown icon"></i>
+                <div class="menu transition hidden" tabindex="-1">
+                  <div class="item"><a href="/posts/5b1e1b63a6f55a10f4ba2121/edit">编辑</a></div>
+                  <div class="item"><a href="/posts/5b1e1b63a6f55a10f4ba2121/remove">删除</a></div>
+                </div>
+              </div>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+   $(document).ready(function () {
+   	  includeHTML(function (){ 
+   	  	  $('.ui.dropdown').dropdown();    
+	      $('.post-content .avatar-link').popup({
+	        inline: true,
+	        position: 'bottom right',
+	        lastResort: 'bottom right'
+	      });
+      })
+    })
+  </script>

@@ -1,0 +1,35 @@
+<!-- <link rel="import" href="post.html"> -->
+<script src  = "include.js"></script>
+<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
+<style type="text/css">
+
+</style>
+<div w3-include-html="head.html">efg</div>
+<div class ="ui grid"></div>
+<div class ="ui grid">
+	<div class="four wide column"></div>
+	<div class="eight wide column">
+		<form class="ui form" method="post">
+			<div class="field required">
+		        <label>用户名</label>
+		        <input placeholder="用户名" type="text" name="name">
+	      	</div>
+	      	<div class="field required">
+		        <label>密码</label>
+		        <input placeholder="密码" type="text" name="name">
+	      	</div>
+	      	<input type="submit" class="ui button fluid" value="登录">
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+   $(document).ready(function () {
+   	  includeHTML(function (){ 
+	      // 点击按钮弹出下拉框
+	      $('.ui.dropdown').dropdown();
+      })
+   	  
+    })
+  </script>
