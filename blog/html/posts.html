@@ -1,4 +1,10 @@
-<!-- <link rel="import" href="post.html"> -->
+<script type="text/javascript">
+   function doload(){
+      $('.ui.dropdown').dropdown();    
+   }
+   
+</script>
+  <!-- <link rel="import" href="post.html"> -->
 <script src  = "include.js"></script>
 <link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
 <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
@@ -24,7 +30,7 @@
   color: #999;
 }
 </style>
-<div w3-include-html="head.html">efg</div>
+<div r-include="head.html" onload="doload">efg</div>
 <div class ="ui grid"></div>
 <div class="post-content">
   <div class="ui grid">
