@@ -1,15 +1,7 @@
-<script type="text/javascript">
-   function doload(){
-      $('.ui.dropdown').dropdown();    
-   }
-   
-</script>
-  <!-- <link rel="import" href="post.html"> -->
 <script src  = "include.js"></script>
-<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
-<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-<script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
-<link rel="stylesheet" href="head.css">
+<link rel="stylesheet" href="vendor/semantic.min.css">
+<script src="vendor/jquery.min.js"></script>
+<script src="vendor/semantic.min.js"></script>
 <style type="text/css">
 .post-content h3 a {
   color: #4fc08d !important;
@@ -64,13 +56,14 @@
 </div>
 <script type="text/javascript">
    $(document).ready(function () {
-   	  includeHTML(function (){ 
-   	  	  $('.ui.dropdown').dropdown();    
-	      $('.post-content .avatar-link').popup({
-	        inline: true,
-	        position: 'bottom right',
-	        lastResort: 'bottom right'
-	      });
-      })
+      window.doload = function (){
+      $('.ui.dropdown').dropdown();
+       $('.post-content .avatar-link').popup({
+          inline: true,
+          position: 'bottom right',
+          lastResort: 'bottom right'
+        });
+    }
+        includeHTML()
     })
-  </script>
+</script>

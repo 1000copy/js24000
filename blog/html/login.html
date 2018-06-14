@@ -1,16 +1,10 @@
 <!-- <link rel="import" href="post.html"> -->
 <script src  = "include.js"></script>
-<script type="text/javascript">
-	function doload(){
-		$('.ui.dropdown').dropdown();
-	}
-</script>
 <link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
 <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
-<link rel="stylesheet" href="head.css">
-<div r-include="head.html" onload="doload">efg</div>
 
+<div r-include="head.html" onload="doload">head</div>
 <div class ="ui grid">
 	<div class="four wide column"></div>
 	<div class="eight wide column">
@@ -29,6 +23,10 @@
 </div>
 <script type="text/javascript">
    $(document).ready(function () {
-   	  includeHTML()
+	   	window.doload = function (){
+			$('.ui.dropdown').dropdown();
+		}
+   	  	includeHTML()
     })
   </script>
+  

@@ -1,3 +1,4 @@
+<!-- <link rel="stylesheet" href="head.css"> -->
 <div id="content">
     <div class="nav" >
       <div class="ui grid">
@@ -24,7 +25,58 @@
 </div>
 <style>
   .item{
-    background-color: red;
+    /*background-color: red;*/
+  }
+    body {
+    margin: 0 auto;
+    padding-top: 40px;
+  }
+
+  a:hover {
+    border-bottom: 3px solid #4fc08d;
+  }
+
+  .button {
+    background-color: #4fc08d !important;
+    color: #fff !important;
+  }
+
+  /* ---------- nav ---------- */
+  .nav {
+    margin-bottom: 20px;
+    color: #999;
+    text-align: center;
+  }
+
+  .nav h1 {
+    color: #4fc08d;
+    display: inline-block;
+    margin: 10px 0;
+  }
+
+  /* ---------- navmenu ---------- */
+
+  .navmenu {
+    position: fixed;
+    right: 30px;
+    top: 35px;
+    z-index: 999;
+  }
+
+  .navmenu .ui.dropdown.button {
+    padding: 10px 10px 0 10px;
+    background-color: #fff !important;
+  }
+
+  .navmenu .icon.bars {
+    /*color: #000;*/
+    font-size: 18px;
+  }
+  .avatar {
+    border-radius: 3px;
+    width: 48px;
+    height: 48px;
+    float: right;
   }
 </style>
 

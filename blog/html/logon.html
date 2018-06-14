@@ -1,14 +1,17 @@
-<!-- <link rel="import" href="post.html"> -->
-<script type="text/javascript" src="../customelement/customelement.js"></script>
-<script src  = "include.js"></script>
-<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
 <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src  = "include.js"></script>
+<script type="text/javascript">
+   $(document).ready(function () {
+      window.doload = function (){
+      $('.ui.dropdown').dropdown();
+    }
+        includeHTML()
+    })
+</script>
+<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
+
 <script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
-<link rel="stylesheet" href="head.css">
-<!-- <link rel="import" href="head.html" id="importhead" > -->
-<link rel="import" href="_head.html" id="importhead" >
-  <div id="head" ></div>
-  <r-head></r-head>
+  <div r-include="head.html" onload="doload">head</div>
   <div class="ui grid">
   <div class="four wide column"></div>
   <div class="eight wide column">
@@ -46,14 +49,3 @@
   </div>
 </div>
 
-<script type="text/javascript">
-   $(document).ready(function () {
-      // var link = document.querySelector('link[rel=import]');
-      // var link = document.querySelector('#importhead');
-      // console.dir(link.import)
-      // var content = link.import.querySelector('#content');
-      // var placeholder = document.querySelector('#head');
-      // placeholder.replaceWith(document.importNode(content, true));
-      $('.ui.dropdown').dropdown();
-    })
-</script>

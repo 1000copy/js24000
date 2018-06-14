@@ -1,0 +1,24 @@
+<template id="chart-pie">
+  <canvas id="myChart" width="200" height="200"></canvas>
+  <script>
+    var c=document.getElementById("myChart");
+    var ctx=c.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(100,75,50,0,2*Math.PI);
+    ctx.stroke();
+  </script>
+</template>
+
+<script>  
+  // thisDoc refers to the "importee", which is chart.html
+  var thisDoc = document.currentScript.ownerDocument;
+
+  // thatDoc refers to the "importer", which is index.html
+  var thatDoc = document;
+
+  // grab the contents of #chart-pie from this document
+  // and append it to the importing document.
+  var template = thisDoc.querySelector("#chart-pie");
+  console.log(template.content)
+  thatDoc.body.appendChild(thatDoc.importNode(template.content, true));
+</script> 
