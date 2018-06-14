@@ -1,17 +1,24 @@
 require.config({
 	    paths : {
-	        "jquery" : ["http://cdn.bootcss.com/jquery/1.11.3/jquery.min"],
-	        "include":["include.js"],
-	        "semantic":["http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"],
+	        "jquery" : ["../html/vendor/jquery.min"],
+	        "s":["../html/vendor/semantic.min"]
 	    }
 	})
-define(function(){
-    require(["jquery","include","semantic"],function($,include){
+// define(function(){
+//     require(["jquery","s"],function($){
+//     	$(document).ready(function () {
+// 		   $('.ui.dropdown').dropdown();
+			
+// 		})
+//     })
+// })
+
+require(["jquery","s"],function($){
+	function initdropdown(){
     	$(document).ready(function () {
-	      window.doload = function (){
-	      $('.ui.dropdown').dropdown();
-	    }
-	    console.log("loaded")
-	    })
-    })
+		   $('.ui.dropdown').dropdown();
+			
+		})
+    }
+    initdropdown()
 })
