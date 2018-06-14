@@ -14,7 +14,7 @@
 	@import url("vendor/semantic.min.css");
 
 
-## requirejs
+## requirejs ref - ../requirejs/semantic.html
 
 以便优化客户端js代码的样子：
 
@@ -35,6 +35,9 @@
 	<script src  = "require.js" main="foo.js"></script>
 
 foojs内则是
+
+
+requirejs 在login.html内点击dropdown总是没有反应，先退回原版本再说
 
 
 ##  error 
