@@ -69,11 +69,21 @@
         });
        var app= new Vue({
           el:'#app',
+          mounted: function () {
+            var self = this;
+            $.ajax({
+                url: 'posts.json',
+                method: 'GET',
+                success: function (data) {
+                    self.items = JSON.parse(data)
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+          },
           data:{
-            items:[
-              {id:'5b1e1b63a6f55a10f4ba2121',views:22,comments:5,title:"title",content:"content",avatar:"avatar.png"},
-              {id:'5b1e1b63a6f55a10f4ba2121',views:22,comments:42,title:"title",content:"content",avatar:"avatar.png"},
-              {id:'5b1e1b63a6f55a10f4ba2121',views:22,comments:1,title:"title",content:"content",avatar:"avatar.png"}],
+            items:[],
             todo:''
           },
           methods:{

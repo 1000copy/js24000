@@ -1,3 +1,38 @@
+
+## 2018年06月15日 装入nodejs远程json文件 
+
+## 2018年06月15日 装入本地json文件 
+
+Initializing Vue data with AJAX
+
+	mounted: function () {
+	    var self = this;
+	    $.ajax({
+	        url: '/items',
+	        method: 'GET',
+	        success: function (data) {
+	            self.items = data;
+	        },
+	        error: function (error) {
+	            console.log(error);
+	        }
+	    });
+	}
+
+
+	https://stackoverflow.com/questions/32413905/initializing-vue-data-with-ajax
+
+## How to use img src in vue.js? [duplicate]
+	
+	https://stackoverflow.com/questions/45880956/how-to-use-img-src-in-vue-js
+
+	try : <img v-bind:src="joke.avatar" /> 
+	not : <img 		  src="{{joke.avatar}}" /> 
+	depends :
+		joke: {
+		  avatar: 'image.jpg'
+		}
+
 ## 优化css
 
 调整：
