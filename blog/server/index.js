@@ -70,17 +70,14 @@ app.post('/api/login', (req, res,next) => {
 	    req.flash('error', e.message)
 	    return res.redirect('back')
 	  }
-	  console.log("用户不存在1")
 	  UserModel.getUserByName(name)
 	    .then(function (user) {
-	      console.log("用户不存在2")
 	      if (!user) {
-	      	console.log("用户不存在")
 	        req.flash('error', '用户不存在')
 	        return res.redirect('back')
 	      }
-	      console.log("用户不存在3")
 	      // 检查密码是否匹配
+	      const sha1 = require('sha1')
 	      if (sha1(password) !== user.password) {
 	        req.flash('error', '用户名或密码错误')
 	        return res.redirect('back')
