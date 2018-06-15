@@ -75,7 +75,8 @@
                 url: 'posts.json',
                 method: 'GET',
                 success: function (data) {
-                    self.items = JSON.parse(data)
+                    // self.items = JSON.parse(data)
+                    self.items = data
                 },
                 error: function (error) {
                     console.log(error)
