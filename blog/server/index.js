@@ -10,7 +10,7 @@ const app = express()
 
 const PostModel = require('./models/posts')
 
-app.get('/posts.json', (req, res,next) => {
+app.get('/api/posts', (req, res,next) => {
 	// ObjectId("5b1e1b34a6f55a10f4ba211f")
 	// PostModel.getPosts()
 	PostModel.getPosts("5b1e1b34a6f55a10f4ba211f")

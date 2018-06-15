@@ -72,7 +72,7 @@
           mounted: function () {
             var self = this;
             $.ajax({
-                url: 'posts.json',
+                url: '/api/posts',
                 method: 'GET',
                 success: function (data) {
                     // self.items = JSON.parse(data)
