@@ -3,15 +3,82 @@
 <link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
 <script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
 <div r-include="head.html" onload="doload">head</div>
-<div r-include="blog.html" onload="doload">blog</div>
+<style type="text/css">
+.avatar {
+  border-radius: 3px;
+  width: 48px;
+  height: 48px;
+  float: right;
+}
+.post-content h3 a {
+  color: #4fc08d !important;
+}
+
+.post-content .tag {
+  font-size: 13px;
+  margin-right: 5px;
+  color: #999;
+}
+
+.post-content .tag.right {
+  float: right;
+  margin-right: 0;
+}
+
+.post-content .tag.right a {
+  color: #999;
+}
+</style>
+<div class="four wide column flash"></div>
+<div class="ui grid" id="app">
+	
+  <div class="four wide column">
+    <a class="avatar avatar-link" href="avatar.png">
+      <img class="avatar" src="avatar.png">
+    </a>
+  </div>
+
+  <div class="eight wide column">
+    <form class="ui form segment" method="post" id="form" action="/api/create">
+      <div class="field required">
+        <label>标题</label>
+        <input type="text" name="title">
+      </div>
+      <div class="field required">
+        <label>内容</label>
+        <textarea name="content" rows="15"></textarea>
+      </div>
+      <input type="submit" class="ui button" value="发布">
+    </form>
+  </div>
+</div>
 <script type="text/javascript">
-   
    $(document).ready(function () {
-      window.doload = function(file){
-        $('.ui.dropdown').dropdown();
-      }    
-      includeHTML()
-      
+	   	window.doload = function (){
+			$('.ui.dropdown').dropdown();
+		}
+   	  	includeHTML()
     })
-</script>
-   
+
+   $('#form').submit(function(event){
+   	    console.log($('#form').attr('action'),)
+   		event.preventDefault()
+	    $.ajax({
+	      url: $('#form').attr('action'),
+	      type: 'POST',
+	      data : $('#form').serialize(),
+	      success: function(data){
+	        // console.log('form submitted.' ,data);
+	        if (!data.success ){
+	        	console.log(data)
+	        	$('.flash').text(data.msg)
+	        }else{
+	        	location = "/posts.html"
+	        }
+	        
+	      }
+	    });
+	    return false;
+	});
+  </script>
+  

@@ -15,7 +15,7 @@
                 this.elmnt.innerHTML = this.responseText;
                 var doload = this.elmnt.getAttribute("onload")
                 // console.log(doload)
-                console.log(doload,window[doload])
+                // console.log(doload,window[doload])
                 if (typeof window[doload] == 'function'){
                   window[doload](file)
                 }

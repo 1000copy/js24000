@@ -4,9 +4,11 @@
 <script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
 
 <div r-include="head.html" onload="doload">head</div>
-<div class ="flash"></div>
 <div class ="ui grid">
-	<div class="four wide column"></div>
+	
+</div>
+<div class ="ui grid">
+	<div class="four wide column flash"></div>
 	<div class="eight wide column">
 		<form class="ui form" method="post" action="/api/login" id="form">
 			<div class="field required">
@@ -36,10 +38,13 @@
 	      type: 'POST',
 	      data : $('#form').serialize(),
 	      success: function(data){
-	        console.log('form submitted.' ,data);
+	        // console.log('form submitted.' ,data);
 	        if (!data.success ){
-	        	$('.flash').text(data.msg)
+	        	
+	        }else{
+	        	location = "/posts.html"
 	        }
+	        $('.flash').text(data.msg)
 	      }
 	    });
 	    return false;

@@ -4,6 +4,12 @@
 <script src="vendor/vue.min.js"></script>
 <link rel="stylesheet" href="vendor/semantic.min.css">
 <style type="text/css">
+.avatar {
+  border-radius: 3px;
+  width: 48px;
+  height: 48px;
+  float: right;
+}
 .post-content h3 a {
   color: #4fc08d !important;
 }
@@ -25,33 +31,35 @@
 </style>
 <div r-include="head.html" onload="doload">efg</div>
 <div id="app">
-  <div class ="ui grid"></div>
-  <div class="post-content" v-for="(item, index) in items">
-    <div class="ui grid">
-      <div class="four wide column">
-        <a class="avatar avatar-link" href="avatar.png" data-title="rita | 女" data-content="dfa">
-          <img class="avatar" v-bind:src="item.avatar">
-          <!-- <img class="avatar" src="{{item.avatar}}"> 这样不行的-->
-        </a>
-      </div>
-      <div class="eight wide column">
-        <div class="ui segment">
-          <h3><a href="">{{item.title}}</a></h3>
-          <pre><p>{{item.content}}</p></pre>
-          <div>
-            <span class="tag">2018-06-11 14:50</span>
-            <span class="tag right">
-              <span>浏览({{item.views}})</span>
-              <span>留言({{item.comments}})</span>
-              <div class="ui inline dropdown" tabindex="0">
-                  <div class="text"></div>
-                  <i class="dropdown icon"></i>
-                  <div class="menu transition hidden" tabindex="-1">
-                    <div class="item"><a href="/posts/{{item.id}}/edit">编辑</a></div>
-                    <div class="item"><a href="/posts/{{item.id}}/remove">删除</a></div>
+  <div >
+    <div class ="ui grid"></div>
+    <div class="post-content" v-for="(item, index) in items">
+      <div class="ui grid">
+        <div class="four wide column">
+          <a class="avatar avatar-link" href="avatar.png">
+            <img class="avatar" v-bind:src="item.author.avatar">
+            <!-- <img class="avatar" src="{{item.avatar}}"> 这样不行的-->
+          </a>
+        </div>
+        <div class="eight wide column">
+          <div class="ui segment">
+            <h3><a href="/post.html">{{item.title}}</a></h3>
+            <pre><p>{{item.content}}</p></pre>
+            <div>
+              <span class="tag">2018-06-11 14:50</span>
+              <span class="tag right">
+                <span>浏览({{item.views}})</span>
+                <span>留言({{item.comments}})</span>
+                <div class="ui inline dropdown" tabindex="0">
+                    <div class="text"></div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu transition hidden" tabindex="-1">
+                      <div class="item"><a href="/posts/{{item.id}}/edit">编辑</a></div>
+                      <div class="item"><a href="/posts/{{item.id}}/remove">删除</a></div>
+                    </div>
                   </div>
-                </div>
-            </span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -62,11 +70,6 @@
    $(document).ready(function () {
       window.doload = function (){
       $('.ui.dropdown').dropdown();
-       $('.post-content .avatar-link').popup({
-          inline: true,
-          position: 'bottom right',
-          lastResort: 'bottom right'
-        });
        var app= new Vue({
           el:'#app',
           mounted: function () {
@@ -75,8 +78,15 @@
                 url: '/api/posts',
                 method: 'GET',
                 success: function (data) {
-                    // self.items = JSON.parse(data)
-                    self.items = data
+                    if (data.success)
+                      self.items = data.data
+                    else{
+                      if (data.needlogin)
+                        location = "/login.html"
+                      else{
+                        console.log(data.msg)    
+                      }
+                    }
                 },
                 error: function (error) {
                     console.log(error)
