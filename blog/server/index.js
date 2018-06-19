@@ -67,8 +67,10 @@ app.post('/api/login', (req, res,next) => {
 	      throw new Error('请填写密码')
 	    }
 	  } catch (e) {
-	    req.flash('error', e.message)
-	    return res.redirect('back')
+	    // req.flash('error', e.message)
+	    // return res.redirect('back')
+	    res.send({success:false,msg:e.message})
+	    return
 	  }
 	  UserModel.getUserByName(name)
 	    .then(function (user) {
