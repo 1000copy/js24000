@@ -1,3 +1,19 @@
+##  error 
+
+### Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https.
+includeHTML @ include.js:26
+
+	--allow-file-access-from-files
+
+### Disable Chrome strict MIME type checking
+
+	--disable-web-security
+	这个特性看来无法关闭，只有使用firefox开发一下试试了
+
+### total chrome 
+
+	open /Applications/Google\ Chrome.app/ --args --allow-file-access-from-files --disable-web-security
+
 ## read
 
 	Styling Your Custom Elements 
@@ -160,13 +176,6 @@ foojs内则是
 
 requirejs 在login.html内点击dropdown总是没有反应，先退回原版本再说
 
-
-##  error 
-
-Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https.
-includeHTML @ include.js:26
-
-open /Applications/Google\ Chrome.app/ --args --allow-file-access-from-files
 
 ## html import ,custom element 
 

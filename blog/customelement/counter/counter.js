@@ -3,6 +3,8 @@
 
   template.innerHTML = `
     <style>
+      @import "../../html/vendor/semantic.min.css";
+      @import "../../html/vendor/semantic.min.css";
       button,
       span {
         font-size: 3rem;
@@ -22,7 +24,7 @@
       }
     </style>
     <div>
-      <button type="button" inc>+</button>
+      <button class="ui button" type="button" inc>+</button>
       <button type="button" decrement>-</button>
       <span></span>
     </div>
