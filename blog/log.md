@@ -1,3 +1,57 @@
+## read
+
+	Styling Your Custom Elements 
+		https://alligator.io/web-components/styling-custom-elements/
+	Attributes and Properties in Custom Elements 
+		https://alligator.io/web-components/attributes-properties/
+	Your First Custom Element
+		https://alligator.io/web-components/your-first-custom-element/
+## 2018年06月21日 custom element 更加简单的测试用例
+
+	<div><span class="red">hello {{who}}<span></div>
+	<style>
+		.red {color:red}
+	</style
+
+	<hello who="world"></helloworld>
+
+## 2018年06月21日 custom element 的测试用例
+
+在此上下文中：
+
+  	<form class="ui form" method="post" action="/api/login" id="form">
+		<div class="field required">
+	        <label>用户名</label>
+	        <input placeholder="用户名" type="text" name="name">
+      	</div>
+      	<div class="field required">
+	        <label>密码</label>
+	        <input placeholder="密码" type="text" name="password">
+      	</div>
+      	<input type="submit" class="ui button fluid" value="登录">
+	</form>
+
+这个块：
+
+	<div class="field required">
+        <label>用户名</label>
+        <input placeholder="用户名" type="text" name="name" required>
+  	</div>
+
+变成这个块
+
+	<labeledit label = "用户名" name="name"></labeledit>
+
+上下文变成：
+
+  	<form class="ui form" method="post" action="/api/login" id="form">
+		<labeledit label = "用户名" name="name"></labeledit>
+		<labeledit label = "密码" name="password"></labeledit>
+      	<input type="submit" class="ui button fluid" value="登录">
+	</form>
+
+还有样式如何做？
+
 ## 2018年06月19日 如何使用js提交form，并且获取response结果？
 
 ## 2018年06月15日 装入nodejs远程mongodb内容

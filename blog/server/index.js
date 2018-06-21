@@ -5,10 +5,6 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const config = require('config-lite')(__dirname)
 const flash = require('connect-flash')
-app.use(require('express-formidable')({
-  uploadDir: path.join(__dirname, 'html'), // 上传文件目录
-  keepExtensions: true// 保留后缀
-}))
 
 // session 中间件
 app.use(session({
@@ -39,9 +35,9 @@ app.use(bodyParser.json());
 app.use(flash())
 app.use(function (req, res, next) {
   // console.log(req.session.user,req.flash('success').toString())
-  // res.locals.user = req.session.user
-  // res.locals.success = req.flash('success').toString()
-  // res.locals.error = req.flash('error').toString()
+  res.locals.user = req.session.user
+  res.locals.success = req.flash('success').toString()
+  res.locals.error = req.flash('error').toString()
   next()
 })
 const PostModel = require('./models/posts')
@@ -222,6 +218,10 @@ app.post('/api/create', (req, res,next) => {
 	    })
 	    .catch(next)
 })
+app.get('/api/post',(req, res) => {
+	  res.send({success:true,data:[{title:"foo",content:"bar"}]})
+})
+app.ge
 app.get('/api/signout', loginStatus.checkLogin,(req, res) => {
 	  req.session.user = null
 	  // 登出成功后跳转到主页
@@ -232,4 +232,10 @@ app.get('/old/posts.json', (req, res) => {
     res.end(JSON.stringify(posts))
 })
 app.use(express.static('html'))
+// 次序很重要啊，是不是，放在前面会出现Error: Can't set headers after they are sent.
+app.use(require('express-formidable')({
+  uploadDir: path.join(__dirname, 'public/img'), // 上传文件目录
+  keepExtensions: true// 保留后缀
+}))
+
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
