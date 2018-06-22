@@ -1,4 +1,74 @@
-##  error 
+## 2018年06月22日 稍微回顾下今日的工作
+
+1. 想要使用Custom Element + shadow DOM的方式（like counterdemo.html)做一个dropmenu。因为这样就比一般的html更加模块化。
+
+2. 在做的过程中，发现本来在html内正常的显示的icon bars，在此模式下就是无法显示，然后发现字体文件并没有如同html方式那样被加载。也没有任何报错。就像dropmenu目录内展示的那样。
+
+3. 于是就想着，要搞明白为什么semantic.css加载时如何加载的font文件。参考font目录
+4. font文件，可以通过css加载，
+
+	<link rel="stylesheet" href="./css/font-awesome.min.css">
+	<i class="fa fa-bars">fa-camera-retro</i> 
+
+或者自己编写css去加载。像是这样。如下代码，暂时了font awesome.css内部的实现机制：
+
+	<style>
+		.fa.fa-bars {
+			font-size: 28px	;
+			color:red;
+			background: blue;
+		}
+		@font-face {
+		font-family: "FA";
+		src: url("./fonts/fontawesome-webfont.eot");
+		src: 
+		url("./fonts/fontawesome-webfont.woff") format("woff"),
+		url("./fonts/FontAwesome.otf") format("opentype"),
+		url("./fonts/fontawesome-webfont.svg#filename") format("svg");
+		}
+		.mytextwithicon {
+	    position:relative;
+		}    
+		.mytextwithicon:before {
+			/* this is your text. You can also use UTF-8 character codes as I do here */
+		    content: "\f0c9";  
+		    font-family: FA;
+		    font-size: 18px;
+		    left:-5px;
+		    position:absolute;
+		    top:0;
+		 }
+	</style>
+	<span class = "mytextwithicon"></span><br/>
+	<i class = "mytextwithicon"></i>
+
+5. 所以，干脆自己做一套css框架？
+
+	https://www.quora.com/Whats-the-best-CSS-framework-for-2018
+
+6. 感觉心累。！！！
+
+## use font by raw css 
+
+google : How to Add Custom Font to Website through @fontface?
+error google: Octal literals are not allowed in strict mode
+googel : Use Font Awesome Icons in CSS
+
+
+## use font by font awesome css 
+
+
+
+下载： http://fontawesome.dashgame.com/
+
+github : https://github.com/FortAwesome/Font-Awesome
+
+## 
+## 暂时避开dropmenu的问题
+
+	 <div class="ui  simple dropdown " tabindex="0">
+
+ 	##  error 
 
 ### Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https.
 includeHTML @ include.js:26

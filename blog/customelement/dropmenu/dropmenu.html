@@ -1,0 +1,35 @@
+<script src="../../html/vendor/jquery.min.js"></script>
+<script src="../../html/vendor/semantic.min.js"></script>
+<link rel="stylesheet" href="../../html/vendor/semantic.min.css">
+    <nav>
+      <div class="ui buttons">
+        <div class="ui  dropdown " tabindex="0">
+          <i class="icon bars"></i>
+          <div class="menu" tabindex="-1">
+              <a class="item" href="/login.html">Item 1</a>
+              <a class="item" href="/logon.html">Item 2</a>
+              <div class="divider"></div>
+              <a class="item" href="/posts.html">Item 3</a>
+              <a class="item" href="/create.html">Item 4</a>
+              
+          </div>
+        </div>
+      </div>
+    </nav>
+<style>
+  nav {
+    position: fixed;
+    left: 50px;
+    top: 35px;
+    z-index: 999;
+  }
+  nav .icon.bars {
+    font-size: 18px;
+  }
+</style>
+
+<script type="text/javascript">
+   $(document).ready(function () {
+      $('.ui.dropdown').dropdown();
+    })
+</script>
