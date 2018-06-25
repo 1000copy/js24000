@@ -1,3 +1,18 @@
+pause 2018年06月25日
+
+## 曾经的工作清单
+
+使用此编辑器 pell https://github.com/jaredreich/pell
+感觉这个书看着不错，可以从这里开始，也是一个blog https://github.com/1000copy/N-blog
+使用新时期的nodejs学习指南 介绍的编码
+使用mongodb做后端
+使用此断言库 。 https://github.com/atian25/blog/issues/16
+ava - 使用此测试框架 https://github.com/avajs/ava-docs
+使用bulma css框架
+html import http://robdodson.me/exploring-html-imports/
+html 语义标签
+用于前端开发的简单服务器 https://github.com/tj/serve
+
 ## 2018年06月22日 稍微回顾下今日的工作
 
 1. 想要使用Custom Element + shadow DOM的方式（like counterdemo.html)做一个dropmenu。因为这样就比一般的html更加模块化。
