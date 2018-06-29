@@ -1,0 +1,64 @@
+    <% include _head.ejs %>
+
+
+    <div class="columns">
+      <div class="column is-3" style="">
+        <div class="icon is-large" style="float: right;color:red;font-size: 2rem;">
+          <i class="fas fa-user" ></i>
+        </div>
+      </div>
+      <div class="column is-6"  >
+        <form class="form" method="post" action="/api/logon">
+          <div class="field">
+            <label class="label">用户名</label>
+            <div class="control">
+              <input placeholder="用户名" type="text" name="name" class="input">
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">密码</label>
+              <div class="control has-icons-left">
+                <input placeholder="密码" type="password" name="password" class="input">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-envelope"></i>
+                </span>
+              </div>
+          </div>
+       <div class="field">
+            <label class="label">重复密码</label>
+              <div class="control has-icons-left">
+                <input placeholder="重复密码" type="password" name="password" class="input">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-key"></i>
+                </span>
+              </div>
+          </div>
+          <div class="field">
+            <label class="label">性别</label>
+            <div class="control">
+              <div class="select">
+                <select name="gender">
+                  <option value="m">男</option>
+                  <option value="f">女</option>
+                  <option value="x">保密</option>
+                </select>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">头像</label>
+            <div class="control">
+              <input type="file" name="avatar" class="file">
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">个人简介</label>
+            <div class="control">
+              <textarea name="bio" rows="5" class="textarea"></textarea>
+            </div>
+          </div>
+          <input type="submit" class="button is-primary" value="注册">
+          <input type="reset" class="button is-info" value="取消">
+        </form>
+      </div>
+    </div>
+     <% include _foot.ejs %>
