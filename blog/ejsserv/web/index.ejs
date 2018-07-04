@@ -2,10 +2,14 @@
 <html>
    <head><title>A test</title></head>
    <body>
-     My Test Page 
+<% 
+	var a = require('./a.js')
+	var c = a.b()
+	console.log(require.paths)
+%>
+<%= require.paths[0]  %><p>
        <% if (1==1) { %>
           Working
        <%}%>
-       <%= "sdd"%>
    </body>
 </html>​

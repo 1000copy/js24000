@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+
+<template id="blog-header">
+  <style>
+    @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
+  </style>
+	  <nav>
+	  Icon:<button class="fa fa-search">Click Me!</button>
+	</nav>
+	<header>
+		<h1>DreamLine</h1>
+		<nav>
+			<ul>
+				<li><a href="#0">Tour</a></li>
+				<li><a href="#0">Blog</a></li>
+				<li><a href="#0">Contact</a></li>
+				<li><a href="#0">Error</a></li>
+				<li><a href="#0"><i class="fa fa-search"></i>Search</a></li>
+			</ul>
+		</nav>
+	</header>
+</template>
+<script type="text/javascript">
+var importDoc = document.currentScript.ownerDocument;
+var proto = Object.create(HTMLElement.prototype, {
+	createdCallback: {
+		value: function() {
+			var t = importDoc.querySelector("#blog-header");
+			var clone = document.importNode(t.content, true);
+			this.createShadowRoot().appendChild(clone);
+		}
+	}
+});
+document.registerElement("blog-header", {prototype: proto});
+
+</script>
+<blog-header></blog-header>
