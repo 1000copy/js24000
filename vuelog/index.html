@@ -1,0 +1,207 @@
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
+<link rel="stylesheet" href="a.css">
+<div id="app">
+    <div id="content">
+      <div class="nav" >
+        <div class="ui grid">
+          <div class="four wide column"></div>
+
+          <div class="eight wide column">
+            <a href="/posts.html"><h1>myblog</h1></a>
+            <p>my first blog</p>
+          </div>
+        </div>
+      </div>
+      <div class="navmenu">
+        <div class="ui buttons">
+          <div class="ui  dropdown " tabindex="0">
+            <i class="icon bars"></i>
+            <div class="menu" tabindex="-1">
+                <router-link class="item" to="/login">登录</router-link>
+                <router-link class="item" to="/posts">个人主页</router-link>
+                <router-link class="item" to="/create">发表文章</router-link>
+                <router-link class="item" to="/edit">edit</router-link>
+                <router-link class="item" to="/logon">注册</router-link>
+                <router-link class="item" to="#!" v-bind:click="onclick">登出</router-link>
+                <a class="item" v-bind:onclick="onclick">logout</a>
+                <div class="divider"></div>
+                <router-link class="item" to="/home">home</router-link>
+                <router-link class="item" to="/about">about</router-link>
+                <router-link class="item" to="/Inc">Inc</router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <router-view></router-view>
+</div>
+<script type="x-template" id="logonView">
+  <div class="ui grid">>
+    <div class="four wide column"></div>
+    <div class="eight wide column">
+    <form class="ui form segment" method="post" action="/api/logon">
+      <div class="field required">
+        <label>用户名</label>
+        <input placeholder="用户名" type="text" name="name">
+      </div>
+      <div class="field required">
+        <label>密码</label>
+        <input placeholder="密码" type="password" name="password">
+      </div>
+      <div class="field required">
+        <label>重复密码</label>
+        <input placeholder="重复密码" type="password" name="repassword">
+      </div>
+      <div class="field required">
+        <label>性别</label>
+        <div class="ui compact selection dropdown" tabindex="0"><select name="gender">
+          <option value="m">男</option>
+          <option value="f">女</option>
+          <option value="x">保密</option>
+        </select><i class="dropdown icon"></i><div class="text">男</div><div class="menu" tabindex="-1"><div class="item active selected" data-value="m">男</div><div class="item" data-value="f">女</div><div class="item" data-value="x">保密</div></div></div>
+      </div>
+      <div class="field required">
+        <label>头像</label>
+        <input type="file" name="avatar">
+      </div>
+      <div class="field required">
+        <label>个人简介</label>
+        <textarea name="bio" rows="5"></textarea>
+      </div>
+      <input type="submit" class="ui button fluid" value="注册">
+    </form>
+  </div>
+</div>
+</script>
+<script type="x-template" id="incView">
+    <div>
+      <span>{{count}}</span>
+      <button v-on:click="inc">+</button>
+    </div>
+</script>
+<script type="x-template" id="createView">
+  <div class="ui grid">
+  
+    <div class="four wide column">
+      
+    </div>
+
+    <div class="eight wide column">
+      <form class="ui form segment" method="post" id="form" action="/api/create">
+        <div class="field required">
+          <label>标题</label>
+          <input type="text" name="title" v-bind:value="item.title">
+        </div>
+        <div class="field required">
+          <label>内容</label>
+          <textarea name="content" rows="15" v-bind:value="item.content"></textarea>
+        </div>
+        <input type="submit" class="ui button" value="发布">
+      </form>
+    </div>
+</div>
+</script>
+<script type="x-template" id="viewView">
+    
+</script>
+
+<script type="x-template" id="loginView">
+    <div class ="ui grid">
+      <div class="four wide column flash"></div>
+      <div class="eight wide column">
+        <form class="ui form" method="post" action="/api/login" id="form">
+          <div class="field required">
+                <label>用户名</label>
+                <input placeholder="用户名" type="text" name="name">
+              </div>
+              <div class="field required">
+                <label>密码</label>
+                <input placeholder="密码" type="text" name="password">
+              </div>
+              <input type="submit" class="ui button fluid" value="登录">
+        </form>
+      </div>
+    </div>
+</script>
+<script type="x-template" id="postsView">
+    <div >
+      <div class="post-content" v-for="(item, index) in items">
+        <div class="ui grid">
+          <div class="four wide column">
+            <a class="avatar avatar-link" href="avatar.png">
+              <img class="avatar" v-bind:src="item.author.avatar">
+            </a>
+          </div>
+          <div class="eight wide column">
+            <div class="ui segment">
+              <h3><a href="/post.html">{{item.title}}</a></h3>
+              <pre><p>{{item.content}}</p></pre>
+              <div>
+                <span class="tag">2018-06-11 14:50</span>
+                <span class="tag right">
+                  <span>浏览({{item.views}})</span>
+                  <span>留言({{item.comments}})</span>
+                  <div class="ui inline dropdown" tabindex="0">
+                      <div class="text"></div>
+                      <i class="dropdown icon"></i>
+                      <div class="menu transition hidden" tabindex="-1">
+                        <div class="item"><a :href="'/posts/'+item.id+'/edit'">编辑</a></div>
+                        <div class="item"><a :href="'/posts/'+item.id+'/delete'">删除</a></div>
+                      </div>
+                    </div>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</script>
+<script>
+  const Home = { template: '<div>home</div>' }
+  const About = { template: '<div>about</div>' }
+  const Inc = { template: '#incView',data:function(){return {count:1} },methods:{inc:function(){this.count++}}}
+  const login = { template: '#loginView'}
+  const Posts = { template: '#postsView', data:function(){return {items:[{title:"t1",content:"c1",author:{}}]} }}
+  const Create = { template: '#createView',data:function(){return {item:{title:"c",content:""}}}}
+  const Edit = { template: '#createView',data:function(){return {item:{title:"e",content:""}}}}
+  const Logon = { template: '#logonView',data:function(){return {}}}
+  
+  //其次，做好组件和URL的映射
+  const routes = [
+    { path: '/home', component: Home },
+    { path: '/about', component: About },
+    { path: '/Inc', component: Inc },
+    { path: '/login', component: login },
+    { path: '/posts', component: Posts},
+    { path: '/create', component: Create},
+    { path: '/edit', component: Edit},
+    { path: '/logon', component: Logon}
+  ]
+  //通知router映射关系
+  const router = new VueRouter({
+    routes :routes
+  })
+  // 把router注册到app内，让app可以识别路由
+  const app = new Vue({
+    router,
+    methods:{onclick:function(){alert("logout")}},
+    watch:{
+        $route (to, from){
+            console.log(from,to,$('.ui.dropdown'))
+            $('.ui.dropdown').dropdown();
+        }
+    } 
+  }).$mount('#app')
+
+</script>
+<script type="text/javascript">
+   $(document).ready(function () {
+      $('.ui.dropdown').dropdown();
+   });
+  </script>
+  

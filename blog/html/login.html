@@ -1,27 +1,23 @@
-<!-- <link rel="import" href="post.html"> -->
 <script src  = "include.js"></script>
-<script type="text/javascript">
-	function doload(){
-		$('.ui.dropdown').dropdown();
-	}
-</script>
 <link rel="stylesheet" href="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css">
 <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
-<link rel="stylesheet" href="head.css">
-<div r-include="head.html" onload="doload">efg</div>
 
+<div r-include="head.html" onload="doload">head</div>
 <div class ="ui grid">
-	<div class="four wide column"></div>
+	
+</div>
+<div class ="ui grid">
+	<div class="four wide column flash"></div>
 	<div class="eight wide column">
-		<form class="ui form" method="post">
+		<form class="ui form" method="post" action="/api/login" id="form">
 			<div class="field required">
 		        <label>用户名</label>
 		        <input placeholder="用户名" type="text" name="name">
 	      	</div>
 	      	<div class="field required">
 		        <label>密码</label>
-		        <input placeholder="密码" type="text" name="name">
+		        <input placeholder="密码" type="text" name="password">
 	      	</div>
 	      	<input type="submit" class="ui button fluid" value="登录">
 		</form>
@@ -29,6 +25,29 @@
 </div>
 <script type="text/javascript">
    $(document).ready(function () {
-   	  includeHTML()
+	   	window.doload = function (){
+			$('.ui.dropdown').dropdown();
+		}
+   	  	includeHTML()
     })
+
+   $('#form').submit(function(event){
+   		event.preventDefault()
+	    $.ajax({
+	      url: $('#form').attr('action'),
+	      type: 'POST',
+	      data : $('#form').serialize(),
+	      success: function(data){
+	        // console.log('form submitted.' ,data);
+	        if (!data.success ){
+	        	
+	        }else{
+	        	location = "/posts.html"
+	        }
+	        $('.flash').text(data.msg)
+	      }
+	    });
+	    return false;
+	});
   </script>
+  

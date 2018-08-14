@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="../font/css/font-awesome.min.css">
+<template id="r-demo">
+	<style>
+	   @import url("../font/css/font-awesome.min.css")
+	</style>
+	<nav>
+	  Icon:<button class="fa fa-search">Click Me!</button>
+	</nav>
+</template>
+<script type="text/javascript">
+var importDoc = document.currentScript.ownerDocument;
+var proto = Object.create(HTMLElement.prototype, {
+	createdCallback: {
+		value: function() {
+			var t = importDoc.querySelector("#r-demo");
+			var clone = document.importNode(t.content, true);
+			this.createShadowRoot().appendChild(clone);
+		}
+	}
+});
+document.registerElement("r-demo", {prototype: proto});
+
+</script>
+<r-demo></r-demo>

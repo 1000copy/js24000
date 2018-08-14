@@ -1,41 +1,40 @@
-
-function includeHTML(callback) {
-  var z, i, elmnt, file, xhttp;
-  /*loop through a collection of all HTML elements:*/
-  z = document.getElementsByTagName("*");
-  for (i = 0; i < z.length; i++) {
-    elmnt = z[i];
-    /*search for elements with a certain atrribute:*/
-    file = elmnt.getAttribute("r-include");
-    if (file) {
-      /*make an HTTP request using the attribute value as the file name:*/
-      xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if (this.readyState == 4) {
-          //when schema is file not http ,this.status == 0
-          if (this.status == 200 || this.status == 0) {
-          	elmnt.innerHTML = this.responseText;
-          }
-          if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
-          /*remove the attribute, and call this function once more:*/
-          elmnt.removeAttribute("r-include");
+    function includeHTML(callback) {
+      var z = document.querySelectorAll('[r-include]')
+      for (i = 0; i < z.length; i++) {
+        var elmnt = z[i];
+        var file = elmnt.getAttribute("r-include");
+        console.log(file)
+        if (file) {
+          var xhttp = new XMLHttpRequest();
+          xhttp.elmnt = elmnt
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4) {
+              //when schema is file not http ,this.status == 0
+              console.log(this.readyState,this.status)
+              if (this.status == 200 || this.status == 0) {
+                this.elmnt.innerHTML = this.responseText;
+                var doload = this.elmnt.getAttribute("onload")
+                // console.log(doload)
+                // console.log(doload,window[doload])
+                if (typeof window[doload] == 'function'){
+                  window[doload](file)
+                }
+              }
+              if (this.status == 404) {this.elmnt.innerHTML = "Page not found.";}
+              /*remove the attribute, and call this function once more:*/
+              this.elmnt.removeAttribute("r-include");
+            }
+          } 
+          xhttp.open("GET", file, true);
+          xhttp.send();
         }
-        var doload = elmnt.getAttribute("onload")
-        if (typeof window[doload] == 'function'){
-          window[doload]()
-        }
-      } 
-      xhttp.open("GET", file, true);
-      xhttp.send();
-      /*exit the function:*/
+      }
       return;
     }
-  }
-}
-function isSupported(){
-  if ('import' in document.createElement('link')) {
-        console.log("supported")
-  } else {
-      console.log("not supported")
-  }
-}
+    function isSupported(){
+      if ('import' in document.createElement('link')) {
+            console.log("supported")
+      } else {
+          console.log("not supported")
+      }
+    }  

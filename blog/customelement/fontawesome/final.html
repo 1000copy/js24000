@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="../font/css/font-awesome.min.css">
+<script type="module">
+var str = 
+`
+<style>
+   @import url("../font/css/font-awesome.min.css")
+</style>
+<nav>
+  
+  <button class="fa fa-search">Click Me!</button>
+  
+</nav>
+`;
+function make (){
+    const template = document.createElement('template');
+    template.innerHTML = str 
+    class RCounter extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+      }
+    }
+    window.customElements.define('r-demo', RCounter);
+}
+make()
+</script>
+<body>
+	<h1>Icon Demo</h1>
+	<r-demo></r-demo>
+</body>
+<!-- SO:
+Font Awesome is not working in html shadow DOM [duplicate]
+ -->

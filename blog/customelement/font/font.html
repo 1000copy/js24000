@@ -1,0 +1,35 @@
+<style>
+	.fa.fa-bars {
+		font-size: 28px	;
+		color:red;
+		background: blue;
+	}
+/*	@font-face {
+	font-family: "FA";
+	src: url("./fonts/fontawesome-webfont.eot");
+	src: 
+	url("./fonts/fontawesome-webfont.woff") format("woff"),
+	url("./fonts/FontAwesome.otf") format("opentype"),
+	url("./fonts/fontawesome-webfont.svg#filename") format("svg");
+	}*/
+	@font-face {
+	font-family: FA;
+	src: 
+	url("./fonts/fontawesome-webfont.woff") format("woff");
+	}
+	.mytextwithicon {
+    position:relative;
+	}    
+	.mytextwithicon:before {
+		/* this is your text. You can also use UTF-8 character codes as I do here */
+	    content: "\f0c9";  
+	    font-family: FA;
+	    font-size: 18px;
+	    left:-5px;
+	    position:absolute;
+	    top:0;
+	 }
+</style>
+<span class = "mytextwithicon"></span><br/>
+<i class = "mytextwithicon"></i>
+

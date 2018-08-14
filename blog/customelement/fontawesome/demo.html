@@ -1,0 +1,32 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<script type="module">
+var str = 
+`
+<style>
+   @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
+</style>
+<nav>
+  Icon:<button class="button-icon icon-heart">Click Me!</button>
+  Icon:<button class="fa fa-search">Click Me!</button>
+  
+</nav>
+`;
+function make (){
+    const template = document.createElement('template');
+    template.innerHTML = str 
+    class RCounter extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+      }
+    }
+    window.customElements.define('r-demo', RCounter);
+}
+make()
+</script>
+<body>
+	<h1>normal</h1>
+	<r-demo></r-demo>
+</body>

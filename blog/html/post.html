@@ -1,1 +1,132 @@
-<b>abcdefg</b>
+<script src  = "include.js"></script>
+<script src="vendor/jquery.min.js"></script>
+<script src="vendor/semantic.min.js"></script>
+<script src="vendor/vue.min.js"></script>
+<link rel="stylesheet" href="vendor/semantic.min.css">
+<style type="text/css">
+.avatar {
+  border-radius: 3px;
+  width: 48px;
+  height: 48px;
+  float: right;
+}
+.post-content h3 a {
+  color: #4fc08d !important;
+}
+
+.post-content .tag {
+  font-size: 13px;
+  margin-right: 5px;
+  color: #999;
+}
+
+.post-content .tag.right {
+  float: right;
+  margin-right: 0;
+}
+
+.post-content .tag.right a {
+  color: #999;
+}
+</style>
+<div r-include="head.html" onload="doload">efg</div>
+<div class="post-content" id="app">
+  <div class="ui grid">
+    <div class="four wide column">
+      <a class="avatar avatar-link" href="/posts?author=5b1e1b34a6f55a10f4ba211f" data-title="reco | 男" data-content="i am reco">
+        <img class="avatar" src="avatar.png">
+      </a>
+    </div>
+
+    <div class="eight wide column">
+      <div class="ui segment">
+        <h3><a href="/posts/5b29b26b8624cb6c22b852b9">{{items[0].title}}</a></h3>
+        <pre><p>{{items[0].content}}</p>
+</pre>
+        <div>
+          <span class="tag">2018-06-20 09:48</span>
+          <span class="tag right">
+            <span>浏览(0)</span>
+            <span>留言(0)</span>
+
+            
+              <div class="ui inline dropdown" tabindex="0">
+                <div class="text"></div>
+                <i class="dropdown icon"></i>
+                <div class="menu" tabindex="-1">
+                  <div class="item"><a href="/posts/5b29b26b8624cb6c22b852b9/edit">编辑</a></div>
+                  <div class="item"><a href="/posts/5b29b26b8624cb6c22b852b9/remove">删除</a></div>
+                </div>
+              </div>
+            
+
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ui grid">
+  <div class="four wide column"></div>
+  <div class="eight wide column">
+    <div class="ui segment">
+      <div class="ui minimal comments">
+        <h3 class="ui dividing header">留言</h3>
+
+        
+
+        
+          <form class="ui reply form" method="post" action="/comments">
+            <input name="postId" value="5b29b26b8624cb6c22b852b9" hidden="">
+            <div class="field">
+              <textarea name="content"></textarea>
+            </div>
+            <input type="submit" class="ui icon button" value="留言">
+          </form>
+        
+
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+   $(document).ready(function () {
+      window.doload = function (){
+      $('.ui.dropdown').dropdown();
+       var app= new Vue({
+          el:'#app',
+          mounted: function () {
+            var self = this;
+            $.ajax({
+                url: '/api/post/',
+                method: 'GET',
+                success: function (data) {
+                    if (data.success)
+                      self.items = data.data
+                    else{
+                      if (data.needlogin)
+                        location = "/login.html"
+                      else{
+                        console.log(data.msg)    
+                      }
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+          },
+          data:{
+            items:[],
+            todo:''
+          },
+          methods:{
+            rm:function(i){
+              this.items.splice(i,1)
+            }
+          }
+        })
+    }
+    includeHTML()
+    })
+</script>

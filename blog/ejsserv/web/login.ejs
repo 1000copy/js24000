@@ -1,0 +1,33 @@
+    <% include _head.ejs %>
+
+
+    <div class="columns">
+      <div class="column is-3" style="">
+        <div class="icon is-large" style="float: right;color:red;font-size: 2rem;">
+          <i class="fas fa-user" ></i>
+        </div>
+      </div>
+      <div class="column is-6"  >
+          <form class="" method="post" action="/api/login" id="form">
+            <div class="field">
+                <div class="label">
+                    <label>用户名</label>
+                </div>
+                <div class="control">
+                    <input placeholder="用户名" type="text" name="name" class="input">
+                </div>
+            </div>
+            <div class="field">
+                <div class="label">
+                    <label>密码</label>
+                </div>
+                <div class="control">
+                    <input placeholder="密码" type="text" name="name" class="input">
+                </div>
+            </div>
+            <input type="submit" class="ui button fluid" value="登录" class="submit is-primary">
+            <input type="reset" class="ui button fluid" value="取消" class="reset is-info">
+          </form>  
+      </div>
+    </div>
+     <% include _foot.ejs %>

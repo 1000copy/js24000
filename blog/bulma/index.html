@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+    
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        Hello World
+      </h1>
+      <p class="subtitle">
+        My first website with <strong>Bulma</strong>!
+      </p>
+    </div>
+    <span class="icon has-text-info">
+      <i class="fas fa-info-circle"></i>
+    </span>
+    <span class="icon has-text-success">
+      <i class="fas fa-check-square"></i>
+    </span>
+    <span class="icon has-text-warning">
+      <i class="fas fa-exclamation-triangle"></i>
+    </span>
+    <span class="icon has-text-danger">
+      <i class="fas fa-ban"></i>
+      <i class="fas fa-bars"></i>
+    </span>
+    <div class="dropdown">
+      <div class="dropdown-trigger">
+        <button class="button">
+          <span class="icon is-small">            
+            <i class="fas fa-bars"></i>
+          </span>
+        </button>
+      </div>
+      <div class="dropdown-menu" >
+        <div class="dropdown-content">
+          <a href="#" class="dropdown-item">
+            Dropdown item
+          </a>
+          <a class="dropdown-item">
+            Other dropdown item
+          </a>
+          <a href="#" class="dropdown-item is-active">
+            Active dropdown item
+          </a>
+          <a href="#" class="dropdown-item">
+            Other dropdown item
+          </a>
+          <hr class="dropdown-divider">
+          <a href="#" class="dropdown-item">
+            With a divider
+          </a>
+        </div>
+      </div>
+    </div>    
+  </section>
+  <section>
+    <div class="columns">
+      <div class="column is-3" style="background: green">
+        
+      </div>
+      <div class="column is-6" style="background: blue" >
+        
+      </div>
+    </div>
+  </section>
+<script type="text/javascript">
+      // for drop down menu
+      //https://stackoverflow.com/questions/46785393/bulma-dropdown-not-working
+      var dropdown = document.querySelector('.dropdown');
+      dropdown.addEventListener('click', function(event) {
+        event.stopPropagation();
+        dropdown.classList.toggle('is-active');
+      });
+    </script>
+  </body>
+</html>

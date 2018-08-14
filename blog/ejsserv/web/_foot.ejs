@@ -1,0 +1,11 @@
+<script type="text/javascript">
+      // for drop down menu
+      // https://stackoverflow.com/questions/46785393/bulma-dropdown-not-working
+      var dropdown = document.querySelector('.dropdown');
+      dropdown.addEventListener('click', function(event) {
+        event.stopPropagation();
+        dropdown.classList.toggle('is-active');
+      });
+    </script>
+  </body>
+</html>
