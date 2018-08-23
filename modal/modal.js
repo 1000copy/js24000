@@ -17,7 +17,7 @@ const MicroModal = (() => {
     '[tabindex]:not([tabindex^="-"])'
   ]
 
-class Modal {
+  class Modal {
     constructor ({
       targetModal,
       triggers = [],
@@ -153,7 +153,7 @@ class Modal {
       }
     }
   }
-
+  // class end 
   /**
    * Modal prototype ends.
    * Here on code is reposible for detecting and
