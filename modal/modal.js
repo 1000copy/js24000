@@ -172,7 +172,7 @@ const MicroModal = (() => {
    */
   const generateTriggerMap = (triggers, triggerAttr) => {
     const triggerMap = []
-
+    // const triggerMap = {}
     triggers.forEach(trigger => {
       const targetModal = trigger.attributes[triggerAttr].value
       if (triggerMap[targetModal] === undefined) triggerMap[targetModal] = []
@@ -281,3 +281,28 @@ const MicroModal = (() => {
 })()
 
 // exports =  MicroModal
+/*
+Configuration
+The init and show method accepts an optional configuration object. This allows you to set custom callbacks and control behaviour of the modal. Example:-
+
+
+MicroModal.init({
+  onShow: modal => console.info(`${modal.id} is shown`), // [1]
+  onClose: modal => console.info(`${modal.id} is hidden`), // [2]
+  openTrigger: 'data-custom-open', // [3]
+  closeTrigger: 'data-custom-close', // [4]
+  disableScroll: true, // [5]
+  disableFocus: false, // [6]
+  awaitCloseAnimation: false, // [7]
+  debugMode: true // [8]
+});
+        
+onShow (function) This is fired when the modal is opening. The function receives the modal object as the first parameter.
+onClose (function) This is fired when the modal is closing. The function receives the modal object as the first parameter.
+openTrigger (string) Custom data attribute to open modal. Default is data-micromodal-trigger.
+closeTrigger (string) Custom data attribute to close modal. Default is data-micromodal-close
+disableScroll (boolean) This disables scrolling on the page while the modal is open. The default value is false.
+disableFocus (boolean) Disable auto focus on first focusable element. Default is false
+awaitCloseAnimation (boolean) Set this to true if using css animations to hide the modal. This allows it to wait for the animation to finish before removing it from the DOM. Default is false
+debugMode (boolean) This option suppresses the console warnings if passed as true. The default value is false.
+*/
