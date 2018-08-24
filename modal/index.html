@@ -1,87 +1,49 @@
 <script src="./modal.js"></script>
-<script type="text/javascript">
-  // MicroModal.init();
-  function openModal(){
-    
+<script>
+  function show(){
+    Modal.show('modal1',
+      {
+        awaitCloseAnimation:true,
+        disableScroll:true,
+        onShow:(root)=>{console.log('onshow')},
+        onClose:(root,modalResult)=>{console.log(modalResult,document.getElementById('some').value,document.getElementById('other').value)
+      }
+    })
   }
 </script>
-<button onclick="MicroModal.show('modal-1');">Open Modal</button>
-<div class="modal micromodal-bounce" id="modal-1">
-  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-    <div class="modal__container" role="dialog">
+<button onclick="show()">Open Modal</button>
+<div class="modal" id="modal1"  style="display: none;">
+  <div class="modal-overlay" tabindex="-1" onclick="Modal.cancel()">
+    <div class="modal-container">
       <div>
-        <header class="modal__header">
-          <h3 class="modal__title">
-            Micromodal
+        <header class="modal-header">
+          <h3 class="modal-title">
+            Modal
           </h3>
-          <button class="cross" data-micromodal-close></button>
+          <button class="cross" onclick="Modal.cancel()"></button>
         </header>
-        <main class="modal__content">
+        <main class="modal-content">
           <p>
             Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
             <form>
               <label for="some">Some</label>
-              <input type="text" placeholder="Some Text" id="some"/>
+              <input type="text" placeholder="Some Text" id="some" value="some"/>
               <label for="other">Other</label>
-              <input type="text" placeholder="Other Text" id="other"/>
+              <input type="text" placeholder="Other Text" id="other" value="other"/>
             </form>
           </p>
         </main>
-        <footer class="modal__footer">
-          <button class="modal__btn modal__btn-primary">Continue</button>
-          <button class="modal__btn" data-micromodal-close>Close</button>
+        <footer class="modal-footer">
+          <button onclick="Modal.ok()">OK</button>
+          <button  onclick="Modal.cancel()">Cancel</button>
         </footer>
       </div>
     </div>
   </div>
 </div>
 <style type="text/css">
-/*.modal .is-open[aria-hidden='true'] { display: none; }*/
-.modal.is-open{ display: block; }
-.modal { display: none; }
-.modal__overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-.modal__container {
-  background-color: #fff;
-  padding: 30px;
-  max-width: 500px;
-  max-height: 100vh;
-  border-radius: 4px;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
 
-.modal__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.modal__title {
-  margin-top: 0;
-  margin-bottom: 0;
-  font-weight: 600;
-  font-size: 1.25rem;
-  line-height: 1.25;
-  color: #00449e;
-  box-sizing: border-box;
-}
-
-.cross {
-  background: transparent;
-  border: 0;
-}
-
-.modal__header .cross:before { content: "\2715"; }
 
 </style>

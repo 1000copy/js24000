@@ -1,88 +1,82 @@
-// import { version } from '../package.json'
-
-const MicroModal = (() => {
+const Modal = (() => {
   'use strict'
-
-  const FOCUSABLE_ELEMENTS = [
-    'a[href]',
-    'area[href]',
-    'input:not([disabled]):not([type="hidden"]):not([aria-hidden])',
-    'select:not([disabled]):not([aria-hidden])',
-    'textarea:not([disabled]):not([aria-hidden])',
-    'button:not([disabled]):not([aria-hidden])',
-    'iframe',
-    'object',
-    'embed',
-    '[contenteditable]',
-    '[tabindex]:not([tabindex^="-"])'
-  ]
-
   class Modal {
     constructor ({
       targetModal,
-      triggers = [],
       onShow = () => {},
       onClose = () => {},
-      openTrigger = 'data-micromodal-trigger',
-      closeTrigger = 'data-micromodal-close',
       disableScroll = false,
       disableFocus = false,
-      awaitCloseAnimation = false,
-      debugMode = false
     }) {
-      // Save a reference of the modal
       this.modal = document.getElementById(targetModal)
-
-      // Save a reference to the passed config
-      this.config = { debugMode, disableScroll, openTrigger, closeTrigger, onShow, onClose, awaitCloseAnimation, disableFocus }
-
-      // Register click events only if prebinding eventListeners
-      if (triggers.length > 0) this.registerTriggers(...triggers)
-
-      // prebind functions for event listeners
+      this.config = {disableScroll,onShow, onClose, disableFocus }
       this.onClick = this.onClick.bind(this)
       this.onKeydown = this.onKeydown.bind(this)
+      this.makecss()
     }
-
-    /**
-     * Loops through all openTriggers and binds click event
-     * @param  {array} triggers [Array of node elements]
-     * @return {void}
-     */
-    registerTriggers (...triggers) {
-      triggers.forEach(trigger => {
-        trigger.addEventListener('click', () => this.showModal())
-      })
+    makecss(){
+      // container
+      var mcontainer = this.modal.querySelector('.modal-container')
+      Object.assign(mcontainer.style, {
+           'background-color': '#fff',
+            padding: '30px',
+            'max-width': '500px',
+            'max-height': '100vh',
+            'border-radius': '4px',
+            'overflow-y': 'auto',
+            'box-sizing': 'border-box'})
+      Object.assign(this.modal.style, {display: 'block'})
+      //overlay
+      var overlay = this.modal.querySelector('.modal-overlay')
+      Object.assign(overlay.style, {position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            'justify-content': 'center',
+            'align-items': 'center'})
+      // cross
+      var cross = this.modal.querySelector('.cross')
+      cross.innerText = "\u2715"
+      Object.assign(cross.style, { border: 0,background:'transparent'})
+      // title
+      var mtitle = this.modal.querySelector('.modal-title')
+      Object.assign(mtitle.style, {'margin-top': 0,'margin-bottom': 0})
+      // header
+      var mheader = this.modal.querySelector('.modal-header')
+      Object.assign(mheader.style, {
+            display: 'flex',
+            'justify-content': 'space-between',
+            'align-items': 'center'})
     }
-
     showModal () {
+      // this.makecss()
       this.activeElement = document.activeElement
-      this.modal.setAttribute('aria-hidden', 'false')
       this.modal.classList.add('is-open')
       this.setFocusToFirstNode()
       this.scrollBehaviour('disable')
       this.addEventListeners()
       this.config.onShow(this.modal)
     }
-
     closeModal () {
+      Object.assign(this.modal.style, {display: 'none'})
       const modal = this.modal
-      this.modal.setAttribute('aria-hidden', 'true')
       this.removeEventListeners()
       this.scrollBehaviour('enable')
       this.activeElement.focus()
-      this.config.onClose(this.modal)
-
-      if (this.config.awaitCloseAnimation) {
-        this.modal.addEventListener('animationend', function handler () {
-          modal.classList.remove('is-open')
-          modal.removeEventListener('animationend', handler, false)
-        }, false)
-      } else {
-        modal.classList.remove('is-open')
-      }
+      this.config.onClose(this.modal,this.modalResult)
+      modal.classList.remove('is-open')
     }
-
+    okModal(){
+      this.modalResult = 'ok'
+      this.closeModal()
+    }
+    cancelModal(){
+      this.modalResult = 'cancel'
+      this.closeModal()
+    }
     scrollBehaviour (toggle) {
       if (!this.config.disableScroll) return
       const body = document.querySelector('body')
@@ -96,56 +90,58 @@ const MicroModal = (() => {
         default:
       }
     }
-
     addEventListeners () {
       this.modal.addEventListener('touchstart', this.onClick)
       this.modal.addEventListener('click', this.onClick)
       document.addEventListener('keydown', this.onKeydown)
     }
-
     removeEventListeners () {
       this.modal.removeEventListener('touchstart', this.onClick)
       this.modal.removeEventListener('click', this.onClick)
       document.removeEventListener('keydown', this.onKeydown)
     }
-
     onClick (event) {
       if (event.target.hasAttribute(this.config.closeTrigger)) {
         this.closeModal()
         event.preventDefault()
       }
     }
-
     onKeydown (event) {
       if (event.keyCode === 27) this.closeModal(event)
-      if (event.keyCode === 9) this.maintainFocus(event)
+      if (event.keyCode === 9) this.doTab(event)
     }
-
     getFocusableNodes () {
+      const FOCUSABLE_ELEMENTS = [
+        'a[href]',
+        'area[href]',
+        'input:not([disabled]):not([type="hidden"])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        'button:not([disabled])',
+        'iframe',
+        'object',
+        'embed',
+        '[contenteditable]',
+        '[tabindex]:not([tabindex^="-"])'
+      ]
       const nodes = this.modal.querySelectorAll(FOCUSABLE_ELEMENTS)
       return Object.keys(nodes).map((key) => nodes[key])
     }
-
     setFocusToFirstNode () {
       if (this.config.disableFocus) return
       const focusableNodes = this.getFocusableNodes()
       if (focusableNodes.length) focusableNodes[0].focus()
     }
-
-    maintainFocus (event) {
+    doTab (event) {
       const focusableNodes = this.getFocusableNodes()
-
-      // if disableFocus is true
       if (!this.modal.contains(document.activeElement)) {
         focusableNodes[0].focus()
       } else {
         const focusedItemIndex = focusableNodes.indexOf(document.activeElement)
-
         if (event.shiftKey && focusedItemIndex === 0) {
           focusableNodes[focusableNodes.length - 1].focus()
           event.preventDefault()
         }
-
         if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
           focusableNodes[0].focus()
           event.preventDefault()
@@ -154,155 +150,24 @@ const MicroModal = (() => {
     }
   }
   // class end 
-  /**
-   * Modal prototype ends.
-   * Here on code is reposible for detecting and
-   * autobinding event handlers on modal triggers
-   */
-
-  // Keep a reference to the opened modal
   let activeModal = null
-
-  /**
-   * Generates an associative array of modals and it's
-   * respective triggers
-   * @param  {array} triggers     An array of all triggers
-   * @param  {string} triggerAttr The data-attribute which triggers the module
-   * @return {array}
-   */
-  const generateTriggerMap = (triggers, triggerAttr) => {
-    const triggerMap = []
-    // const triggerMap = {}
-    triggers.forEach(trigger => {
-      const targetModal = trigger.attributes[triggerAttr].value
-      if (triggerMap[targetModal] === undefined) triggerMap[targetModal] = []
-      triggerMap[targetModal].push(trigger)
-    })
-
-    return triggerMap
-  }
-
-  /**
-   * Validates whether a modal of the given id exists
-   * in the DOM
-   * @param  {number} id  The id of the modal
-   * @return {boolean}
-   */
-  const validateModalPresence = id => {
-    if (!document.getElementById(id)) {
-      console.warn(`MicroModal v${version}: \u2757Seems like you have missed %c'${id}'`, 'background-color: #f8f9fa;color: #50596c;font-weight: bold;', 'ID somewhere in your code. Refer example below to resolve it.')
-      console.warn(`%cExample:`, 'background-color: #f8f9fa;color: #50596c;font-weight: bold;', `<div class="modal" id="${id}"></div>`)
-      return false
-    }
-  }
-
-  /**
-   * Validates if there are modal triggers present
-   * in the DOM
-   * @param  {array} triggers An array of data-triggers
-   * @return {boolean}
-   */
-  const validateTriggerPresence = triggers => {
-    if (triggers.length <= 0) {
-      console.warn(`MicroModal v${version}: \u2757Please specify at least one %c'micromodal-trigger'`, 'background-color: #f8f9fa;color: #50596c;font-weight: bold;', 'data attribute.')
-      console.warn(`%cExample:`, 'background-color: #f8f9fa;color: #50596c;font-weight: bold;', `<a href="#" data-micromodal-trigger="my-modal"></a>`)
-      return false
-    }
-  }
-
-  /**
-   * Checks if triggers and their corresponding modals
-   * are present in the DOM
-   * @param  {array} triggers   Array of DOM nodes which have data-triggers
-   * @param  {array} triggerMap Associative array of modals and thier triggers
-   * @return {boolean}
-   */
-  const validateArgs = (triggers, triggerMap) => {
-    validateTriggerPresence(triggers)
-    if (!triggerMap) return true
-    for (var id in triggerMap) validateModalPresence(id)
-    return true
-  }
-
-  /**
-   * Binds click handlers to all modal triggers
-   * @param  {object} config [description]
-   * @return void
-   */
-  const init = config => {
-    // Create an config object with default openTrigger
-    const options = Object.assign({}, { openTrigger: 'data-micromodal-trigger' }, config)
-
-    // Collects all the nodes with the trigger
-    const triggers = [...document.querySelectorAll(`[${options.openTrigger}]`)]
-
-    // Makes a mappings of modals with their trigger nodes
-    const triggerMap = generateTriggerMap(triggers, options.openTrigger)
-
-    // Checks if modals and triggers exist in dom
-    if (options.debugMode === true && validateArgs(triggers, triggerMap) === false) return
-
-    // For every target modal creates a new instance
-    for (var key in triggerMap) {
-      let value = triggerMap[key]
-      options.targetModal = key
-      options.triggers = [...value]
-      new Modal(options) // eslint-disable-line no-new
-    }
-  }
-
-  /**
-   * Shows a particular modal
-   * @param  {string} targetModal [The id of the modal to display]
-   * @param  {object} config [The configuration object to pass]
-   * @return {void}
-   */
   const show = (targetModal, config) => {
     const options = config || {}
     options.targetModal = targetModal
-
-    // Checks if modals and triggers exist in dom
-    if (options.debugMode === true && validateModalPresence(targetModal) === false) return
-
-    // stores reference to active modal
-    activeModal = new Modal(options) // eslint-disable-line no-new
+    activeModal = new Modal(options)
     activeModal.showModal()
   }
-
-  /**
-   * Closes the active modal
-   * @return {void}
-   */
   const close = () => {
     activeModal.closeModal()
+    return activeModal.modalResult
   }
-
-  return { init, show, close }
+  const okModal = () => {
+    activeModal.okModal()
+    return activeModal.modalResult
+  }
+  const cancelModal = () => {
+    activeModal.cancelModal()
+    return activeModal.modalResult
+  }
+  return { show, close,ok:okModal,cancel:cancelModal }
 })()
-
-// exports =  MicroModal
-/*
-Configuration
-The init and show method accepts an optional configuration object. This allows you to set custom callbacks and control behaviour of the modal. Example:-
-
-
-MicroModal.init({
-  onShow: modal => console.info(`${modal.id} is shown`), // [1]
-  onClose: modal => console.info(`${modal.id} is hidden`), // [2]
-  openTrigger: 'data-custom-open', // [3]
-  closeTrigger: 'data-custom-close', // [4]
-  disableScroll: true, // [5]
-  disableFocus: false, // [6]
-  awaitCloseAnimation: false, // [7]
-  debugMode: true // [8]
-});
-        
-onShow (function) This is fired when the modal is opening. The function receives the modal object as the first parameter.
-onClose (function) This is fired when the modal is closing. The function receives the modal object as the first parameter.
-openTrigger (string) Custom data attribute to open modal. Default is data-micromodal-trigger.
-closeTrigger (string) Custom data attribute to close modal. Default is data-micromodal-close
-disableScroll (boolean) This disables scrolling on the page while the modal is open. The default value is false.
-disableFocus (boolean) Disable auto focus on first focusable element. Default is false
-awaitCloseAnimation (boolean) Set this to true if using css animations to hide the modal. This allows it to wait for the animation to finish before removing it from the DOM. Default is false
-debugMode (boolean) This option suppresses the console warnings if passed as true. The default value is false.
-*/
