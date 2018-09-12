@@ -1,8 +1,11 @@
 {
   "name": "personperhour",
   "version": "1.0.0",
-  "description": "## create table \tcreate database pph; \tuse pph; \tcreate table tenant_access_records (personname varchar(20),sysc_time datetime); \tselect count(*) as pph from tenant_access_records where date(sysc_time) = ? group by hour(sysc_time);",
+  "description": "person per hour",
   "main": "index.js",
+  "bin":{
+    "pph":"index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

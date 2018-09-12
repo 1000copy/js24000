@@ -1,3 +1,30 @@
+# 用法
+
+1. 安装node.js ,在这里下载 https://nodejs.org/en/
+2. 解包给你的zip文件
+3. 进入此zip解压后的目录，执行命令
+
+npm install -g
+安装完成。
+4. 执行命令pph ,用法是
+
+Usage : pph host database username password datetime
+
+
+host 数据库主机名
+database 数据库名
+username 数据库用户名
+password 数据库用户密码
+datetime 统计时间
+
+即可看到结果，像是这样：
+
+	$ pph localhost pph root root1234 2018-09-11
+	Connected!
+	9 2
+	10 2
+	12 1
+	13 2
 
 # person per hour in some day
 
