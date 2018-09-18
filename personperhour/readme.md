@@ -1,3 +1,20 @@
+ 
+ # command 
+
+ node pivot localhost pph root root1234 2018-09-1 2018-09-31
+
+# pivot 
+
+	select  
+	hour(sysc_time),
+	sum(case when day(sysc_time)=11 then 1 else 0 end) as "11", 
+	sum(case when day(sysc_time)=12 then 1 else 0 end) as "12"
+	from tenant_access_records 
+	where sysc_time between '2018-9-1' and '2018-9-31'
+	group by hour(sysc_time) 
+	order by hour(sysc_time) 
+
+
 # 用法
 
 1. 安装node.js ,在这里下载 https://nodejs.org/en/
@@ -46,7 +63,7 @@ insert into tenant_access_records values('reco','2018-09-11 12:23:29');
 insert into tenant_access_records values('rec','2018-09-11 13:23:29');
 insert into tenant_access_records values('re','2018-09-11 13:23:29');
 insert into tenant_access_records values('r','2018-09-12 15:23:29');
-
+insert into tenant_access_records values('r','2018-09-12 5:23:29');
 ## result for 2018-09-11
 
 	9	2
