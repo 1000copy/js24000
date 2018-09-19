@@ -49,7 +49,7 @@ con.connect(function(err) {
   var b = process.argv[6] || '2018-09-10'
   var e = process.argv[7] || '2018-09-13'
   MONTHSTART = new Date(b).getDate()
-  MONTHEND = new Date(e).getDate()
+  MONTHEND = new Date(e).getDate()-1
   var columns = getColumns()
   var betweenMonth = getBetweenMonth(b,e)
   var sql =`
@@ -61,6 +61,7 @@ con.connect(function(err) {
               group by hour(sysc_time) 
               order by hour(sysc_time) 
             `
+  console.log(sql)
   con.query(sql, function (err, result,fields) {
     if (err) {console.log(err);return};
     logHead()

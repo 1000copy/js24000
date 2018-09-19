@@ -1,4 +1,48 @@
- 
+## skip some fields
+
+cat /Users/lcj/Documents/tenant_access_records.csv |awk -F'","|^"|"$' '{print $2}'>/Users/lcj/Documents/single.csv
+
+awk -F'","|^"|"$' '{print "$6}' /Users/lcj/Documents/tenant_access_records.csv >/Users/lcj/Documents/single.csv
+
+awk -F'","|^"|"$' '{printf("\"%s\"\n",$6)}' /Users/lcj/Documents/tenant_access_records.csv >/Users/lcj/Documents/single.csv
+
+## import from csv
+
+ load data local infile '/Users/lcj/Documents/single.csv' into table tenant_access_records
+ fields terminated by ','
+ enclosed by '"'
+ lines terminated by '\n'
+ IGNORE 1 LINES
+ (sysc_time)
+
+ find the answer here.
+
+It's because the server variable local_infile is set to FALSE|0. Refer from the document.
+
+You can verify by executing:
+
+SHOW VARIABLES LIKE 'local_infile';
+If you have SUPER privilege you can enable it (without restarting server with a new configuration) by executing:
+
+SET GLOBAL local_infile = 1;
+
+
+	select  count(*) from tenant_access_records 
+## test
+
+	select  
+	hour(sysc_time),
+	sum(case when day(sysc_time)=1 then 1 else 0 end) as "1", 
+	sum(case when day(sysc_time)=2 then 1 else 0 end) as "2",
+	sum(case when day(sysc_time)=3 then 1 else 0 end) as "3",
+	sum(case when day(sysc_time)=4 then 1 else 0 end) as "4",
+	sum(case when day(sysc_time)=5 then 1 else 0 end) as "5",
+	sum(case when day(sysc_time)=6 then 1 else 0 end) as "6"
+	from tenant_access_records 
+	where sysc_time >= "2018-9-1" and sysc_time < "2018-9-7"
+	group by hour(sysc_time) 
+	order by hour(sysc_time) 
+
  # command 
 
  Usage   : node pivot host database username password begindate enddate
@@ -66,6 +110,10 @@ insert into tenant_access_records values('rec','2018-09-11 13:23:29');
 insert into tenant_access_records values('re','2018-09-11 13:23:29');
 insert into tenant_access_records values('r','2018-09-12 15:23:29');
 insert into tenant_access_records values('r','2018-09-12 5:23:29');
+insert into tenant_access_records values('r','2018-09-1 5:23:29');
+insert into tenant_access_records values('r','2018-09-2 5:23:29');
+insert into tenant_access_records values('r','2018-09-3 5:23:29');
+
 ## result for 2018-09-11
 
 	9	2
