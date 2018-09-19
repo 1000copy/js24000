@@ -3,6 +3,7 @@
 
  node pivot localhost pph root root1234 2018-09-1 2018-09-31
 
+-------------读到这里，就可以得到你想要的每月按时间分组的报表。
 # pivot 
 
 	select  

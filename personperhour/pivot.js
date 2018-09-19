@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 var mysql = require('mysql');
 if (process.argv.length === 2){
-	console.log("Usage : pph host database username password begindate,enddate")
+	console.log("Usage  : node pivot host database username password begindate enddate")
+  console.log("Example: node pivot localhost pph root root1234 2018-09-10 2018-09-13")
 	return 
 }
 var con = mysql.createConnection({
@@ -11,8 +12,8 @@ var con = mysql.createConnection({
   password: process.argv[5] || "root1234",
   
 });
-const MONTHSTART = 1
-const MONTHEND = 31
+var MONTHSTART = 1
+var MONTHEND = 31
 function getColumns(){
   var a = []
   for (var index = MONTHSTART; index <= MONTHEND; index++) {
@@ -45,8 +46,10 @@ function logHead(){
 con.connect(function(err) {
   if (err) {console.log(err.message);return};
   console.log("Connected!");
-  var b = process.argv[6] || '2018-09-1'
-  var e = process.argv[7] || '2018-09-31'
+  var b = process.argv[6] || '2018-09-10'
+  var e = process.argv[7] || '2018-09-13'
+  MONTHSTART = new Date(b).getDate()
+  MONTHEND = new Date(e).getDate()
   var columns = getColumns()
   var betweenMonth = getBetweenMonth(b,e)
   var sql =`
