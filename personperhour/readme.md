@@ -1,7 +1,8 @@
  
  # command 
 
- node pivot localhost pph root root1234 2018-09-1 2018-09-31
+ Usage   : node pivot host database username password begindate enddate
+ example : node pivot localhost pph root root1234 2018-09-10 2018-09-13
 
 -------------读到这里，就可以得到你想要的每月按时间分组的报表。
 # pivot 
