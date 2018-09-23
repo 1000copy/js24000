@@ -1,14 +1,17 @@
+## error 
+
+MySQL 8.0 - Client does not support authentication protocol requested by server; consider upgrading MySQL client
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'
+
 ## skip some fields
 
-cat /Users/lcj/Documents/tenant_access_records.csv |awk -F'","|^"|"$' '{print $2}'>/Users/lcj/Documents/single.csv
-
-awk -F'","|^"|"$' '{print "$6}' /Users/lcj/Documents/tenant_access_records.csv >/Users/lcj/Documents/single.csv
-
-awk -F'","|^"|"$' '{printf("\"%s\"\n",$6)}' /Users/lcj/Documents/tenant_access_records.csv >/Users/lcj/Documents/single.csv
+awk -F'","|^"|"$' '{printf("\"%s\"\n",$5)}' ~/Documents/tenant20180920.csv >~/Documents/single.csv
+mv ~/Documents/single.csv ./
 
 ## import from csv
 
- load data local infile '/Users/lcj/Documents/single.csv' into table tenant_access_records
+ load data local infile '~/github/js24000/single.csv' into table tenant_access_records
  fields terminated by ','
  enclosed by '"'
  lines terminated by '\n'
@@ -16,6 +19,8 @@ awk -F'","|^"|"$' '{printf("\"%s\"\n",$6)}' /Users/lcj/Documents/tenant_access_r
  (sysc_time)
 
  find the answer here.
+
+mysql -uroot --local-infile pph
 
 It's because the server variable local_infile is set to FALSE|0. Refer from the document.
 
