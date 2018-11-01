@@ -6,9 +6,9 @@ export default class PopUpInfo extends HTMLElement {
 	// Create spans
 	var wrapper = document.createElement('span');
 	wrapper.setAttribute('class','wrapper');
-	var icon = document.createElement('span');
-	icon.setAttribute('class','icon');
-	icon.setAttribute('tabindex', 0);
+	// var icon = document.createElement('span');
+	// icon.setAttribute('class','icon');
+	// icon.setAttribute('tabindex', 0);
 	var info = document.createElement('span');
 	info.setAttribute('class','info');
 	// Take attribute content and put it inside the info span
@@ -23,7 +23,7 @@ export default class PopUpInfo extends HTMLElement {
 	}
 	var img = document.createElement('img');
 	img.src = imgUrl;
-	icon.appendChild(img);
+  img.setAttribute('tabindex', 0);
 	var style = document.createElement('style');
 	style.textContent = `
       .wrapper {
@@ -45,15 +45,15 @@ export default class PopUpInfo extends HTMLElement {
         z-index: 3;
       }
       img {
-        width: 1.2rem;
+        width: 1rem;
       }
-      .icon:hover + .info, .icon:focus + .info {
+      img:hover + .info {
         opacity: 1;
       }
     `;
 	shadow.appendChild(style);
 	shadow.appendChild(wrapper);
-	wrapper.appendChild(icon);
+	wrapper.appendChild(img);
 	wrapper.appendChild(info);
  }
 }

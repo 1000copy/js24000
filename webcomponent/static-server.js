@@ -10,8 +10,11 @@ http.createServer(function (request, response) {
     }
 
     var extname = path.extname(filePath);
-    var contentType = 'text/html';
+    var contentType ;
     switch (extname) {
+        case '.html':
+            contentType = 'text/html';
+            break;
         case '.js':
             contentType = 'text/javascript';
             break;
@@ -47,6 +50,7 @@ http.createServer(function (request, response) {
             }
         }
         else {
+            console.log(contentType,typeof content,contentType == 'text/html' ?String(content).substring(0,100):"-")
             response.writeHead(200, { 'Content-Type': contentType });
             response.end(content, 'utf-8');
         }
