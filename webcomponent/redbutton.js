@@ -31,7 +31,61 @@ export default class PopUpInfo extends HTMLElement {
     super();
     var shadow = this.attachShadow({mode: 'open'});
   	// Create spans
-  	this.init1(shadow)
+  	this.init3(shadow)
+ }
+ init3(shadow){
+  // execuse me but it's not node.js ,it's brower ,must visit file by URL and AJAX.
+  // var fs = require('fs')
+  // fs.readFile("incdec.vue", "utf8", function(err, data) {...});
+  // var url = window.location.pathname;
+  // var filename = url.substring(url.lastIndexOf('/')+1);
+  // console.log(url,filename);
+  //  how to get THIS script file name ?
+  var scripts = document.getElementsByTagName('script');
+  var lastScript = scripts[scripts.length-1];
+  var scriptName = lastScript.src;
+  console.log(scripts)
+  var that = this
+  fetch('/redbutton.vue').then(function(response){
+    return response.text().then(function(htmlStr){
+        var wrapper = htmlToElement(`<wrapper>${htmlStr}</wrapper>`)
+        var style = wrapper.querySelector('style')
+        var template = wrapper.querySelector('template')
+        shadow.appendChild(style);
+        shadow.appendChild(template.content.cloneNode(true));
+        that.attachEvent(shadow)
+    })
+  })
+ }
+ init2(shadow){
+  var htmlStr = `<style>
+    .wrapper {
+      position: relative;
+      font-size:2rem;
+      background:blue;
+    }
+    input {
+      width: 50px;
+      font-size:2rem;
+    }
+    button {
+      width: 2rem;
+      font-size:2rem;
+    }
+</style>
+<template>
+  <span class="wrapper">
+    <button id="inc">+</button>
+    <input value="1"/>
+    <button id="dec">-</button>
+  </span>
+</template>`
+  var wrapper = htmlToElement(`<wrapper>${htmlStr}</wrapper>`)
+  var style = wrapper.querySelector('style')
+  var template = wrapper.querySelector('template')
+  shadow.appendChild(style);
+  shadow.appendChild(template.content.cloneNode(true));
+  this.attachEvent(shadow)
  }
  init1(shadow){
   var wrapper = htmlToElement(htmlStr)

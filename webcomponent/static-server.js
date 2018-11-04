@@ -33,6 +33,9 @@ http.createServer(function (request, response) {
         case '.wav':
             contentType = 'audio/wav';
             break;
+        case '.vue':
+            contentType = 'plain/text';
+            break;
     }
 
     fs.readFile(filePath, function(error, content) {
