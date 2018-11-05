@@ -1,4 +1,5 @@
   <script type="module">
+  	  //ref : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
 	  import PopUpInfo from './pp.js';
 	  customElements.define('popup-info', PopUpInfo);
   </script>
@@ -9,16 +10,19 @@
   </script>
   <script type="module">
   	  // Dynamic import 
-	  import('./redbutton.js').then((module)=>{
-	  	let redbutton = module.default
-	  	customElements.define('red-button', redbutton);
-	  })
+	  // import('./redbutton.js').then((module)=>{
+	  // 	let redbutton = module.default
+	  // 	customElements.define('red-button', redbutton);
+	  // })
   </script>
   <script type="module">
-  	// async support in ES7 ,now is ES6
-	// let module = await import('./redbutton.js')
-    //  	let redbutton = module.default
-    //   	customElements.define('red-button', redbutton);
+  	// async support  ES7 .but it is error-prone if you aren't add async function wrapper on await.
+  	// error message is 'Uncaught SyntaxError: Unexpected reserved word'
+  	(async () =>{
+		let module = await import('./redbutton.js')
+     	let redbutton = module.default
+      	customElements.define('red-button', redbutton);
+    })()
   </script>
   
   <red-button step="2"></red-button>

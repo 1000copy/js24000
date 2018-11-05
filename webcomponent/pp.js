@@ -1,7 +1,7 @@
 export default class PopUpInfo extends HTMLElement {
   constructor() {
     super();
-    console.log("hi,super")
+    // console.log("hi,super")
     var shadow = this.attachShadow({mode: 'open'});
 	// Create spans
 	var wrapper = document.createElement('span');

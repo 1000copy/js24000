@@ -4,7 +4,7 @@ var path = require('path');
 
 http.createServer(function (request, response) {
     var filePath = '.' + request.url;
-    console.log('request starting...',filePath);
+    // console.log('request starting...',filePath);
     if (filePath == './'){
         filePath = './index.html';
     }
@@ -36,6 +36,9 @@ http.createServer(function (request, response) {
         case '.vue':
             contentType = 'plain/text';
             break;
+        default:
+            contentType = 'text/html';
+            break;
     }
 
     fs.readFile(filePath, function(error, content) {
@@ -53,7 +56,7 @@ http.createServer(function (request, response) {
             }
         }
         else {
-            console.log(contentType,typeof content,contentType == 'text/html' ?String(content).substring(0,100):"-")
+            // console.log(contentType,typeof content,contentType == 'text/html' ?String(content).substring(0,100):"-")
             response.writeHead(200, { 'Content-Type': contentType });
             response.end(content, 'utf-8');
         }

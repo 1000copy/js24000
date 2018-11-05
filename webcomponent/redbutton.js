@@ -41,10 +41,10 @@ export default class PopUpInfo extends HTMLElement {
   // var filename = url.substring(url.lastIndexOf('/')+1);
   // console.log(url,filename);
   //  how to get THIS script file name ?
-  var scripts = document.getElementsByTagName('script');
-  var lastScript = scripts[scripts.length-1];
-  var scriptName = lastScript.src;
-  console.log(scripts)
+  // var scripts = document.getElementsByTagName('script');
+  // var lastScript = scripts[scripts.length-1];
+  // var scriptName = lastScript.src;
+  // console.log(scripts)
   var that = this
   fetch('/redbutton.vue').then(function(response){
     return response.text().then(function(htmlStr){
