@@ -22,7 +22,7 @@
 <template>
   <span class="wrapper">
     <button id="inc">+</button>
-    <input type="number" value="1"/>
+    <input type="number" value="0"/>
     <button id="dec">-</button>
   </span><br>
   <button>milestone MAKE</button>

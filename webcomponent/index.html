@@ -1,8 +1,25 @@
   <script type="module">
 	  import PopUpInfo from './pp.js';
 	  customElements.define('popup-info', PopUpInfo);
-	  import redbutton from './redbutton.js';
-	  customElements.define('red-button', redbutton);
   </script>
-  <popup-info img="./alt.png" text="Your card validation code"></popup-info>cvc
+  <script type="module">
+  	  // Static Import
+	  // import redbutton from './redbutton.js';
+	  // customElements.define('red-button', redbutton);
+  </script>
+  <script type="module">
+  	  // Dynamic import 
+	  import('./redbutton.js').then((module)=>{
+	  	let redbutton = module.default
+	  	customElements.define('red-button', redbutton);
+	  })
+  </script>
+  <script type="module">
+  	// async support in ES7 ,now is ES6
+	// let module = await import('./redbutton.js')
+    //  	let redbutton = module.default
+    //   	customElements.define('red-button', redbutton);
+  </script>
+  
   <red-button step="2"></red-button>
+  <popup-info img="./alt.png" text="Your card validation code"></popup-info>cvc

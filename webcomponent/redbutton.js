@@ -16,7 +16,7 @@ const cssstyle = `
 const htmlStr =`
   <span class="wrapper">
     <button id="inc">+</button>
-    <input value="1"/>
+    <input value="0"/>
     <button id="dec">-</button>
   </span>
 `
