@@ -1,0 +1,16 @@
+<!-- Document Fragment and Insert into document -->
+<h1>Template Element</h1>
+<ul></ul>
+<template>
+  <li>item</li>
+</template>
+<script>
+	var frag = document.createDocumentFragment();
+	var textNode = frag.appendChild(document.createTextNode("Some text"));
+	var br = frag.appendChild(document.createElement("br"));
+	var body = document.body;
+	body.appendChild(frag);
+	alert(body.lastChild.tagName); // "BR"
+	alert(body.lastChild.previousSibling.data); // "Some text"
+	alert(frag.hasChildNodes()); // false
+</script>
