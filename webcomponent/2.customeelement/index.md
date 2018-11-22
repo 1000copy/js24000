@@ -10,7 +10,7 @@
 
 这样，新的定制元素就和一个ES6类联系在一起了，无论何时，知道浏览器剖析到了这个元素，就会调用对应类的构造方法。
 
-注意到元素名称的横线（-）了吗？所有定制元素的名称都必须有一个横线，以便和内置元素区别。标准制定者扩展新的内置元素名称时不使用带有横线的名称，和开发者的定制元素不至于发生冲突。这个标准不是约定，而是强制的，如果你去掉上面代码内元素名称的横线，那么会得到这样的错误：
+注意到元素名称的横线（-）了吗？所有定制元素的名称都必须有一个横线，以便和内置元素区别。标准制定者扩展新的内置元素名称时不使用带有横线的名称，和开发者的定制元素不至于发生冲突。这个标准不是约定而是强制的，如果你去掉上面代码内元素名称的横线，那么会得到这样的错误：
 
 	Uncaught DOMException: Failed to execute 'define' on 'CustomElementRegistry': "myelement" is not a valid custom element name
 
@@ -110,4 +110,25 @@
 	</body>
 
 函数attributeChangedCallback会被调用两次，一次是浏览器剖析到定制元素并且设置属性初值事，还有一次是修改属性时。
+
+## 更多基类
+
+Autonomous custom element: Standalone elements; they don't inherit from built-in HTML elements.
+Customized built-in element: These elements inherit from — and extend — built-in HTML elements.	
+
+https://blog.revillweb.com/extending-native-dom-elements-with-web-components-233350c8e86a
+
+新的定制元素不仅仅可以继承于HTMLElement，还可以继承很多内置元素。基类可以选择更加符合自己需求的具体类，比如你需要的定制元素和段落类接近，那么可以从段落类开始自己的元素定制，如果你需求的元素和按钮接近，那么可以从按钮类开始。
+
+	class MyP extends HTMLParagraphElement{
+
+	}
+
+对于Customized built-in element的使用的方法特别留意，要使用属性is来引用：
+	
+	<p  is="my-element"></p>
+
+而不是：
+
+	<my-element></my-element>
 

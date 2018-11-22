@@ -1,3 +1,19 @@
+<script type="module">
+		class MyElement extends HTMLParagraphElement{
+			constructor(){
+				super()
+				console.log('constructed')
+			}
+			connectedCallback(){
+				console.log('connected')	
+				this.text = "my"
+			}
+			disconnectedCallback(){
+				console.log('disconnected')		
+			}
+		}
+		customElements.define('my-element',MyElement,{extends:"p"})
+	</script>
 <script>
 	function loaded(){
 		function bind(){
@@ -10,26 +26,10 @@
 				t[i].remove()
 			}
 		}
-		bind()
-		//constructed
-		//connected
-		unbind()//disconnected
+		// bind()
+		// unbind()
 	}
 	</script>
-	<script type="module">
-		class MyElement extends HTMLElement{
-			constructor(){
-				super()
-				console.log('constructed')
-			}
-			connectedCallback(){
-				console.log('connected')	
-			}
-			disconnectedCallback(){
-				console.log('disconnected')		
-			}
-		}
-		customElements.define('myelement',MyElement)
-	</script>
 	<body onload="loaded()">
+		<p  is="my-element"></p>
 	</body>
