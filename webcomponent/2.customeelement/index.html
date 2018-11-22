@@ -1,0 +1,35 @@
+<script>
+	function loaded(){
+		function bind(){
+			var t = document.createElement("my-element")
+			document.body.appendChild(t)
+		}
+		function unbind(){
+			var t = document.querySelectorAll("my-element")
+			for (var i = 0; i < t.length; i++) {
+				t[i].remove()
+			}
+		}
+		bind()
+		//constructed
+		//connected
+		unbind()//disconnected
+	}
+	</script>
+	<script type="module">
+		class MyElement extends HTMLElement{
+			constructor(){
+				super()
+				console.log('constructed')
+			}
+			connectedCallback(){
+				console.log('connected')	
+			}
+			disconnectedCallback(){
+				console.log('disconnected')		
+			}
+		}
+		customElements.define('myelement',MyElement)
+	</script>
+	<body onload="loaded()">
+	</body>
