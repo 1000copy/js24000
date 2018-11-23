@@ -113,22 +113,63 @@
 
 ## 更多基类
 
-Autonomous custom element: Standalone elements; they don't inherit from built-in HTML elements.
-Customized built-in element: These elements inherit from — and extend — built-in HTML elements.	
+定制元素的类型可以分为两种，分别是：
 
-https://blog.revillweb.com/extending-native-dom-elements-with-web-components-233350c8e86a
+1. Autonomous custom element（自主定制元素）: 它们不会从任何内建的元素继承，而是从更加一般的基类也就是HTMLElement。
+2. Customized built-in element（定制内建元素）: 它们继承于内建元素，这个选择就比较多了。后面文字会举例说明。
 
-新的定制元素不仅仅可以继承于HTMLElement，还可以继承很多内置元素。基类可以选择更加符合自己需求的具体类，比如你需要的定制元素和段落类接近，那么可以从段落类开始自己的元素定制，如果你需求的元素和按钮接近，那么可以从按钮类开始。
+自主定制元素继承于HTMLElement，内建定制元素则是可以有很多种选择，这些选择都是浏览器的内建元素。可以选择更加符合自己需求的具体类，比如你需要的定制元素和段落类接近，那么可以从段落类开始自己的元素定制，如果你需求元素和按钮接近，那么可以从按钮类开始。比如扩展段落元素：
 
-	class MyP extends HTMLParagraphElement{
+	class MyParagraph extends HTMLParagraphElement{}
 
-	}
+然后注册定制元素。和自主定制元素不同，需要使用第三个参数，指定扩展的标签。这里对应HTMLParagraphElement的元素是p。
+
+	customElements.define("my-paragraph", MyParagraph, { extends: "p" });
 
 对于Customized built-in element的使用的方法特别留意，要使用属性is来引用：
 	
-	<p  is="my-element"></p>
+	<p  is="my-paragraph"></p>
 
 而不是：
 
-	<my-element></my-element>
+	<my-paragraph></my-paragraph>
 
+
+更多的内建元素扩展实例如下：
+
+	<script type="module">
+	class ConfirmLink extends HTMLAnchorElement {
+	  connectedCallback() {
+	    this.addEventListener("click", e => {
+	      const result = confirm(`want to go to '${this.href}'?`);
+	      if (!result) e.preventDefault();
+	    });
+	  }
+	}
+	class NothingTodoButton extends HTMLButtonElement{
+		connectedCallback(){
+			this.addEventListener("click",e=>{
+				alert("Nothing Todo")
+			})
+		}
+	}
+	customElements.define("nothing-todo", NothingTodoButton, { extends: "button" });
+	customElements.define("confirm-link", ConfirmLink, { extends: "a" });
+	</script>
+	<a is="confirm-link" href="http://google.com">confirm</a>
+	<button is="nothing-todo">NothingTodo</button>
+
+## ref
+
+Web Components are pretty amazing. They offer powerful features straight from the platform, some of the headliners are; true encapsulation of both JavaScript and CSS, cross-framework interoperability and of course a standardised component model for easily reusable UI components.
+
+
+2. Using templates and slots 
+https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_templates_and_slots
+3. slot 
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot
+4. Shadow DOM v1: Self-Contained Web Components 
+https://developers.google.com/web/fundamentals/web-components/shadowdom
+## 兼容性
+
+firefox+ chrome OK ，edge not ，safari not ok ：https://caniuse.com/#feat=custom-elementsv1

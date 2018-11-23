@@ -1,35 +1,30 @@
 <script type="module">
-		class MyElement extends HTMLParagraphElement{
-			constructor(){
-				super()
-				console.log('constructed')
-			}
-			connectedCallback(){
-				console.log('connected')	
-				this.text = "my"
-			}
-			disconnectedCallback(){
-				console.log('disconnected')		
-			}
-		}
-		customElements.define('my-element',MyElement,{extends:"p"})
-	</script>
-<script>
-	function loaded(){
-		function bind(){
-			var t = document.createElement("my-element")
-			document.body.appendChild(t)
-		}
-		function unbind(){
-			var t = document.querySelectorAll("my-element")
-			for (var i = 0; i < t.length; i++) {
-				t[i].remove()
-			}
-		}
-		// bind()
-		// unbind()
+class ConfirmLink extends HTMLAnchorElement {
+  connectedCallback() {
+    this.addEventListener("click", e => {
+      const result = confirm(`want to go to '${this.href}'?`);
+      if (!result) e.preventDefault();
+    });
+  }
+}
+class NothingTodoButton extends HTMLButtonElement{
+	connectedCallback(){
+		this.addEventListener("click",e=>{
+			alert("Nothing Todo")
+		})
 	}
-	</script>
-	<body onload="loaded()">
-		<p  is="my-element"></p>
-	</body>
+}
+class ClickableParagraph extends HTMLParagraphElement{
+	connectedCallback(){
+		this.addEventListener("click",e=>{
+			alert("ClickableParagraph")
+		})
+	}
+}
+customElements.define("nothing-todo", NothingTodoButton, { extends: "button" });
+customElements.define("confirm-link", ConfirmLink, { extends: "a" });
+customElements.define("clickable-paragraph", ClickableParagraph, { extends: "p" });
+</script>
+<a is="confirm-link" href="http://google.com">confirm</a>
+<button is="nothing-todo">NothingTodo</button>
+<p is="clickable-paragraph">ClickableParagraph</p>
