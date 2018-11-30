@@ -14,16 +14,16 @@ class NothingTodoButton extends HTMLButtonElement{
 		})
 	}
 }
-class ClickableParagraph extends HTMLParagraphElement{
+class MyParagraph extends HTMLParagraphElement{
 	connectedCallback(){
 		this.addEventListener("click",e=>{
-			alert("ClickableParagraph")
+			alert("MyParagraph")
 		})
 	}
 }
 customElements.define("nothing-todo", NothingTodoButton, { extends: "button" });
 customElements.define("confirm-link", ConfirmLink, { extends: "a" });
-customElements.define("clickable-paragraph", ClickableParagraph, { extends: "p" });
+customElements.define("clickable-paragraph", MyParagraph, { extends: "p" });
 </script>
 <a is="confirm-link" href="http://google.com">confirm</a>
 <button is="nothing-todo">NothingTodo</button>
