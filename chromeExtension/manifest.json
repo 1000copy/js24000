@@ -1,0 +1,15 @@
+{
+"manifest_version": 2,
+"name": "PlaceHolderImage",
+"description": "Make PlaceHolder Image",
+"version": "1",
+"author": "Reco",
+"browser_action": {
+   "default_icon": "120.png",
+   "default_title": "PlaceHolder Factory"
+ },
+"chrome_url_overrides" : {
+  "newtab": "newtab.html"
+},
+"permissions": ["activeTab"]
+}
