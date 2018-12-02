@@ -1,4 +1,4 @@
-# Web Components 全揽
+# Web Components 小揽
 
 Web Components技术可以把一组相关的HTML、JS代码和CSS风格打包成为一个自包含的组件，只要使用大家熟悉的标签即可引入此组件。Web Components技术包括：
 
@@ -89,6 +89,129 @@ Web建站使用组件技术有比较长的历史了，这个技术一直以来�
 
 执行后，你会发现span的风格不再影响组件之外的标签。看起来还是很简单的，只要把你本来需要构造的HTML内部DOM插入到shadow节点内即可。
 
+## 定制元素的属性
+
+元素的属性被称为Attribute，JS对象内的属性被称为Property。代码惯例上每一个Attribute都会有JS对象的一个Property对应。为了方便，我们希望添加的Attribute可以和JS内的Property同步。就是说，如果有人通过HTML DOM API修改了Attribute，那么我希望对于的JS属性会被同步修改；反之亦然，有人修改了Property，那么这个修改可以会同步修改到对应的Attribute。
+
+我们以spin-button的value属性为例。定义一个普通的Property的方法是通过get/set关键字，比如定义value：
+
+ 	get value(){}
+ 	set value(newValue){}
+
+随后就可以使用`object.value`访问此属性值，或者通过`object.value = newValue`为属性设置新值。可以在两个函数内通过代码设置和Attribute同步：
+
+	get value(){
+		return this.getAttribute('value') || 1
+	}
+	set value(v){
+		this.setAttribute('value',v)
+	}
+
+这样代码内通过对属性value的访问，最后都会导致对Attribute的访问。如果有代码对Attribute访问，如何修改Attribute的同时同步更新Property呢。这就需要利用HTMLElement提供的生命周期方法了：
+
+	static get observedAttributes() {
+	  return ['value'];
+	}
+	attributeChangedCallback(name, oldValue, newValue) {
+	  switch (name) {
+	    case 'value':
+	      
+	      break;
+	  }
+	}
+
+方法observedAttributes听过返回值声明需要观察的属性，这样就可以在指定属性清单发生更新时通过另一个生命周期方法`attributeChangedCallback`,通知代码变化的情况。做响应的同步处理。整合后的代码如下：
+
+	var template = `
+		<button inc>+</button><span>1</span><button dec>-</button>
+		<style>
+			span{color:red;}
+			*{font-size:2rem;}
+		</style>
+	`
+	class SpinButton extends HTMLElement{
+		constructor(){
+			super()
+			var shadow = this.attachShadow({mode:'open'})
+			var t = document.createElement('template')
+			t.innerHTML = template
+			shadow.appendChild(t.content.cloneNode(true))
+			var b1 = shadow.querySelector('[inc]')
+			var b2 = shadow.querySelector('[dec]')
+			this.s = shadow.querySelector('span')
+			var i = 1
+			var that = this
+			b1.onclick = function(){
+				that.s.innerHTML = ++that.value 
+			}
+			b2.onclick = function(){
+				that.s.innerHTML = -- that.value 
+			}
+		}
+		static get observedAttributes() {
+		  return ['value'];
+		}
+		attributeChangedCallback(name, oldValue, newValue) {
+		  switch (name) {
+		    case 'value':
+		      this.s.innerHTML = newValue
+		      break;
+		  }
+		}
+		get value(){
+			return this.getAttribute('value') || 1
+		}
+		set value(v){
+			this.setAttribute('value',v)
+		}
+	}
+	customElements.define('spin-button',SpinButton)
+
+## 插槽
+
+组件给用户使用的时候，一般会运行用户传递特定的参数，以便让组件更加符合自己的需求。
+
+传递参数有几种方法，一种是通过元素的属性传递参数，一般的简单值比如数字、日期和字符串就可以此方式传递。另外就是允许传递HTML片段，这样可以传递更加复杂的内容。这个方式使用的技术是有标准的，在Web Component标准内，被称为是slot插槽，也就是大家常常说到得内容分发技术。
+
+我们将会以Hello World为案例，讲述传参的方法。假设一个标签`<greeting-hello>`，属性传参允许指定hello的对象，像是这样：
+
+	<greeting-hello who="world">
+	<greeting-hello who="Reco">
+
+Slot插槽传参可以传递复杂的HTML片段，像是这样：
+
+	<greeting-hello>
+		<b slot="who">Reco</b>
+	</greeting-hello>
+
+通过对任何一个元素标记属性slot，即可指定需要插入的HTML片段和它的名字（这里的片段名字叫做who），然后可以在定制元素内通过```
+属性传递参数已经谈过了，这里仅仅针对插槽传递`<slot>```引用此片段：
+
+	<slot name="who"></slot>
+
+有了插槽技术，就无需自己编写代码，方便的引入本来在使用组件的页面内的HTML片段。具体做法随后描述。
+
+和创建一个普通的定制元素并没什么区别，还是一样的如此：
+
+	<script type="module">
+	var template = `<h3>Hello,<slot name='who'/></h3>`
+	class GreetingHello extends HTMLElement{
+		constructor(){
+			super()
+			var shadow = this.attachShadow({mode:'open'})
+			var t = document.createElement('template')
+			t.innerHTML = template
+			shadow.appendChild(t.content.cloneNode(true))
+		}
+	}
+	customElements.define('greeting-hello',GreetingHello)
+	</script>
+	<greeting-hello><i slot="who">Reco</i></greeting-hello>
+
+分发之后的效果等于是这样的：
+
+	，<h3>Hello,<i>Reco</i></h3>
+你会发现，在我们自己的代码中，没有任何处理slot标签的任何代码。Web Components内部已经为我们实现了自动的内容分发。让传递HTML片段到组件内变成非常方便的事情。
 
 ## 状态
 
@@ -108,4 +231,4 @@ https://hacks.mozilla.org/2018/10/firefox-63-tricks-and-treats/
 https://www.codementor.io/ayushgupta/vanilla-js-web-components-chguq8goz
 *6*. Doing something with Web Components
 https://medium.com/@dalaidunc/doing-something-with-web-components-40b1a1700c32
-
+[一篇看懂vue.js内容分发 - 挚爱JavaScript - SegmentFault 思否](https://segmentfault.com/a/1190000007591093?_ea=4931344)
