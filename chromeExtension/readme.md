@@ -1,8 +1,12 @@
 # 编写第一个Chrome Extension
 
-在编码过程中，我常常需要创建一些占位图片，以便验证UI布局和效果。因此我想要创建一个Chrome Extension，当用户打开新的页面时，使用一个生成PlaceHolder的链接群替代默认的新页面。
+Chrome Extension可以加载到Chrome内，通过操纵Chrome浏览器，从而完成一些定制的工作。
+
+假设你想要一个功能，它可以在你点击上下文菜单项目时剪贴当前标签的URL和标题的话，这个功能在Chrome本身并不支持，那么就可以通过一个Chrome Extension来完成此项特性。
 
 ## 最少结构
+
+在编码过程中，我常常需要创建一些占位图片，以便验证UI布局和效果。因此我想要创建一个Chrome Extension，当用户打开新的页面时，使用一个生成PlaceHolder的链接群替代默认的新页面。
 
 一个Chrome Extension最低需求的文件是manifest.json、必要的html 
 可选的图标、CSS、JS等。这里的文件清单如下：
@@ -80,3 +84,9 @@
 等特定于Chrome Extension的特定开发技术概念，可以在Chrome开发者指导内找到[更多API信息](https://developer.chrome.com/extensions/devguide)。
 
 我个人想要做一个按键后拷贝当前页面的Title和URL的扩展，可以从此扩展[Copy URL + Title](https://github.com/ishu3101/copy-url-and-title)内学习到更多的开发知识。
+
+# credits
+ 
+ 本文概略翻译于此文。
+ [How to Create and Publish a Chrome Extension in 20 minutes](https://medium.freecodecamp.org/how-to-create-and-publish-a-chrome-extension-in-20-minutes-6dc8395d7153)
+ 感谢作者的奉献。

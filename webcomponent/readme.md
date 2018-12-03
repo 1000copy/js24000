@@ -1,38 +1,36 @@
-ref : 
-1. Posts of wb 
-https://alligator.io/web-components/
-2. Custom Elements v1: Reusable Web Components 
-https://developers.google.com/web/fundamentals/web-components/customelements?authuser=0
-*3. web-components-examples
-https://github.com/mdn/web-components-examples/blob/master/README.md
-4. Firefox 63 – Tricks and Treats!
-https://hacks.mozilla.org/2018/10/firefox-63-tricks-and-treats/
-5.  HTML Web Component using Plain JavaScript
-https://www.codementor.io/ayushgupta/vanilla-js-web-components-chguq8goz
-*6*. Doing something with Web Components
-https://medium.com/@dalaidunc/doing-something-with-web-components-40b1a1700c32
 
-# reading 
+## Draft
+
+## Current 
+
+用来作为postion:relative and absolute css 也不错。
+[Introducing Slot-Based Shadow DOM API | WebKit](https://webkit.org/blog/4096/introducing-shadow-dom-api/)
+编写第二个Chrome Extension+Copy URL+Title
+
+## TODO 
+
+[Posts About Web Components ← Alligator.io](https://alligator.io/web-components/)
+
+[Custom Elements v1: Reusable Web Components  |  Web Fundamentals  |  Google Developers](https://developers.google.com/web/fundamentals/web-components/customelements?authuser=0)
+
+[HTML Web Component using Plain JavaScript | Codementor](https://www.codementor.io/ayushgupta/vanilla-js-web-components-chguq8goz)
+
+[Doing something with Web Components – Duncan Grant – Medium](https://medium.com/@dalaidunc/doing-something-with-web-components-40b1a1700c32)
+
 
 https://developers.google.com/web/fundamentals/web-components/shadowdom
 https://alligator.io/web-components/composing-slots-named-slots/
 https://www.hongkiat.com/blog/html-template-slow-tag-shadow-dom/
 https://www.codementor.io/ayushgupta/vanilla-js-web-components-chguq8goz
 https://medium.com/@dalaidunc/doing-something-with-web-components-40b1a1700c32
-理解DOM到底是什么 https://juejin.im/post/5c01e2b051882518eb1f785a
 
-[零基础转行前端，一年工作经验，我如何入职蚂蚁金服 - 掘金](https://juejin.im/post/5c011c92f265da614e2bd0c2)
-How to Create and Publish a Chrome Extension in 20 minutes
-https://medium.freecodecamp.org/how-to-create-and-publish-a-chrome-extension-in-20-minutes-6dc8395d7153
-# reading
+## DONE
+[How to Create and Publish a Chrome Extension in 20 minutes](https://medium.freecodecamp.org/how-to-create-and-publish-a-chrome-extension-in-20-minutes-6dc8395d7153)
+[Firefox 63 - Tricks and Treats! - Mozilla Hacks - the Web developer blog](https://hacks.mozilla.org/2018/10/firefox-63-tricks-and-treats/)
 
-## read: https://webkit.org/blog/4096/introducing-shadow-dom-api/
+# CSS隔离
 
-slot.1 https://codepen.io/1000copy/pen/LXMNyq?editors=1010
-slot.2 https://codepen.io/1000copy/pen/VVqaXo?editors=1011
-slot.3 https://codepen.io/1000copy/pen/YRddjv
-
-# Style Isolation
+：）用来作为postion:relative and absolute css 也不错。
 
 One major benefit of using shadow DOM is style isolation. To see how, let’s say we want to create a custom progress bar. We can use two nested div’s to show the bar and another div with the text to show the percentage as follows:
 
@@ -168,18 +166,4 @@ Conceptually, slots are holes in a shadow DOM that will be filled by children of
 In this template, we have slots named fullName, which contains two other slots named firstName and lastName, and two additional slots named email and address. The fullName slot is taking the advantage of fallback content, and showing firstName and lastName only if there were no nodes assigned to the fullName slot. Even though there is exactly one node assigned to each slot in this example, multiple elements with the same slot attribute value can be assigned to a single slot, and they will appear in the order they appeared as the children of the host element. You can also use an unnamed default slot that will be filled by all of the host’s children that don’t have a slot attribute specified. When a Web browser renders this content, the content of the li element is replaced by the shadow DOM, and slots inside of it are replaced by their assigned node as if rendering the following DOM instead:
 
 As you can see, slot-based composition is a powerful tool that allows widgets to pull in the page content without cloning or modifying the DOM. With it, widgets can respond to changes made to its child nodes without MutationObservers or an explicit notification via script. In essence, composition turns the DOM into a communication medium between components.
-
-# Styling the Host Element
-
-There is one more thing to note in the previous example, which had a mysterious pseudo-class :host:
-
-	<template id="contact-template">
-	    <style>
-	        :host { border: solid 1px #ccc;}
-	    </style>
-	...
-	</template>
-
-This pseudo class, as its name suggests, matches the host element of the shadow DOM in which this rule appears. By default, author style rules defined outside the shadow DOM have a higher precedence over rules defined in the shadow DOM. This allows a component to define its “default style”, and let users of the component override as needed. In addition, a component can use !important to force a certain style, such as width and display type, without which it cannot function properly with. Any !important rules defined inside a shadow DOM have a higher precedence over regular and !important rules defined outside the shadow DOM.
-
 
