@@ -1,0 +1,30 @@
+    <body>
+	<template id="progress-bar-template">
+	    <div class="progress">
+	        <div class="bar"></div>
+	        <div class="label">0%</div>
+	    </div>
+	<style>
+	.progress { position: relative; border: solid 1px;width: 100px; height: 1rem; }
+	.progress > .bar { background: red; height: 100%; }
+	.progress > .label {
+      position: absolute; top: 0;
+      width: 100%;
+	    text-align: center; font-size: 0.8rem;}
+	</style>
+	</template>
+	<script>
+	function createProgressBar() {
+	    var progressBar = document.createElement('div');
+	    var shadowRoot = progressBar.attachShadow({mode: 'closed'});
+	    shadowRoot.appendChild(document.getElementById('progress-bar-template').content.cloneNode(true));
+	    progressBar.updateProgress = function (newPercentage) {
+	        shadowRoot.querySelector('.label').textContent = newPercentage + '%';
+	        shadowRoot.querySelector('.bar').style.width = newPercentage + '%';
+	    }
+	    return progressBar;
+	}
+	var p =  createProgressBar()
+	document.body.appendChild(p)
+	p.updateProgress(22)
+	</script></body>
