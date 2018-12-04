@@ -4,13 +4,7 @@
 ## Current 
 
 
-[编写第二个Chrome Extension+Copy URL+Title](../chromeExtensioncopyTitleURL/*)
-
-
-
 ## TODO 
-
-
 
 [Posts About Web Components ← Alligator.io](https://alligator.io/web-components/)
 
@@ -29,6 +23,7 @@ https://medium.com/@dalaidunc/doing-something-with-web-components-40b1a1700c32
 
 ## DONE
 
+### [编写第二个Chrome Extension+Copy URL+Title](../chromeExtensioncopyTitleURL/*)
 ### [# 编写第一个Chrome Extension - 掘金](https://juejin.im/post/5c03ed44e51d456ac27b48c4)
 ### [# CSS 绝对定位释义 - 掘金](https://juejin.im/post/5c04f207f265da61530486af)
 ### [How to Create and Publish a Chrome Extension in 20 minutes](https://medium.freecodecamp.org/how-to-create-and-publish-a-chrome-extension-in-20-minutes-6dc8395d7153)

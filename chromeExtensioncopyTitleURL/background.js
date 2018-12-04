@@ -13,3 +13,8 @@ function copyToClipboard(str) {
 }
 var title="Copy [Title](URL)"
 var parent = chrome.contextMenus.create({"title": title,"onclick": copyTitleURL});
+chrome.commands.onCommand.addListener(function(command) {
+	 if("Run" === command){
+	 	copyTitleURL()
+	 }
+});
