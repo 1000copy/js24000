@@ -1,0 +1,67 @@
+<script type="module">
+	var templateStr = `	<template id="progress-bar-template">
+	    <div class="progress">
+	        <div class="bar"></div>
+	        <div class="label">0%</div>
+	    </div>
+	<style>
+	:host{
+		display: inline-block;
+		width:100px;
+		margin: 0;
+		padding: 0;
+		border: 0;}
+	.progress { position: relative; border: solid 1px;height: 1rem;padding:0px;width:100%}
+	.progress > .bar { background: red; height: 100%; }
+	.progress > .label {
+      position: absolute; top: 0;
+        width: 100%;
+	    text-align: center; font-size: 0.8rem;}
+	</style>
+	</template>
+`
+function htmlToElement(html) {
+    var template = document.createElement('template');
+    html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+class ProgressBar extends HTMLElement{
+	constructor(){
+		super()
+		this.sdom = this.attachShadow({mode: 'closed'});
+	    this.sdom.appendChild(htmlToElement(templateStr).content.cloneNode(true));
+	    // this.updateProgress(10)
+	}
+	updateProgress(newPercentage) {
+        this.sdom.querySelector('.label').textContent = newPercentage + '%';
+        this.sdom.querySelector('.bar').style.width = newPercentage + '%';
+    }
+    static get observedAttributes() {
+	  return ['value'];
+	}
+	attributeChangedCallback(name, oldValue, newValue) {
+	  switch (name) {
+	    case 'value':
+	      // this.s.innerHTML = newValue
+	      this.updateProgress(newValue)
+	      break;
+	  }
+	}
+	get value(){
+		return this.getAttribute('value') || 1
+	}
+	set value(v){
+		this.setAttribute('value',v)
+	}
+}
+customElements.define('x-progressbar',ProgressBar)
+</script>
+<style>
+  x-progressbar {
+  	width: 200px
+  }
+</style>
+<body>
+<x-progressbar value="50"/>
+</body>
