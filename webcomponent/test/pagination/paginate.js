@@ -60,4 +60,4 @@ function paginate(totalItems, currentPage, pageSize, maxPages) {
         pages: pages
     };
 }
-console.log(paginate(150,20,5,10));
+// console.log(paginate(150,20,5,10));
