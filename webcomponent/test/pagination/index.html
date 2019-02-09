@@ -104,6 +104,7 @@ class Pagination extends HTMLElement{
 	    	this.current += 1
 
 	    }
+	    this.onroll = new CustomEvent('onroll',{bubbles:true,cancelable:false})
 	}
 	updateTotalItems(value) {
 		this._totalItems = value
@@ -120,6 +121,9 @@ class Pagination extends HTMLElement{
     	this._current = +value
 		var a = paginate(this._totalItems,this._current)
 		this.updateUI()
+		// this.dispatchEvent(this.onroll)////
+		var b = this.getAttribute('onroll')
+		eval(b)
     }
     updateUI(){
     	this.sdom.querySelector('.current').textContent = this._current
@@ -172,6 +176,11 @@ customElements.define('x-pagination',Pagination)
   	
   }
 </style>
+<script type="text/javascript">
+	function onroll(currentPage,pageSize){
+		console.log('event fired',currentPage,pageSize)
+	}
+</script>
 <body>
-<x-pagination totalitems="150" current="2" pagesize="10"/>
+<x-pagination totalitems="150" current="2" pagesize="10" onroll="onroll()"/>
 </body>
