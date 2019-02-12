@@ -1,215 +1,48 @@
+<head>
+	<meta charset="UTF-8"> 
+</head>
 <script type="module">
-	function paginate(totalItems, currentPage, pageSize, maxPages) {
-	    if (currentPage === void 0) { currentPage = 1; }
-	    if (pageSize === void 0) { pageSize = 10; }
-	    if (maxPages === void 0) { maxPages = 10; }
-	    // calculate total pages
-	    var totalPages = Math.ceil(totalItems / pageSize);
-	    // ensure current page isn't out of range
-	    if (currentPage < 1) {
-	        currentPage = 1;
-	    }
-	    else if (currentPage > totalPages) {
-	        currentPage = totalPages;
-	    }
-	    var startPage, endPage;
-	    if (totalPages <= maxPages) {
-	        // total pages less than max so show all pages
-	        startPage = 1;
-	        endPage = totalPages;
-	    }
-	    else {
-	        // total pages more than max so calculate start and end pages
-	        var maxPagesBeforeCurrentPage = Math.floor(maxPages / 2);
-	        var maxPagesAfterCurrentPage = Math.ceil(maxPages / 2) - 1;
-	        if (currentPage <= maxPagesBeforeCurrentPage) {
-	            // current page near the start
-	            startPage = 1;
-	            endPage = maxPages;
-	        }
-	        else if (currentPage + maxPagesAfterCurrentPage >= totalPages) {
-	            // current page near the end
-	            startPage = totalPages - maxPages + 1;
-	            endPage = totalPages;
-	        }
-	        else {
-	            // current page somewhere in the middle
-	            startPage = currentPage - maxPagesBeforeCurrentPage;
-	            endPage = currentPage + maxPagesAfterCurrentPage;
-	        }
-	    }
-	    // calculate start and end item indexes
-	    var startIndex = (currentPage - 1) * pageSize;
-	    var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
-	    // create an array of pages to ng-repeat in the pager control
-	    var pages = Array.from(Array((endPage + 1) - startPage).keys()).map(function (i) { return startPage + i; });
-	    // return object with all pager properties required by the view
-	    return {
-	        totalItems: totalItems,
-	        currentPage: currentPage,
-	        pageSize: pageSize,
-	        totalPages: totalPages,
-	        startPage: startPage,
-	        endPage: endPage,
-	        startIndex: startIndex,
-	        endIndex: endIndex,
-	        pages: pages
-	    };
-	}
-	var templateStr = `	
-	<template id="progress-bar-template">
-	    <div class="progress">
-	    	<button class="first">First</button>
-	    	<button class="next">Next</button>
-	    	<span class="current">1</span>
-			/
-	    	<span class="pages">1</span>
-	    	<button class="prev">Prev</button>
-	    	<button class="last">Last</button>
-	    </div>
-	<style>
-	:host{
-		display: inline-block;
-		margin: 0;
-		padding: 0;
-		border: 0;}
-	.progress { position: relative; border: solid 1px;height: 1.5rem;padding:0px;width:100%}
-	</style>
-	</template>
-`
-function htmlToElement(html) {
-    var template = document.createElement('template');
-    html = html.trim(); // Never return a text node of whitespace as the result
-    template.innerHTML = html;
-    return template.content.firstChild;
-}
-class Pagination extends HTMLElement{
-	constructor(){
-		super()
-		this.sdom = this.attachShadow({mode: 'closed'});
-	    this.sdom.appendChild(htmlToElement(templateStr).content.cloneNode(true));
-	    this._totalItems = 1
-	    this._current = 1
-	    this._pagesize = 1
-	    this.sdom.querySelector('.last').onclick = ()=>{
-	    	this.current = this._totalItems
-	    }
-	    this.sdom.querySelector('.first').onclick = ()=>{
-	    	this.current = 1
-	    }
-	    this.sdom.querySelector('.prev').onclick = ()=>{
-	    	this.current -= 1
-	    }
-	    this.sdom.querySelector('.next').onclick = ()=>{
-	    	this.current += 1
-
-	    }
-	    this.onroll_ = new CustomEvent('onroll',
-	    	{
-		    	 bubbles:true,
-		    	 cancelable:false,
-		    	 detail:{currentPage:()=>this._current},
-		    	 // detail:this,
-		    	 // detail:{currentPage:this._current,
-		    	 // pageSize:this._pagesize}
-		    	 
-	    	})
-	}
-	updateTotalItems(value) {
-		this._totalItems = value
-		var a = paginate(value)
-		this.current = a.currentPage
-		// this.sdom.querySelector('.first').disabled = a.currentPage == 1 
-		this.updateUI()
-    }
-    updatePageSize(value) {
-		this._pagesize = value
-		var a = paginate(this.pages,this.current,value)
-    }
-    updateCurrent(value) {
-    	if(value!=this._current){
-	    	this._current = +value
-			var a = paginate(this._totalItems,this._current)
-			this.updateUI()
-			
-			if (this.onroll && window[this.onroll]){
-				// console.log(this.onroll)
-				var e = {detail:{currentPage:()=>this._current}}
-				window[this.onroll](e)
-			}else{
-				this.dispatchEvent(this.onroll_)	
-			}
-    	}
-    	// var b = this.getAttribute('onroll')
-		// eval(b)
-    }
-    updateUI(){
-    	this.sdom.querySelector('.current').textContent = this._current
-        this.sdom.querySelector('.pages').textContent = this._totalItems
-        this.sdom.querySelector('.last').disabled = this._totalItems == this._current 
-        this.sdom.querySelector('.first').disabled = 1 == this._current 
-        this.sdom.querySelector('.next').disabled = this._totalItems == this._current 
-        this.sdom.querySelector('.prev').disabled = 1 == this._current 
-    }
-    static get observedAttributes() {
-	  return ['totalitems','current','pagesize'];
-	}
-	attributeChangedCallback(name, oldValue, newValue) {
-	  switch (name) {
-	    case 'totalitems':
-	      this.updateTotalItems(newValue)
-	      break;
-	    case 'current':
-	      this.updateCurrent(newValue)
-	      break;
-	    case 'pagesize':
-	      this.updatePageSize(newValue)
-	      break;
-	  }
-	}
-	get totalItems(){
-		return this.getAttribute('totalitems') || 1
-	}
-	set totalItems(v){
-		this.setAttribute('totalitems',v)
-	}
-	get current(){
-		return +this.getAttribute('current') || 1
-	}
-	set current(v){
-		this.setAttribute('current',v)
-		this._current = this.current
-	}
-	get pagesize(){
-		return +this.getAttribute('pagesize') || 1
-	}
-	set pagesize(v){
-		this.setAttribute('pagesize',v)
-	}
-	get onroll(){
-		return this.getAttribute('onroll') || ""
-	}
-	set onroll(v){
-		this.setAttribute('onroll',v)
-	}
-}
-customElements.define('x-pagination',Pagination)
+   import './index.js'
 </script>
-<style>
-  x-pagination {
-  	
-  }
-</style>
 <body>
-<x-pagination totalitems="150" current="1" pagesize="10" onroll="onroll1" />
-<script type="text/javascript">
-	function onroll(e){
-		console.log('currentPage1:',e.detail.currentPage())
-	}
+	<x-pagination totalitems="150" current="1" pagesize="10" onroll="onroll" />
+</body>
+<script type="module">
+	class DataSet {
+   	  constructor(){
+   	  	this._pagesize = 10
+   	  	this.d = []
+   	  	for (var i = 1; i <= 150; i++) {
+   	  		this.d.push(i)
+   	  	}
+   	  }
+   	  get pagesize(){
+   	  	return this._pagesize 
+   	  }
+   	  set pagesize(value){
+   	  	this._pagesize = value
+   	  }
+   	  getPage(index){
+   	  	var result = []
+   	  	var initial = (index-1)*this.pagesize
+   	  	for (var i = initial; i < initial + this.pagesize; i++) {
+   	  		if (this.d[i])
+   	  			result.push(this.d[i])
+   	  	}
+   	  	return result 
+   	  }
+   }
+	var d = new DataSet()
+	// function onroll(e){
+	// 	var c = e.detail.currentPage()
+	// 	console.log('currentPage1:',c)
+	// 	console.log(d.getPage(c))
+	// }
 	var p = document.querySelector("x-pagination")
 	p.addEventListener('onroll',(e)=>{
+		var c = e.detail.currentPage()
 		console.log('currentPage2:',e.detail.currentPage())
+		console.log(d.getPage(c))
 	})
+	console.log(d.getPage(1))
 </script>
-</body>
-<!-- https://stackoverflow.com/questions/773184/get-javascript-function-object-from-its-name-as-a-string -->

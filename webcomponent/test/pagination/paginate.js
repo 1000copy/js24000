@@ -3,7 +3,7 @@
 //URL   : http://jasonwatmore.com/post/2018/08/07/javascript-pure-pagination-logic-in-vanilla-js-typescript
 //title : JavaScript - Pure Pagination Logic in Vanilla JS / TypeScript
 "use strict";
-function paginate(totalItems, currentPage, pageSize, maxPages) {
+export default function paginate(totalItems, currentPage, pageSize, maxPages) {
     if (currentPage === void 0) { currentPage = 1; }
     if (pageSize === void 0) { pageSize = 10; }
     if (maxPages === void 0) { maxPages = 10; }
