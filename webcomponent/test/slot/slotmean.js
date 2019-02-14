@@ -28,6 +28,12 @@
 
       this.attachShadow({ mode: 'open' });
       this.shadowRoot.appendChild(template.content.cloneNode(true));
+      // var d = this.shadowRoot.querySelector('slot')
+      
+    }
+    connectedCallback(){
+      var d = this.querySelector('p')
+      console.log("d:",d)
     }
   }
 

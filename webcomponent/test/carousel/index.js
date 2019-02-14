@@ -2,26 +2,25 @@ var htmlStr = `
 <template>
   <div id="carousel" class="carousel">
     <div class="slides">
-      <div class="slide" data-state="active">Slide 1</div>
-      <div class="slide">Slide 2</div>
-      <div class="slide">Slide 3</div>
+      <slot></slot>
     </div>
     <div class="indicators">
     </div>
   </div>
 </template>
 <style>
-  .carousel {
+  .carousel{
     position: relative;
     height: 200px;
     width: 300px;
+    background-color:yellow;
   }
   .slides {
     height: 100%;
     width: 100%;
     position: relative;
   }
-  .slide {
+  ::slotted(.slide) {
     position: absolute;
     top: 0;
     left: 0;
@@ -34,17 +33,17 @@ var htmlStr = `
     opacity: 0;
     transition: opacity 1000ms;
   }
-  .slide:nth-child(1) {
+  ::slotted(.slide:nth-child(1)) {
       background-color: red;
-      opacity: 1;
+      opacity: 0;
   }
-  .slide:nth-child(2) {
+  ::slotted(.slide:nth-child(2)) {
       background-color: green;
   }
-  .slide:nth-child(3) {
+  ::slotted(.slide:nth-child(3)) {
       background-color: blue;
   }
-  .slide[data-state=active] {
+  ::slotted(.slide[data-state=active]) {
     display: block;
   }
   .indicators {
@@ -107,8 +106,7 @@ function carouselHide(num,indicators,slides) {
   
 class Carousel extends HTMLElement {
   connectedCallback(){
-    var carousel = this.s.getElementById('carousel');
-    var slides = carousel.querySelectorAll('.slide');
+    var slides = this.querySelectorAll('.slide');
     console.log("slidesConnected:",slides)
   }
   constructor() {
@@ -121,7 +119,7 @@ class Carousel extends HTMLElement {
     var speed = 5000; // 5 seconds
     
     if (carousel) {
-        var slides = carousel.querySelectorAll('.slide');
+        var slides = this.querySelectorAll('.slide');
         console.log("slides:",slides)
         var indicatorsRoot = carousel.querySelector('.indicators');
         for (var i = 0; i < slides.length; i++) {
@@ -149,7 +147,9 @@ class Carousel extends HTMLElement {
   var wrapper = htmlToElement(`<wrapper>${htmlStr}</wrapper>`)
   var style = wrapper.querySelector('style')
   var template = wrapper.querySelector('template')
-  shadow.appendChild(style);
+  //wtf???
+  shadow.appendChild(style.cloneNode(true));
+  this.appendChild(style);
   shadow.appendChild(template.content.cloneNode(true));
   this.attachEvent(shadow)
  }
