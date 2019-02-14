@@ -7,9 +7,6 @@ var htmlStr = `
       <div class="slide">Slide 3</div>
     </div>
     <div class="indicators">
-      <input class="indicator" name="indicator" data-slide="1" data-state="active" checked type="radio" />
-      <input class="indicator" name="indicator" data-slide="2" type="radio" />
-      <input class="indicator" name="indicator" data-slide="3" type="radio" />
     </div>
   </div>
 </template>
@@ -77,7 +74,7 @@ function carouselHide(num,indicators,slides) {
       slides[num].setAttribute('data-state', 'active');
       slides[num].style.opacity=1;
   }
-  function setSlide(slide,indicators,slides) {
+  function setSlide(slide,indicators,slides,switcher) {
       return function() {
           // Reset all slides
           for (var i = 0; i < indicators.length; i++) {
@@ -109,9 +106,15 @@ function carouselHide(num,indicators,slides) {
   }
   
 class Carousel extends HTMLElement {
+  connectedCallback(){
+    var carousel = this.s.getElementById('carousel');
+    var slides = carousel.querySelectorAll('.slide');
+    console.log("slidesConnected:",slides)
+  }
   constructor() {
     super();
-    var shadow = this.attachShadow({mode: 'open'});
+    this.s = this.attachShadow({mode: 'open'});
+    var shadow = this.s
   	this.init(shadow)
     var carousel = shadow.getElementById('carousel');
     var slides = 3;
@@ -119,12 +122,26 @@ class Carousel extends HTMLElement {
     
     if (carousel) {
         var slides = carousel.querySelectorAll('.slide');
+        console.log("slides:",slides)
+        var indicatorsRoot = carousel.querySelector('.indicators');
+        for (var i = 0; i < slides.length; i++) {
+          var d = document.createElement('input')
+          d.setAttribute('class',"indicator")
+          d.setAttribute('name',"indicator")
+          d.setAttribute('data-slide',i+1)
+          if (slides[i].getAttribute('data-state') == 'active'){
+            d.setAttribute('data-state',"active")
+            d.setAttribute('checked',"")
+          }
+          d.setAttribute('type',"radio")
+          indicatorsRoot.appendChild(d)
+        }
         var indicators = carousel.querySelectorAll('.indicator');
         var switcher = setInterval(function() {
             switchSlide(indicators,slides);
         }, speed);
         for (var i = 0; i < indicators.length; i++) {
-            indicators[i].addEventListener("click", setSlide(i,indicators,slides));
+            indicators[i].addEventListener("click", setSlide(i,indicators,slides,switcher));
         }
     }
  }
