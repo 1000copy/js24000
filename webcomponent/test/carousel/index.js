@@ -13,7 +13,6 @@ var htmlStr = `
     position: relative;
     height: 200px;
     width: 300px;
-    background-color:yellow;
   }
   .slides {
     height: 100%;
@@ -35,7 +34,7 @@ var htmlStr = `
   }
   ::slotted(.slide:nth-child(1)) {
       background-color: red;
-      opacity: 0;
+      opacity: 1;
   }
   ::slotted(.slide:nth-child(2)) {
       background-color: green;
