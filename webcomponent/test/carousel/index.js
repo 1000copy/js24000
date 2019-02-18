@@ -9,10 +9,12 @@ var htmlStr = `
   </div>
 </template>
 <style>
+  :host{
+    display:block;
+  }
   .carousel{
     position: relative;
-    height: 200px;
-    width: 300px;
+    border-radius: 10px;
   }
   .slides {
     height: 100%;
@@ -20,6 +22,7 @@ var htmlStr = `
     position: relative;
   }
   ::slotted(.slide) {
+    border-radius: 10px;
     position: absolute;
     top: 0;
     left: 0;
@@ -35,12 +38,6 @@ var htmlStr = `
   ::slotted(.slide:nth-child(1)) {
       background-color: red;
       opacity: 1;
-  }
-  ::slotted(.slide:nth-child(2)) {
-      background-color: green;
-  }
-  ::slotted(.slide:nth-child(3)) {
-      background-color: blue;
   }
   ::slotted(.slide[data-state=active]) {
     display: block;
@@ -111,6 +108,7 @@ class Carousel extends HTMLElement {
   constructor() {
     super();
     this.s = this.attachShadow({mode: 'open'});
+    // this.s = this.attachShadow({mode: 'close'});
     var shadow = this.s
   	this.init(shadow)
     var carousel = shadow.getElementById('carousel');

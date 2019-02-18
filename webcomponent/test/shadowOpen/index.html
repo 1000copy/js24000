@@ -1,0 +1,9 @@
+
+<body><h2>Shadow open test</h2></body>
+<script>
+	var h = document.querySelector("h2")
+	var s = h.attachShadow({mode: 'open'});
+    s.innerHTML = "<button>HI</button>"
+    // var s1 = h.attachShadow({mode: 'close'});
+    // s1.innerHTML = "<button>HIClose</button>"
+</script>

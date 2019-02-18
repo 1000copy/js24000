@@ -1,6 +1,27 @@
 
+
+# Web Component Little Book
+## spin案例，来自alligator，展示最基本的Web components
+## 定制元素的概念和案例解析
+## Shadow DOM 概念和案例解析
+- shadow DOM vs light DOM
+- 局部化的CSS
+- 特殊的选择符 
+对Shadow DOM的open/close参数的测试
+
+## 内容分发的方法
+## 特殊的css选择符
+1. :host选择元素自身 
+2. 选择上下文host-context 
+3. slotted选择分发的节点（Distribute Node)
+## Carousel案例，展示“内容分发”，对分发内容的css选择
+## 更多的组件 
+## 支持状况
+
 ## TODO
 
+一个比较完整的组件清单和Aria设计指南
+https://www.w3.org/TR/wai-aria-practices-1.1/#intro
 (backtotop button](https://segmentfault.com/a/1190000008164484)
 (carousel)[https://codepen.io/LANparty/pen/wePYXb]
 
