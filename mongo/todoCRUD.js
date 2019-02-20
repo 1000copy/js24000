@@ -56,23 +56,52 @@ var deleteTodo = async (obj) => {
         client.close();
     }
 }
-var ListTodo = async () => {
+var ListTodo = async (connectionString) => {
     const client = await MongoClient.connect(connectionString,
         { useNewUrlParser: true });
 
     const dbo = client.db('todos');
     try {
        var r = await dbo.collection("todo").find().toArray()
-       console.log(r);
+       return r;
     }
     finally {
         client.close();
     }
 }
-(async()=>{
-  await deleteTodo({ _id: 1 }).catch(err => console.error(err));
-  await insertTodo(connectionString,{_id:1,name:"reco9"}).catch(err => console.error(err));
-  await insertManyTodo(connectionString,[{_id:2,name:"reco2"},{_id:3,name:"reco3"}]).catch(err => console.error(err));
-  await updateTodo(connectionString,{_id:1},"reco7").catch(err => console.error(err));
-  await ListTodo().catch(err => console.error(err));
-})()
+class TodoCRUD {
+  constructor(connectionString){
+    this.connectionString = connectionString
+  }
+  async list(){
+    return await ListTodo(this.connectionString).catch(err => console.error(err));
+  }
+  async delete(obj){
+    return await deleteTodo(obj).catch(err => console.error(err));  
+  }
+  async insert(obj){
+    return await insertTodo(this.connectionString,obj).catch(err => console.error(err));
+  }
+  async insertMany(objs){
+    return await insertManyTodo(this.connectionString,objs).catch(err => console.error(err));
+  }
+  async update(filter,newValue){
+    return await updateTodo(this.connectionString,filter,newValue).catch(err => console.error(err));
+  }
+}
+module.exports = exports = new TodoCRUD(connectionString)
+// (async()=>{
+  
+//   var todo = new TodoCRUD(connectionString)
+//   await todo.delete({ _id: 1 })
+//   await todo.delete({ _id: 2 })
+//   await todo.delete({ _id: 3 })
+//   await todo.insert({_id:1,name:"reco9"})
+//   await todo.insertMany([{_id:2,name:"reco2"},{_id:3,name:"reco3"}])
+//   await todo.update({_id:1},"reco7")
+//   // await ListTodo(connectionString).catch(err => console.error(err));
+  
+//   var r = await todo.list()
+//   console.log(r);
+// })()
+
