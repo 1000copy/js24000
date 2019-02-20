@@ -15,6 +15,20 @@ var insertTodo = async function(connectionString,obj){
       client.close();
   }
 }
+var insertManyTodo = async function(connectionString,objs){
+  const client = await MongoClient.connect(connectionString,
+      { useNewUrlParser: true });
+
+  const dbo = client.db('todos');
+  try {
+     var res = await dbo.collection('todo').insertMany(
+      objs);
+     console.log("Number of documents inserted: " + res.insertedCount);
+  }
+  finally {
+      client.close();
+  }
+}
 var updateTodo = async function(connectionString,filter,newTodo){
   const client = await MongoClient.connect(connectionString,
       { useNewUrlParser: true });
@@ -58,6 +72,7 @@ var ListTodo = async () => {
 (async()=>{
   await deleteTodo({ _id: 1 }).catch(err => console.error(err));
   await insertTodo(connectionString,{_id:1,name:"reco9"}).catch(err => console.error(err));
+  await insertManyTodo(connectionString,[{_id:2,name:"reco2"},{_id:3,name:"reco3"}]).catch(err => console.error(err));
   await updateTodo(connectionString,{_id:1},"reco7").catch(err => console.error(err));
   await ListTodo().catch(err => console.error(err));
 })()
