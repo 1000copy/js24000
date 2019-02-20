@@ -1,6 +1,6 @@
-var todo = require('./todoCRUD.js')
+
 (async()=>{
-  
+  var todo = require('./todoCRUD.js')  
   // var todo = new TodoCRUD(connectionString)
   await todo.delete({ _id: 1 })
   await todo.delete({ _id: 2 })
