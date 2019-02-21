@@ -1,13 +1,24 @@
 "use strict"
 var http = require('http');
-var rparam = require('./rparam')
+var rparam = require('./regexpparam')
+var BodyJsonParser = require('./filter/bodyjsonparser')
+
 class App{
-   constructor(){
+   constructor(options){
    	 this.paths = new Paths()
    	 this.uses = new Uses()
    	 var self = this
-   	 this.server = http.createServer(async function(req,res){
-   	 	 res.statusCode = 200;
+     // use body parser
+     var bjp = new BodyJsonParser({})
+     this.use(bjp.middleware())
+     // use static server
+     if (options && options.staticRoot){
+       var staticFilter = require('./filter/StaticServer')
+       var s = new staticFilter({root:options.staticRoot})
+       this.get('/',s.middleware())
+     }
+   	 this.server = http.createServer(async(req,res)=>{
+   	 	  res.statusCode = 200;
 		    await self.dispatch(req,res)
    	 });
    }
@@ -57,8 +68,8 @@ class App{
 		this.server.listen(port, cb);
    }
 }
-function createApp(){
-	return new App()
+function createApp(options){
+	return new App(options)
 }
 class Uses{
 	constructor(){

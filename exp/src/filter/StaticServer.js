@@ -3,14 +3,14 @@ const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
-const mimeType =require('./mimeType')
-const MagicFilter =require('./filter/')
-class Static{
+const mimeType =require('../mimeType')
+// const MagicFilter =require('./filter/')
+class StaticServer{
   constructor(options){
     this.options = options
     this.root = options.root
     this.filters = []
-    this.addFilter(new MagicFilter())
+    // this.addFilter(new MagicFilter())
   }
   addFilter(filter){
     this.filters.push(filter)
@@ -23,7 +23,7 @@ class Static{
     var basePath = req.basePath
     var filters = this.filters
     const parsedUrl = url.parse(req.url)
-    parsedUrl.pathname = parsedUrl.pathname.slice(basePath.length)
+    parsedUrl.pathname = parsedUrl.pathname.slice((basePath==undefined?"":basePath).length)
     let pathname = `${this.root}${parsedUrl.pathname}`
     fs.exists(pathname, function (exist) {
       if(!exist) {
@@ -54,4 +54,4 @@ class Static{
     });
   }
 }
-exports = module.exports = Static
+exports = module.exports = StaticServer

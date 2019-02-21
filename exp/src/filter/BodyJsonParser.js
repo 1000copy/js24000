@@ -3,8 +3,6 @@ const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
-const mimeType =require('./mimeType')
-const MagicFilter =require('./filter/')
 class BodyJsonParser{
   constructor(options){
     this.options = options
