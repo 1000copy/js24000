@@ -1,0 +1,39 @@
+<script type="text/javascript">
+	  function getPage(id){
+	  	fetch('/todopage/'+id)
+		  .then(function(response) {
+		  	return response.json();
+		  })
+		  .then(function(json) {
+		  	// var trs = document.querySelectorAll('#todos tr')
+		  	// trs.remove()
+		  	var t = document.querySelector("#todos")
+		  	t.innerHTML = ""
+		  	for (var i = 0; i < json.length; i++) {
+		  		var obj = json[i]
+		  		var tr = document.createElement("tr")
+		  		var td1 = document.createElement("td")
+		  		td1.innerHTML = obj._id
+		  		var td2 = document.createElement("td")
+		  		td2.innerHTML = obj.name
+		  		tr.appendChild(td1)
+		  		tr.appendChild(td2)
+		  		t.appendChild(tr)
+		  	}
+		  });
+	  }
+	  function onroll(){
+	  	var p = document.querySelector("#pager")
+	  	var c = +p.getAttribute("current")
+	  	getPage(c)
+	  }
+	  getPage(1)
+</script>
+<script type="module">
+	import "/public/pagination.js"
+</script>
+<h1>todo list</h1>
+<div>
+	<table id="todos"></table>
+	<x-pagination totalitems="15" current="1" pagesize="10" onroll="onroll" id="pager"/>
+</div>

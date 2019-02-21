@@ -56,6 +56,19 @@ var deleteTodo = async (obj) => {
         client.close();
     }
 }
+var PageTodo = async (connectionString,id,pageSize=10) => {
+    const client = await MongoClient.connect(connectionString,
+        { useNewUrlParser: true });
+
+    const dbo = client.db('todos');
+    try {
+       var r = await dbo.collection("todo").find().toArray()
+       return r.slice((id-1)*pageSize,id*pageSize);
+    }
+    finally {
+        client.close();
+    }
+}
 var ListTodo = async (connectionString) => {
     const client = await MongoClient.connect(connectionString,
         { useNewUrlParser: true });
@@ -75,6 +88,9 @@ class TodoCRUD {
   }
   async list(){
     return await ListTodo(this.connectionString).catch(err => console.error(err));
+  }
+  async page(id){
+    return await PageTodo(this.connectionString,id).catch(err => console.error(err));
   }
   async delete(obj){
     return await deleteTodo(obj).catch(err => console.error(err));  

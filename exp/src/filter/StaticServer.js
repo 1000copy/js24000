@@ -20,11 +20,15 @@ class StaticServer{
   }
   pipe(req, res) {
     var options = this.options
-    var basePath = req.basePath
+    var basePath = options.staticRoot
     var filters = this.filters
     const parsedUrl = url.parse(req.url)
-    parsedUrl.pathname = parsedUrl.pathname.slice((basePath==undefined?"":basePath).length)
-    let pathname = `${this.root}${parsedUrl.pathname}`
+    
+    console.log(`wtf--${parsedUrl.pathname},${options.staticRoot}`)
+    parsedUrl.pathname = parsedUrl.pathname.slice(basePath.length)
+    console.log(`wtf--${parsedUrl.pathname},${basePath}`)
+    let pathname = `${basePath}/${parsedUrl.pathname}`
+    console.log(`fetching  ${pathname}`)
     fs.exists(pathname, function (exist) {
       if(!exist) {
         res.statusCode = 404;

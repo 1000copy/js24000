@@ -7,6 +7,7 @@ class App{
    constructor(options){
    	 this.paths = new Paths()
    	 this.uses = new Uses()
+     this.options = options
    	 var self = this
      // use body parser
      var bjp = new BodyJsonParser({})
@@ -14,8 +15,8 @@ class App{
      // use static server
      if (options && options.staticRoot){
        var staticFilter = require('./filter/StaticServer')
-       var s = new staticFilter({root:options.staticRoot})
-       this.get('/',s.middleware())
+       var s = new staticFilter(options)
+       this.get('/public',s.middleware())
      }
    	 this.server = http.createServer(async(req,res)=>{
    	 	  res.statusCode = 200;
