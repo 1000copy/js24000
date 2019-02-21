@@ -24,9 +24,7 @@ class StaticServer{
     var filters = this.filters
     const parsedUrl = url.parse(req.url)
     
-    console.log(`wtf--${parsedUrl.pathname},${options.staticRoot}`)
     parsedUrl.pathname = parsedUrl.pathname.slice(basePath.length)
-    console.log(`wtf--${parsedUrl.pathname},${basePath}`)
     let pathname = `${basePath}/${parsedUrl.pathname}`
     console.log(`fetching  ${pathname}`)
     fs.exists(pathname, function (exist) {
