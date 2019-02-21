@@ -6,9 +6,9 @@ class App{
    	 this.paths = new Paths()
    	 this.uses = new Uses()
    	 var self = this
-   	 this.server = http.createServer(function(req,res){
+   	 this.server = http.createServer(async function(req,res){
    	 	 res.statusCode = 200;
-		    self.dispatch(req,res)
+		    await self.dispatch(req,res)
    	 });
    }
    use(handles){
@@ -23,29 +23,35 @@ class App{
    	  }
    }
    HTTPMETHOD(path,method,handles){
-   	  if (arguments.length > 3){
-   	  	 handles = Array.prototype.slice.call(arguments,2)
-   	  }
    	  this.paths.add(new Path(path,method,handles))
    }
    get(path,handles){
-     var handles1 = typeof arguments.length >= 3?handles:Array.prototype.slice.call(arguments,1)
-     // console.log(handles1)
-	  this.HTTPMETHOD(path,'GET',handles1)
+    if (arguments.length > 2){
+      handles = Array.prototype.slice.call(arguments,1)
+    }
+	  this.HTTPMETHOD(path,'GET',handles)
    }
    post(path,handles){
+    if (arguments.length > 2){
+      handles = Array.prototype.slice.call(arguments,1)
+    }
    	this.HTTPMETHOD(path,'POST',handles)
    }
    put(path,handles){
-   	  this.HTTPMETHOD(path,'PUT',handles)
+    if (arguments.length > 2){
+      handles = Array.prototype.slice.call(arguments,1)
+    }
+   	this.HTTPMETHOD(path,'PUT',handles)
    }
    delete(path,handles){
-   	  this.HTTPMETHOD(path,'DELETE',handles)
+    if (arguments.length > 2){
+      handles = Array.prototype.slice.call(arguments,1)
+    }
+   	this.HTTPMETHOD(path,'DELETE',handles)
    }
-   dispatch(req,res){
-     // console.log(this.paths.paths)
-	  this.uses.dispatch(req,res)
-	  this.paths.dispatch(req,res)
+   async dispatch(req,res){
+      await this.uses.dispatch(req,res)
+  	  await this.paths.dispatch(req,res)
    }
    listen(port,cb){
 		this.server.listen(port, cb);
@@ -61,10 +67,11 @@ class Uses{
 	add(use){
 		this.uses.push(use)
 	}
-	dispatch(req,res){
+	async dispatch(req,res){
+    // console.log(this.uses.length)
 		for (var i = 0; i < this.uses.length; i++) {
 	   		var use = this.uses[i]
-	   		use && use(req,res)
+	   		use && await use(req,res)
 	   	}
 	}
 }
@@ -75,32 +82,33 @@ class Paths{
 	add(path){
 		this.paths.push(path)
 	}
-   match(req,path){
+  match(req,path){
       return req.method == path.method &&
        (req.url == path.path || req.url.indexOf(path.path) == 0 || rparam.match(path.path,req.url) )
       
-   }
-   normal(url){
+  }
+  normal(url){
       return url.slice(-1) == '/'?url.slice(0,-1):url
-   }
-	dispatch(req,res){
-     var url = this.normal(req.url)
-     for (var i=0;i<this.paths.length;i++) {
+  }
+	async dispatch(req,res){
+    var url = this.normal(req.url)
+    for (var i=0;i<this.paths.length;i++) {
    	 	var path = this.paths[i]
       if (this.match(req,path)){
             req.params = rparam.getParam(path.path,url)
             var handles = path.handles
-      		if (typeof handles == 'function')
-   	 			handles(req,res)
-   	 		else{
-		   	 	for (var j=0;j<handles.length;j++) {
-		   	 		var handle = handles[j]
-            req.basePath = path.path
-			   	 	handle(req,res)
-		   	 	}
-             }
+            if (typeof handles == 'function'){
+     	 		 	   await handles(req,res) 
+            }
+     	 	    else{
+    		   	 	for (var j=0;j<handles.length;j++) {
+    		   	 		var handle = handles[j]
+                req.basePath = path.path
+    			   	 	await handle(req,res)
+    		   	 	}
+            }
 	   	}
-   	  }
+   	}
 	}
 }
 class Path{

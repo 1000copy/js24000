@@ -15,7 +15,7 @@ class Static{
   addFilter(filter){
     this.filters.push(filter)
   }
-  getStatic(){
+  middleware(){
     return this.pipe.bind(this)
   }
   pipe(req, res) {
