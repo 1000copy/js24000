@@ -6,7 +6,11 @@
         awaitCloseAnimation:true,
         disableScroll:true,
         onShow:(root)=>{console.log('onshow')},
-        onClose:(root,modalResult)=>{console.log(modalResult,document.getElementById('some').value,document.getElementById('other').value)
+        onClose:(root,modalResult)=>{
+          console.log("1",modalResult)
+          // console.log(modalResult,
+          //   document.getElementById('some').value,
+          //   document.getElementById('other').value)
       }
     })
   }
@@ -34,8 +38,8 @@
           </p>
         </main>
         <footer class="modal-footer">
-          <button onclick="Modal.ok()">OK</button>
-          <button  onclick="Modal.cancel()">Cancel</button>
+          <button onclick="event.stopPropagation();Modal.ok()">OK</button>
+          <button  onclick="event.stopPropagation();Modal.cancel()">Cancel</button>
         </footer>
       </div>
     </div>

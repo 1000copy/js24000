@@ -66,6 +66,7 @@ const Modal = (() => {
       this.removeEventListeners()
       this.scrollBehaviour('enable')
       this.activeElement.focus()
+      // console.trace()
       this.config.onClose(this.modal,this.modalResult)
       modal.classList.remove('is-open')
     }

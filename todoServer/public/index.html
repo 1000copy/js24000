@@ -1,3 +1,48 @@
+<script src="/public/modal/modal.js"></script>
+<script>
+  function editTodo(id,callback){
+  	document.getElementById('some').value = id
+    Modal.show('modal1',
+      {
+        awaitCloseAnimation:true,
+        disableScroll:true,
+        onShow:(root)=>{console.log('onshow')},
+        onClose:(root,modalResult)=>{
+          var some = document.getElementById('some').value
+          if (modalResult =="ok")
+          	callback(some)
+      }
+    })
+  }
+</script>
+<!-- <button onclick="editTodo()">Open Modal</button> -->
+<div class="modal" id="modal1"  style="display: none;">
+  <div class="modal-overlay" tabindex="-1" onclick="Modal.cancel()">
+    <div class="modal-container">
+      <div>
+        <header class="modal-header">
+          <h3 class="modal-title">
+            Modal
+          </h3>
+          <button class="cross" onclick="Modal.cancel()"></button>
+        </header>
+        <main class="modal-content">
+          <p>
+            input new todo item
+            <form>
+              <label for="some">title of todo</label>
+              <input type="text" placeholder="Some Text" id="some" value="some" onclick="event.stopPropagation()" />
+            </form>
+          </p>
+        </main>
+        <footer class="modal-footer">
+          <button onclick="event.stopPropagation();Modal.ok()">OK</button>
+          <button  onclick="event.stopPropagation();Modal.cancel()">Cancel</button>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
  <meta charset="UTF-8"> 
  <script type="text/javascript">
 	  function getPage(id){
@@ -53,8 +98,14 @@
 		  	}
 		  });
 	}
-	function edit(id,value){
-		value = {name:"placeholder"}
+	function edit(id){
+		editTodo(id,function(value){
+			edit1(id,{name:value})
+		})
+	}
+	function edit1(id,value){
+		// value = {name:"placeholder"}
+		console.log(id,value)
 		fetch(`/todo/${id}`,{method:'put',
 				headers:{'Content-Type': 'application/json'},
 				body:JSON.stringify(value)

@@ -44,7 +44,7 @@ app.put('/todo/:id',async (req,res)=>{
 	var todo = require('./todoCRUD.js')  
 	try{
 		todo.update({_id:+req.params.id},req.json.name)
-		res.end(JSON.stringify({success:true}))	
+		res.end(JSON.stringify({success:true,id:req.params.id}))	
 	}catch(err){
 		res.end(JSON.stringify({success:false,msg:err}))	
 	}
