@@ -1,4 +1,5 @@
-<script type="text/javascript">
+ <meta charset="UTF-8"> 
+ <script type="text/javascript">
 	  function getPage(id){
 	  	fetch('/todopage/'+id)
 		  .then(function(response) {
@@ -16,8 +17,14 @@
 		  		td1.innerHTML = obj._id
 		  		var td2 = document.createElement("td")
 		  		td2.innerHTML = obj.name
+		  		var td3 = document.createElement("td")
+		  		td3.innerHTML = `<button onclick='edit(${obj._id})'>Edit</button>`
+		  		var td4 = document.createElement("td")
+		  		td4.innerHTML = `<button onclick='remove(${obj._id})'>Remove</button>`
 		  		tr.appendChild(td1)
 		  		tr.appendChild(td2)
+		  		tr.appendChild(td3)
+		  		tr.appendChild(td4)
 		  		t.appendChild(tr)
 		  	}
 		  });
@@ -28,6 +35,42 @@
 	  	getPage(c)
 	  }
 	  getPage(1)
+</script>
+<script type="text/javascript">
+	function remove(id){
+		fetch(`/todo/${id}`,{method:'delete'
+				// headers:{'Content-Type': 'application/json'}
+			})
+		  .then(function(response) {
+		  	return response.json();
+		  })
+		  .then(function(json) {
+		  	if (json.success){
+				alert(`deleted ${json.deleted}`)
+				onroll()
+		  	}else{
+		  		alert(json.msg)
+		  	}
+		  });
+	}
+	function edit(id,value){
+		value = {name:"placeholder"}
+		fetch(`/todo/${id}`,{method:'put',
+				headers:{'Content-Type': 'application/json'},
+				body:JSON.stringify(value)
+			})
+		  .then(function(response) {
+		  	return response.json();
+		  })
+		  .then(function(json) {
+		  	if (json.success){
+				alert(`updated ${json.id}`)
+				onroll()
+		  	}else{
+		  		alert(json.msg)
+		  	}
+		  });
+	}
 </script>
 <script type="module">
 	import "/public/pagination.js"

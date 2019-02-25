@@ -26,12 +26,28 @@ app.post('/todo',async (req,res)=>{
 	res.end(JSON.stringify(req.json))
 })
 app.delete('/todo/:id',async (req,res)=>{
-	res.end('deleted '+req.params.id)
+	res.writeHead(200, {"Content-Type": "application/json"});
+	var todo = require('./todoCRUD.js')  
+	var obj  = {}
+	try{
+		await todo.delete({_id:+req.params.id})
+		obj = {success:true,deleted:req.params.id}
+		console.log(`deleted ${req.params.id}`)
+	}catch(err){
+		obj = {success:false,msg:`delete todo item {req.params.id} failure cause ${err}`}
+	}
+	res.end(JSON.stringify(obj))
 })
 app.put('/todo/:id',async (req,res)=>{
 	console.log('put ,id:',req.params.id,"data is,",req.json)
-	res.writeHead(200, {"Content-Type": "application/jSon"});
-	res.end(JSON.stringify(req.json))
+	res.writeHead(200, {"Content-Type": "application/json"})
+	var todo = require('./todoCRUD.js')  
+	try{
+		todo.update({_id:+req.params.id},req.json.name)
+		res.end(JSON.stringify({success:true}))	
+	}catch(err){
+		res.end(JSON.stringify({success:false,msg:err}))	
+	}
 })
 app.listen(3000,function(){
 	console.log('listen on 3000')

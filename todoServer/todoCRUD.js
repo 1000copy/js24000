@@ -35,8 +35,9 @@ var updateTodo = async function(connectionString,filter,newTodo){
 
   const dbo = client.db('todos');
   try {
-     var res = await dbo.collection('todo').updateOne(filter,{"$set":{"name":newTodo}});
-     console.log("Number of documents updated: ", res.matchedCount);
+     console.log("filter ", filter)
+     var res = await dbo.collection('todo').updateOne(filter,{"$set":{"name":newTodo}})
+     console.log("Number of documents updated: ", res.matchedCount)
   }
   finally {
       client.close();
@@ -49,6 +50,7 @@ var deleteTodo = async (obj) => {
     const dbo = client.db('todos');
     try {
       var myquery = obj;
+      console.log(`delete query is ${obj}`,obj)
       var r = await dbo.collection("todo").deleteMany(myquery)
       console.log(r.deletedCount,"document(s) deleted");
     }
