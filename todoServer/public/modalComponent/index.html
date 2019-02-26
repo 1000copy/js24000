@@ -1,0 +1,24 @@
+<head>
+  <meta charset="utf-8"/>
+</head>
+<script type="module">
+  import  "./modalcomponent.js"
+  // var d = document.querySelector("x-dialog")
+  // d.setAttribute("open","rdd")
+  // console.log(Modal)
+  function show(){
+    Modal.show('modal1',
+      {
+        awaitCloseAnimation:true,
+        disableScroll:true,
+        onShow:(root)=>{console.log('onshow')},
+        onClose:(root,modalResult)=>{
+          console.log("1",modalResult)
+      }
+    })
+  }
+  window.show = show
+</script>
+<x-dialog></x-dialog>
+<button onclick="show()">Open Modal</button>
+
