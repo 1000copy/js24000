@@ -74,9 +74,14 @@ const Modal = (() => {
       this.modalResult = 'ok'
       this.closeModal()
     }
-    cancelModal(){
-      this.modalResult = 'cancel'
-      this.closeModal()
+    cancelModal(e){
+      if (!e || this.isOverlay(e)){
+        this.modalResult = 'cancel'
+        this.closeModal()
+      }
+    }
+    isOverlay(e){
+      return e && e.target && (e.target.getAttribute("class") == "modal-overlay")
     }
     scrollBehaviour (toggle) {
       if (!this.config.disableScroll) return
@@ -166,8 +171,8 @@ const Modal = (() => {
     activeModal.okModal()
     return activeModal.modalResult
   }
-  const cancelModal = () => {
-    activeModal.cancelModal()
+  const cancelModal = (e) => {
+    activeModal.cancelModal(e)
     return activeModal.modalResult
   }
   return { show, close,ok:okModal,cancel:cancelModal }
