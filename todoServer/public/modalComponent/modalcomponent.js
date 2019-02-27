@@ -1,4 +1,4 @@
-export const Modal = (() => {
+const Modal = (() => {
   'use strict'
   class Modal {
     constructor ({
@@ -7,8 +7,8 @@ export const Modal = (() => {
       onClose = () => {},
       disableScroll = false,
       disableFocus = false,
-    }) {
-      this.modal = document.getElementById(targetModal)
+    },shadow) {
+      this.modal = shadow.getElementById(targetModal)
       this.config = {disableScroll,onShow, onClose, disableFocus }
       this.onClick = this.onClick.bind(this)
       this.onKeydown = this.onKeydown.bind(this)
@@ -157,10 +157,10 @@ export const Modal = (() => {
   }
   // class end 
   let activeModal = null
-  const show = (targetModal, config) => {
+  const show = (targetModal, config,shadow) => {
     const options = config || {}
     options.targetModal = targetModal
-    activeModal = new Modal(options)
+    activeModal = new Modal(options,shadow)
     activeModal.showModal()
   }
   const close = () => {
@@ -180,7 +180,8 @@ export const Modal = (() => {
 window.Modal = Modal
 customElements.define('x-dialog', class extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `
+  	this.shadow = this.attachShadow({mode: 'open'})
+    this.shadow.innerHTML = `
 <div class="modal" id="modal1"  style="display: none;">
   <div class="modal-overlay" tabindex="-1" onclick="Modal.cancel(event)">
     <div class="modal-container">
@@ -212,11 +213,9 @@ customElements.define('x-dialog', class extends HTMLElement {
 </div>`
   }
   static get observedAttributes() {
-  	console.log("4")
     return ['open'];
   }
   show(){
-  	console.log("123")
   	 Modal.show('modal1',
       {
         awaitCloseAnimation:true,
@@ -224,7 +223,7 @@ customElements.define('x-dialog', class extends HTMLElement {
         onShow:(root)=>{console.log('onshow')},
         onClose:(root,modalResult)=>{
           console.log("1",modalResult)}
-  	})
+  	},this.shadow)
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name == "open") {
