@@ -8,6 +8,7 @@ const Modal = (() => {
       disableScroll = false,
       disableFocus = false,
     },shadow) {
+      this.shadow = shadow
       this.modal = shadow.getElementById(targetModal)
       this.config = {disableScroll,onShow, onClose, disableFocus }
       this.onClick = this.onClick.bind(this)
@@ -180,6 +181,7 @@ const Modal = (() => {
 window.Modal = Modal
 customElements.define('x-dialog', class extends HTMLElement {
   connectedCallback() {
+  	// this.shadow = this.attachShadow({mode: 'open'})
   	this.shadow = this.attachShadow({mode: 'open'})
     this.shadow.innerHTML = `
 <div class="modal" id="modal1"  style="display: none;">
@@ -188,19 +190,14 @@ customElements.define('x-dialog', class extends HTMLElement {
       <div>
         <header class="modal-header">
           <h3 class="modal-title">
-            Modal
+            <slot name="title">Modal Title Here</slot>
           </h3>
           <button class="cross" onclick="Modal.cancel()"></button>
         </header>
         <main class="modal-content">
           <p>
-            Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
-            <form>
-              <label for="some">Some</label>
-              <input type="text" placeholder="Some Text" id="some" value="some"/>
-              <label for="other">Other</label>
-              <input type="text" placeholder="Other Text" id="other" value="other"/>
-            </form>
+            <slot name="message">Message here</slot>
+    		<slot name="content">Content Here</slot>
           </p>
         </main>
         <footer class="modal-footer">
@@ -220,9 +217,13 @@ customElements.define('x-dialog', class extends HTMLElement {
       {
         awaitCloseAnimation:true,
         disableScroll:true,
-        onShow:(root)=>{console.log('onshow')},
+        onShow:(root)=>{},
         onClose:(root,modalResult)=>{
-          console.log("1",modalResult)}
+          // console.log("1",modalResult,this.shadow.getElementById("some").value)
+          if (window[this.onclose]){
+          	window[this.onclose](modalResult,this.shadow)
+          }
+      }
   	},this.shadow)
   }
   attributeChangedCallback(name, oldValue, newValue) {
@@ -230,6 +231,14 @@ customElements.define('x-dialog', class extends HTMLElement {
     	this.show()
     } else {
      
+    }
+  }
+  get onclose() {
+    return this.getAttribute('onclose');
+  }
+  set onclose(val) {
+    if (val) {
+      this.setAttribute('onclose', val);
     }
   }
   get open() {

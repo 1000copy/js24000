@@ -9,6 +9,21 @@
   }
   window.show = show
 </script>
-<x-dialog></x-dialog>
+<x-dialog onclose="onclose">
+  <h3 slot="title">Title</h3>
+  <p slot="message"> Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.~</p>
+  <form slot="content">
+      <label for="some">Some</label>
+      <input type="text" placeholder="Some Text" id="some" value="some"/>
+      <label for="Other">Other</label>
+      <input type="text" placeholder="Other Text" id="Other" value="Other"/>
+    </form>
+</x-dialog>
+<script type="text/javascript">
+  function onclose(result,shadow){
+    // console.log("onclose event,",result,shadow && shadow.getElementById("some").value)
+    console.log("onclose event,",result=="ok",document.getElementById("some").value)
+  }
+</script>
 <button onclick="show()">Open Modal</button>
-
+<!-- -->
