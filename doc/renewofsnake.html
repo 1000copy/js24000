@@ -1,0 +1,251 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <canvas id="game" width="300" height="300"></canvas>
+    </body>
+    <script type="text/javascript">
+    class Point{
+        constructor(x,y){
+            this.x = x
+            this.y = y
+        }
+        clone(){
+            return new Point(this.x,this.y)
+        }
+        toString(){
+            return `{${this.x},${this.y}}`
+        }
+        isEq(p){
+            return this.x == p.x && this.y == p.y
+        }
+    }
+    const SQU = 10
+    const AREA = 30
+    const LEVEL = 10
+    const SNAKELEN = 5
+    class Snake{
+        constructor(g){
+          this.g = g
+          this.ui = []   
+          for(var i = 0 ;i<SNAKELEN;i++){
+              this.ui.push(new Point(i,0))
+          }
+        }
+        head(){
+            return this.ui[this.ui.length-1].clone()
+        }
+        tail(){
+            return this.ui[0].clone()
+        }
+        paint(ctx){
+            for(var i = 0 ;i< this.ui.length;i++){
+                ctx.fillStyle ="green"
+                var p = this.ui[i]
+                ctx.fillRect(p.x*SQU,p.y*SQU,SQU,SQU)
+            }
+        }
+        toString(){
+            var r = ""
+            for (var i=0;i<this.ui.length;i++){
+                r += this.ui[i].toString()
+            }
+            return r 
+        }
+        putHead(head){
+            this.ui.push(head)
+            // console.log(this.toString())
+        }
+        removeTail(){
+            this.ui.shift()
+        }
+        moveTail2Head(){
+            this.putHead( this.getNextPosition())
+            this.removeTail()
+        }
+        getNextPosition(){
+            var next = this.head()
+            var offset = this.g.getOffset()
+            next.x +=  offset.x
+            next.y +=  offset.y
+            return next
+        }
+        eat(){
+            this.ui.push(this.getNextPosition())
+            this.g.resetFood()
+        }
+        isEatSelf(){
+            var p = this.getNextPosition()
+            for(var i = 0 ;i<this.ui.length-1;i++){
+                if (p.isEq(this.ui[i]))
+                  return true
+            }
+            return false
+        }
+        isOut(){
+            var p = this.getNextPosition()
+            if (p.x < 0 || p.x > AREA || p.y < 0 || p.y > AREA)
+               return true
+            return false
+        }
+        move(){
+            if (this.isOut())g.over()
+            if (this.isEatSelf())g.over()
+            
+            if (!this.g.isTouchFood())
+                this.moveTail2Head()
+        }
+    }
+    class Food{
+        constructor(){
+          var x = Math.floor(Math.random() * AREA) 
+          var y = Math.floor(Math.random() * AREA) 
+          this.ui = {x:x,y:y}   
+        }
+        paint(ctx){
+            ctx.fillStyle ="red"
+            var x = this.ui.x
+            var y = this.ui.y
+            ctx.fillRect(x*SQU,y*SQU,SQU,SQU)
+        }
+    }
+    class Game{
+        paint(ctx){
+            ctx.fillStyle ="black"
+            ctx.fillRect(0,0,AREA*SQU,AREA*SQU)
+        }
+        resetFood(){
+            this.food = new Food()
+        }
+        over(){
+            this.snake = new Snake(this)
+            this.food = new Food()
+            this.direction = "right"
+            console.log("Game reset")
+        }
+        constructor(){
+            // javascript
+            var canvas = document.getElementById("game")
+            this.ctx = canvas.getContext("2d")
+            this.snake = new Snake(this)
+            this.food = new Food()
+            this.level = LEVEL
+            this.direction = "right"
+        }
+        simulate(){}
+        rock(){
+            var ctx = this.ctx
+            this.simulate()
+            this.snake.move()
+            this.paint(ctx)
+            this.snake.paint(ctx)
+            this.food.paint(ctx)
+        }
+        isTouchFood(){
+            if (this.snake.getNextPosition().isEq(this.food.ui)){
+                this.snake.eat()
+            }
+        }
+        getOffset(){
+            var offset = {x:0,y:0}
+            switch(this.direction){
+                case "down":{
+                    offset.y = 1
+                    break
+                }   
+                case "left":{
+                    offset.x = -1
+                    break
+                }   
+                case "right":{
+                    offset.x = 1
+                    break
+                }   
+                case "up":{
+                    offset.y = -1
+                    break
+                }  
+            }
+            return offset
+        }
+    }
+    class AutoGame extends Game{
+        constructor(){
+            super()
+            this.timeRock()
+        }
+        timeRock(){
+            var self = this
+            setInterval(function(){
+               self.rock()
+            },1000/this.level)
+        }
+        onkeydown(e){
+            var keymap = {37:"left" ,38:"up",39:"right",40:"down"}
+            var key = e.which
+            var nd = keymap[key]
+            var g = this
+            if (g.direction == "left" && nd == "right")
+              return 
+            if (g.direction == "right" && nd == "left")
+              return   
+            if (g.direction == "up" && nd == "down")
+              return 
+            if (g.direction == "down" && nd == "up")
+              return 
+            g.direction = keymap[key]
+        }
+    }
+    class ManualGame extends Game{
+        constructor(){
+            super()
+            this.rock()
+        }
+        onkeydown(e){
+            var keymap = {37:"left" ,38:"up",39:"right",40:"down"}
+            var key = e.which
+            var nd = keymap[key]
+            var g = this
+            if (g.direction == "left" && nd == "right")
+              return 
+            if (g.direction == "right" && nd == "left")
+              return   
+            if (g.direction == "up" && nd == "down")
+              return 
+            if (g.direction == "down" && nd == "up")
+              return 
+            g.direction = keymap[key]
+            g.rock()
+        }
+    }
+    class SimulateGame extends AutoGame{
+        simulate(){
+            if (this.food.ui.x > this.snake.head().x && this.direction !="left"){
+                this.direction = "right"
+                return 
+            }
+            if (this.food.ui.y > this.snake.head().y && this.direction !="up"){
+                this.direction = "down"
+                return 
+            }
+            if (this.food.ui.y < this.snake.head().y && this.direction !="down"){
+                this.direction = "up"
+                return 
+            }
+            if (this.food.ui.x < this.snake.head().x && this.direction !="right"){
+                this.direction = "left"
+                return 
+            }
+            var dir = {"left":"up","right":"down","down":"left","up":"right"}
+            this.direction = dir[this.direction]
+        }
+    }
+    var g = new AutoGame()
+    // var g = new SimulateGame()
+    document.onkeydown = function(e){
+        g.onkeydown(e)
+        // console.log(g.direction) // 
+    }        
+    </script>
+</html>
+

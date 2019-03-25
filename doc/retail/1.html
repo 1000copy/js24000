@@ -1,0 +1,35 @@
+<script src="vue.js"></script>
+<script src="1.js"></script>
+<div id="item-app">
+    <h1>item app</h1>
+    <input type="text" placeholder='new' v-model='barcode'/> <button @click="add">add</button> 
+     <table>
+     	<tr v-for="(item, index) in items"><td>{{item.product.name}} <td>{{item.qty}}<td>{{item.sum}}</tr>
+      
+    </table>
+    <label>total:</label>
+    <label>{{total}}</label>
+</div>
+<script>
+var app= new Vue({
+  el:'#item-app',
+  data:{
+    items:[],
+    barcode:'',
+    total:0
+  },
+  methods:{
+    add:function(){
+		if(this.barcode){
+			var item = null
+			if (item = shared().fireBarcode(this.barcode)){
+				// render
+				this.total = shared().bill.getTotal()
+		        this.items = shared().bill.getItems() 
+		        this.barcode =''
+			}
+	      }
+    }
+  }
+})
+</script>
