@@ -15,10 +15,6 @@
 
 在这篇文章中，你将学习两种在JavaScript（ES6）中创建变量的新方法，let和const。 在此过程中，我们将研究var，let和const之间的差异，以及函数与块级作用域，变量提升和不变性等主题。
 
-如果你更喜欢观看视频的方式，可以看这个：
-
-[var vs let vs const: Variable declarations in ES6 | ES2015](https://link.juejin.im?target=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D6vBYfLCE9-Q)
-
 ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在我们真正深入研究var，let和const之间的差异之前，首先需要了解一些先决条件。 它们是变量声明与初始化，作用域（特别是函数作用域）和提升。
 
 变量声明与初始化
@@ -27,14 +23,13 @@ ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在
 变量声明引入了新的标识符。
 
     var declaration
-    复制代码
-
+    
 上面我们创建了一个名为declaration的新的标识符。在JavaScript中，变量在创建时使用`undefined`值初始化。这意味着如果我们尝试打印`declaration`变量，我们将得到undefineed。
 
     var declaration
     
     console.log(declaration)
-    复制代码
+    
 
 所以如果我们打印declaration变量，得到undefined.
 
@@ -46,7 +41,7 @@ ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在
     
     declaration = 'This is an initialization'
     
-    复制代码
+    
 
 所以这里我们通过将变量赋值为一个字符串来初始化它。
 
@@ -68,12 +63,12 @@ ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在
     getDate()
     console.log(date) // ❌ Reference Error
     
-    复制代码
+    
 
 现在让我们看一个更高级的例子。假设我们有一个数组`prices`，并且我们需要一个函数，接受该数组以及一个`discount`作为参数，并返回一个新的折扣后的价格数组。最终目标可能如下所示：
 
     discountPrices([100, 200, 300], .5)
-    复制代码
+    
 
 并且实现可能像这样：
 
@@ -86,7 +81,7 @@ ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在
       }
       return discounted
     }
-    复制代码
+    
 
 看起来很简单，但这与作用域有什么关系？看一下`for`循环。在其内部声明的变量是否可以在其外部访问？事实证明，他们可以。
 
@@ -102,15 +97,15 @@ ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在
       console.log(finalPrice) // 150
       return discounted
     }
-    复制代码
+    
 
 如果JavaScript是你知道的唯一的编程语言，你可能不会想到这一点。但是，如果你从另一种编程语言（特别是一种块级作用域的编程语言）开始使用JavaScript，那么你可能会对这里发生的事情感到担忧。
 
-它并没有真正破碎，它只是有点奇怪。在`for`循环之外，没有理由仍然可以访问`i`，`discountedPrice`和`finalPrice`。它对我们没有任何好处，甚至可能在某些情况下对我们造成伤害。但是，由于用`var`声明的变量是函数作用域内的，所以你可以这样做。
+它并没有真正破碎(broken)，它只是有点奇怪。在`for`循环之外，没有理由仍然可以访问`i`，`discountedPrice`和`finalPrice`。它对我们没有任何好处，甚至可能在某些情况下对我们造成伤害。但是，由于用`var`声明的变量是函数作用域内的，所以你可以这样做。
 
 现在我们讨论了变量声明，初始化和作用域， 那么在我们深入了解`let`和`const`之前我们需要清除的最后一件事就是变量提升。
 
-### 变量提升
+### 变量提升(Hoisting)
 
 记得早些时候我们说过“在JavaScript中，变量在创建时用`undefined`值来初始化。”事实证明，这就是变量提升的全部内容。JavaScript解释器将在所谓的“创建”阶段为变量声明分配默认值`undefined`。
 
@@ -134,7 +129,7 @@ ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在
       console.log(finalPrice) // 150
       return discounted
     }
-    复制代码
+    
 
 请注意，所有变量声明都分配了默认值`undefined`。这就是为什么如果你在实际声明之前尝试访问其中一个变量，你就会得到`undefined`。
 
@@ -151,7 +146,7 @@ ES2015（或ES6）引入了两种创建变量的新方法，let和const。但在
       console.log(finalPrice) // 150
       return discounted
     }
-    复制代码
+    
 
 现在你已经了解了有关`var`的所有内容，让我们最后谈谈你真正关心的话题：`var`，`let`和`const`之间的区别是什么？
 
@@ -174,7 +169,7 @@ var 与 let 与 const
       console.log(finalPrice) // 150
       return discounted
     }
-    复制代码
+    
 
 记住，我们能够在`for`循环之外打印`i`，`discountedPrice`和`finalPrice`，因为它们是用`var`声明的，而`var`是作用域是在函数内。但是现在，如果我们将`var`声明更改为使用`let`，并尝试运行，会发生什么？
 
@@ -192,7 +187,7 @@ var 与 let 与 const
     }
     discountPrices([100, 200, 300], .5) // ❌ ReferenceError: i is not defined
     
-    复制代码
+    
 
 :no\_good: 我们得到`ReferenceError：i is not defined`。这告诉我们的是，使用`let`声明的变量是作用于块级作用域的，而不是函数作用域。因此，尝试访问我们声明的“块”之外的`i`（或`discountedPrice`或`finalPrice`）会给我们一个引用错误，就像我们刚刚看到的那样。
 
@@ -201,7 +196,7 @@ var 与 let 与 const
     var: 作用域是函数范围的
     
     let: 作用域是块级范围的
-    复制代码
+    
 
 下一个区别与变量提升有关。之前我们说过，变量提升的定义是“JavaScript解释器会在所谓的'创建'阶段将变量赋值为`undefined`这个默认值。”我们甚至在变量声明之前通过打印这个变量看到了这一点（你得到了`undefined`）。
 
@@ -219,7 +214,7 @@ var 与 let 与 const
       return discounted
     }
     
-    复制代码
+    
 
 我想不出任何你会想要在声明变量之前访问它的用例。看起来抛出一个引用错误比返回`undefined`更好。
 
@@ -238,7 +233,7 @@ var 与 let 与 const
       console.log(finalPrice) // 150
       return discounted
     }
-    复制代码
+    
 
     var 与 let
     
@@ -250,7 +245,7 @@ var 与 let 与 const
       作用范围是块级的
       在变量声明之前使用时报引用错误
      
-    复制代码
+    
 
 let与const
 ---------
@@ -261,7 +256,7 @@ let与const
     const handle = 'tylermcginnis'
     name = 'Tyler McGinnis' // ✅
     handle = '@tylermcginnis' // ❌ TypeError: Assignment to constant variable.
-    复制代码
+    
 
 上面的内容是用`let`声明的变量可以重新赋值，但用`const`声明的变量不能。
 
@@ -272,7 +267,7 @@ let与const
     }
     person.name = 'Kim Kardashian West' // ✅
     person = {} // ❌ Assignment to constant variable.
-    复制代码
+    
 
 请注意，更改对象上的属性并不是重新赋值，因此即使使用`const`声明对象，也不意味着你不能改变其任何属性。它只表示您无法将其重新分配给新值。
 
@@ -298,6 +293,6 @@ let与const
       作用范围是块级的
       在变量声明之前使用时会报引用错误
       不能重新赋值
-    复制代码
+    
 
 这篇文章最初发布于[tylermcginnis.com](https://link.juejin.im?target=https%3A%2F%2Ftylermcginnis.com%2Fvar-let-const%2F)，是其 [Modern JavaScript](https://link.juejin.im?target=https%3A%2F%2Ftylermcginnis.com%2Fcourses%2Fmodern-javascript%2F)课程的一部分。

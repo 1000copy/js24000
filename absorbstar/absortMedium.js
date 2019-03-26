@@ -4,7 +4,7 @@ var fileprefix = 'stars/medium/'
 var stars = [
   {url : "https://blog.usejournal.com/var-let-and-const-hoisting-and-scope-8860540031d1",
   filename : '/index.md',
-  selector : 'div.section-content'},
+  selector : 'div.postArticle-content'},
 ]
 
 // stars = [

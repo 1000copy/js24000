@@ -1,6 +1,6 @@
 var filename =  'parsed.html'
 var fs = require('fs')
-var filePath = 'test/bug.html'
+var filePath = 'bug.html'
 var options = {encoding: 'utf-8', flag: 'r'};
 fs.readFile(filePath, options, function (err, data) {
     if(err)
@@ -10,9 +10,10 @@ fs.readFile(filePath, options, function (err, data) {
     {
       var body = data
       // console.log(body)
-      var p = require('node-html-parser');
-      const root = p.parse(body);
-      var article = root.querySelector('article.article').innerHTML
+      const cheerio = require('cheerio')
+      const $ = cheerio.load(body)
+      var article = $('article.article').html()
+
       saveit(filename,article,()=>{
         console.log("The file was saved!");
       })
