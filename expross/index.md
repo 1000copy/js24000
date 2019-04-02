@@ -1,9 +1,5 @@
-tool : https://www.browserling.com/tools/html-to-markdown
-from : https://juejin.im/post/59c0ef425188257e934966ad
-
 
 # express 源码阅读
-
 
 ## 1 简介
 
@@ -13,7 +9,6 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
 
 如果你准备通过本文学习express的基本原理，前提条件最好有一定的express使用经验，写过一两个基于express的应用程序，否则对于其背后的原理理解起来难以产生共鸣，不易掌握。
 
-代码链接：[github.com/WangZhechao…](https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2FWangZhechao%2Fexpross)
 
 ## 2 框架初始化
 
@@ -26,14 +21,12 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
 
     const express = require('express')
     const app = express()
-
     app.get('/', function (req, res) {
       res.send('Hello World!')
     })
-
     app.listen(3000, function () {
       console.log('Example app listening on port 3000!')
-    })复制代码
+    })
 
 接下来，确认框架的名称以及目录结构。框架的名称叫做`expross`。目录结构如下：
 
@@ -47,19 +40,18 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
       |    |
       |    |-- index.js
       |
-      |-- index.js复制代码
+      |-- index.js
 
 让`expross/index.js`文件加载`lib`目录下的`expross.js`文件。
 
-    module.exports = require('./lib/expross');复制代码
+    module.exports = require('./lib/expross');
 
 通过_测试程序前两行_可以推断`lib/expross.js`导出结果应该是一个**函数**，所以在`expross.js`文件中添加如下代码：
 
     function createApplication() {
       return {};
     }
-
-    exports = module.exports = createApplication;复制代码
+    exports = module.exports = createApplication;
 
 测试程序中包含两个函数，所以暂时将`createApplication`函数体实现如下：
 
@@ -68,19 +60,18 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
             get: function() {
                 console.log('expross().get function');
             },
-
             listen: function() {
                 console.log('expross().listen function');
             }
         }
-    }复制代码
+    }
 
 虽然无法得到想要的结果，但至少可以将测试程序跑通，函数的核心内容可以在接下来的步骤中不断完善。
 
 至此，初始框架搭建完毕，修改`test/index.js`文件的前两行：
 
     const expross = require('../');
-    const app = expross();复制代码
+    const app = expross();
 
 运行`node test/index.js`查看结果。
 
@@ -94,19 +85,16 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
 实现http服务器比较简单，可以参考nodejs官网的实现。
 
     const http = require('http');
-
     const hostname = '127.0.0.1';
     const port = 3000;
-
     const server = http.createServer((req, res) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
       res.end('Hello World\n');
     });
-
     server.listen(port, hostname, () => {
       console.log(`Server running at http://${hostname}:${port}/`);
-    });复制代码
+    });
 
 参考该案例，实现`expross`的`listen`函数。
 
@@ -114,9 +102,8 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
         var server = http.createServer(function(req, res) {
             console.log('http.createServer...');
         });
-
         return server.listen(port, cb);
-    }复制代码
+    }
 
 当前`listen`函数包含了两个参数，但是`http.listen`有很多重载函数，为了和`http.listen`一致，可以将函数设置为`http.listen`的“代理”，这样可以保持`expross().listen`和`http.listen`的参数统一。
 
@@ -124,28 +111,15 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
         var server = http.createServer(function(req, res) {
             console.log('http.createServer...');
         });
-
-          //代理
+        //代理
         return server.listen.apply(server, arguments);
-    }复制代码
+    }
 
 在`listen`函数中，我们拦截了所有http请求，每次http请求都会打印`http.createServer ...`,之所以拦截http请求，是因为expross需要分析每次http请求，根据http请求的不同来处理不同的业务逻辑。
 
-在底层：
+## 路由
 
-一个http请求主要包括请求行、请求头和消息体，nodejs将常用的数据封装为http.IncomingMessage类，在上面的代码中req就是该类的一个对象。
-
-每个http请求都会对应一个http响应。一个http响应主要包括状态行、响应头、消息体，nodejs将常用的数据封装为http.ServerResponse类，在上面的代码中res就是该类的一个对象。
-
-不仅仅是nodejs，基本上所有的http服务框架都会包含request和response两个对象，分别代表着http的请求和响应，负责服务端和浏览器的交互。
-
-在上层：
-
-服务器后台代码根据http请求的不同，绑定不同的逻辑。在真正的http请求来临时，匹配这些http请求，执行与之对应的逻辑，这个过程就是web服务器基本的执行流程。
-
-对于这些http请求的管理，有一个专有名词 —— “**路由管理**”，每个http请求就默认为一个**路由**，常见的路由区分策略包括URL、HTTP请求名词等等，但不仅仅限定这些，所有的http请求头上的参数其实都可以进行判断区分，例如使用user-agent字段判断移动端。
-
-不同的框架对于路由的管理规则略有不同，但不管怎样，都需要一组管理http请求和业务逻辑映射的函数，测试用例中的`get`函数就是路由管理中的一个函数，主要负责添加get请求。
+理论上，可以在一个函数内处理所有HTTP请求，但是这样做代码逻辑会过于复杂。实际上的做法是，根据http请求的不同，绑定不同的逻辑。在真正请求来临时，匹配这些请求，执行与之对应的逻辑，这个请求和对应逻辑的对应过程，有一个专有名词 —— “**路由管理**”。每个http请求就默认为一个**路由**，常见的路由区分策略包括URL、HTTP请求名词等等。为此需要一组管理http请求和业务逻辑映射的函数，测试用例中的`get`函数就是路由管理中的一个函数，主要负责添加get请求。
 
 既然知道路由管理的重要，这里就创建一个router数组，负责管理所有路由映射。参考express框架，抽象出每个路由的基本属性：
 
@@ -160,25 +134,23 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end('404');
         }
-    }];复制代码
+    }];
 
 修改listen函数，将http请求拦截逻辑改为匹配router路由表，如果匹配成功，执行对应的handle函数，否则执行router[0].handle函数。
 
     listen: function(port, cb) {
         var server = http.createServer(function(req, res) {
-
             for(var i=1,len=router.length; i<len; i++) {
                 if((req.url === router[i].path || router[i].path === '*') &&
                     (req.method === router[i].method || router[i].method === '*')) {
                     return router[i].handle && router[i].handle(req, res);
                 }
             }
-
             return router[0].handle && router[0].handle(req, res);
         });
 
         return server.listen.apply(server, arguments);
-    }复制代码
+    }
 
 实现get路由请求非常简单，该函数主要是添加get请求路由，只需要将其信息加入到router数组即可。
 
@@ -188,7 +160,7 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
             method: 'GET',
             handle: fn
         });
-    }复制代码
+    }
 
 执行测试用例，报错，提示res.send不存在。该函数并不是nodejs原生函数，这里在res上临时添加函数send，负责发送相应到浏览器。
 
@@ -207,19 +179,17 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
         });
 
         return server.listen.apply(server, arguments);
-    }复制代码
+    }
 
 在结束这次迭代之前，拆分整理一下程序目录：
 
 创建application.js文件，将createApplication函数中的代码转移到该文件，expross.js文件只保留引用。
 
     var app = require('./application');
-
     function createApplication() {
         return app;
     }
-
-    exports = module.exports = createApplication;复制代码
+    exports = module.exports = createApplication;
 
 整个目录结构如下：
 
@@ -234,7 +204,7 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
       |    |
       |    |-- index.js
       |
-      |-- index.js复制代码
+      |-- index.js
 
 最后，运行`node test/index.js`，打开浏览器访问`http://127.0.0.1:3000/`。
 
@@ -256,7 +226,6 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
             }
         }];
     };
-
     Router.prototype.get = function(path, fn) {
         this.stack.push({
             path: path,
@@ -264,7 +233,6 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
             handle: fn
         });
     };
-
     Router.prototype.handle = function(req, res) {
         for(var i=1,len=this.stack.length; i<len; i++) {
             if((req.url === this.stack[i].path || this.stack[i].path === '*') &&
@@ -272,25 +240,20 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
                 return this.stack[i].handle && this.stack[i].handle(req, res);
             }
         }
-
         return this.stack[0].handle && this.stack[0].handle(req, res);
-    };复制代码
+    };
 
 修改原有的application.js文件的内容。
 
     var http = require('http');
     var Router = require('./router');
-
     exports = module.exports = {
         _router: new Router(),
-
         get: function(path, fn) {
             return this._router.get(path, fn);
         },
-
         listen: function(port, cb) {
             var self = this;
-
             var server = http.createServer(function(req, res) {
                 if(!res.send) {
                     res.send = function(body) {
@@ -300,23 +263,23 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
                         res.end(body);
                     };
                 }
-
                 return self._router.handle(req, res);
             });
-
             return server.listen.apply(server, arguments);
         }
-    };复制代码
+    };
 
 这样以后路由方面的操作只和Router本身有关，与application分离，使代码更加清晰。
 
+## 迭代 3
+
 这个路由系统正常运行时没有问题的，但是如果路由不断的增多，this.stack数组会不断的增大，匹配的效率会不断降低，为了解决效率的问题，需要仔细分析路由的组成成分。
 
-目前在expross中，一个路由是由三个部分构成：路径、方法和处理函数。前两者的关系并不是一对一的关系，而是一对多的关系，如：
+目前在expross中，一个路由是由三个部分构成：路径、方法和处理函数(Path,Method,Handler)。前两者的关系并不是一对一的关系，而是一对多的关系，如：
 
     GET books/1
     PUT books/1
-    DELETE books/1复制代码
+    DELETE books/1
 
 如果将路径一样的路由整合成一组，显然效率会提高很多，于是引入Layer的概念。
 
@@ -336,7 +299,7 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
     |  |- handle|  |- handle|  |- handle|  |- handle|
     |  |- route |  |- route |  |- route |  |- route |
     ------------------------------------------------
-                      router 内部复制代码
+                      router 内部
 
 这里先创建Layer类。
 
@@ -345,7 +308,6 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
         this.name = fn.name || '<anonymous>';
         this.path = path;
     }
-
     //简单处理
     Layer.prototype.handle_request = function (req, res) {
       var fn = this.handle;
@@ -354,7 +316,6 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
           fn(req, res);
       }
     };
-
     //简单匹配
     Layer.prototype.match = function (path) {
         if(path === this.path || path === '*') {
@@ -362,7 +323,7 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
         }
 
         return false;
-    };复制代码
+    };
 
 再次修改Router类。
 
@@ -389,7 +350,7 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
 
     Router.prototype.get = function(path, fn) {
         this.stack.push(new Layer(path, fn));
-    };复制代码
+    };
 
 运行`node test/index.js`，访问`http://127.0.0.1:3000/`一切看起来很正常，但是上面的代码忽略了路由的属性method。这样的结果会导致如果测试用例存在问题：
 
@@ -399,7 +360,7 @@ from : https://juejin.im/post/59c0ef425188257e934966ad
 
     app.get('/', function(req, res) {
         res.send('get Hello World!');
-    });复制代码
+    });
 
 程序无法分清PUT和GET的区别。
 
@@ -414,7 +375,7 @@ route的结构如下：
     |  |- method|  |- method|  |- method|  |- method|
     |  |- handle|  |- handle|  |- handle|  |- handle|
     ------------------------------------------------
-                      route 内部复制代码
+                      route 内部
 
 创建Route类。
 
@@ -449,7 +410,7 @@ route的结构如下：
                 return self.stack[i].handle_request(req, res);
             }
         }
-    };复制代码
+    };
 
 在上面的代码中，并没有定义前面结构图中的item对象，而是使用了Layer对象进行替代，主要是为了方便快捷，从另一种角度看，其实二者是存在很多共同点的。另外，为了利于理解，代码中只实现了GET方法，其他方法的代码实现是类似的。
 
@@ -488,7 +449,7 @@ route的结构如下：
         route.get(fn);
 
         return this;
-    };复制代码
+    };
 
 运行`node test/index.js`，一切看起来和原来一样。
 
@@ -512,7 +473,7 @@ route的结构如下：
       |    |
       |    |-- index.js
       |
-      |-- index.js复制代码
+      |-- index.js
 
 接着，总结一下当前expross各个部分的工作。
 
@@ -542,7 +503,7 @@ application代表一个应用程序，expross是一个工厂类负责创建appli
                            |-----|-----------|
                            | ... |   ...     |
                             ----- ----------- 
-                                 router复制代码
+                                 router
 
 ## 3 第三次迭代
 
@@ -588,7 +549,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         'search',
         'connect'
       ];
-    }复制代码
+    }
 
 知道所支持的方法名列表数组后，剩下的只需要一个for循环生成所有的函数即可。
 
@@ -605,7 +566,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
             return this;
         };
-    });复制代码
+    });
 
 接着修改Router。
 
@@ -617,7 +578,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
             return this;
         };
-    });复制代码
+    });
 
 最后修改application.js的内容。这里改动较大，重新定义了一个Application类，而不是使用字面量直接创建。
 
@@ -647,7 +608,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
         var router = this._router;
         router.handle(req, res);
-    };复制代码
+    };
 
 接着增加HTTP方法函数。
 
@@ -657,7 +618,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
             this._router[method].apply(this._router, arguments);
             return this;
         };
-    });复制代码
+    });
 
 因为导出的是Application类，所以修改expross.js文件。
 
@@ -666,7 +627,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
     function createApplication() {
         var app = new Application();
         return app;
-    }复制代码
+    }
 
 运行`node test/index.js`，走起。
 
@@ -680,7 +641,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
     app.get('/', function(req, res) {
         res.send('get Hello World!');
-    });复制代码
+    });
 
 结果并不是想象中类似下面的结构：
 
@@ -700,7 +661,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
     |-----|-----------|
     | ... |   ...     |
      ----- ----------- 
-          router复制代码
+          router
 
 而是如下的结构：
 
@@ -719,7 +680,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
     |-----|-----------|       |  |- method|   route
     | ... |   ...     |       |  |- handle| 
      ----- -----------        -------------
-        router复制代码
+        router
 
 之所以会这样是因为路由系统存在这先后顺序的关系，如果你前面的描述结构很有可能会丢失路由顺序这个属性。既然这样，那Route的用处是在哪？
 
@@ -742,7 +703,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
     })
     .delete(function(req, res, next) {
       next(new Error('not implemented'));
-    });复制代码
+    });
 
 而不是这样：
 
@@ -762,7 +723,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
     .delete('/users/:user_id', function(req, res) {
 
-    });复制代码
+    });
 
 理解了Route的使用方法，接下来就要讨论刚刚提到的顺序问题。在路由系统中，路由的处理顺序非常重要，因为路由是按照数组的方式存储的，如果遇见两个同样的路由，同样的方法名，不同的处理函数，这时候前后声明的顺序将直接影响结果（这也是express中间件存在顺序相关的原因），例如下面的例子：
 
@@ -774,7 +735,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
     app.get('/', function(req, res) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end('second');
-    });复制代码
+    });
 
 上面的代码如果执行会发现永远都返回`first`，但是有的时候会根据前台传来的参数动态判断是否执行接下来的路由，怎样才能跳过`first`进入`second`？这就涉及到路由系统的流程控制问题。
 
@@ -803,7 +764,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
       } catch (err) {
         next(err);
       }
-    };复制代码
+    };
 
 接下来修改Route.dispath函数。因为涉及到内部的逻辑跳转，使用for循环按部就班不太合适，这里使用了类似递归的方式。
 
@@ -843,7 +804,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         }
 
         next();
-    };复制代码
+    };
 
 整个处理过程本质上还是一个for循环，唯一的差别就是在处理函数中用户主动调用next函数的处理逻辑。
 
@@ -858,7 +819,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         var layer = new Layer(path, route.dispatch.bind(route));
 
         ...
-    };复制代码
+    };
 
 接着修改Router.handle的代码，逻辑和Route.dispatch类似。
 
@@ -890,7 +851,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         }
 
         next();
-    };复制代码
+    };
 
 修改后的函数处理过程和原来的类似，不过有一点需要注意，当发生异常的时候，会将结果返回给上一层，而不是执行原有`this.stack`第0层的代码逻辑。
 
@@ -905,13 +866,13 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
             });
             res.end('404');        
         })];
-    };复制代码
+    };
 
 改为
 
     var Router = function() {
         this.stack = [];
-    };复制代码
+    };
 
 然后，修改Application.handle函数。
 
@@ -934,7 +895,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
         var router = this._router;
         router.handle(req, res, done);
-    };复制代码
+    };
 
 这里简单的将done函数处理为返回404页面，其实在express框架中，使用的是一个单独的npm包，叫做`finalhandler`。
 
@@ -957,11 +918,11 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
     app.listen(3000, function() {
         console.log('Example app listening on port 3000!');
-    });复制代码
+    });
 
 运行`node test/index.js`，访问`http://127.0.0.1:3000/`，结果显示：
 
-    404: Error: error复制代码
+    404: Error: error
 
 貌似目前一切都很顺利，不过还有一个需求目前被忽略了。当前处理函数的异常全部是由框架捕获，返回的信息只能是固定的404页面，对于框架使用者显然很不方便，大多数时候，我们都希望可以捕获错误，并按照一定的信息封装返回给浏览器，所以expross需要一个返回错误给上层使用者的接口。
 
@@ -969,13 +930,13 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
     function process_fun(req, res, next) {
 
-    }复制代码
+    }
 
 如果增加一个错误处理函数，按照nodejs的规则，第一个参数是错误信息，定义应该如下所示：
 
     function process_err(err, req, res, next) {
 
-    }复制代码
+    }
 
 因为两个声明的第一个参数信息是不同的，如果区分传入的处理函数是处理错误的函数还是处理正常的函数，这个是expross框架需要搞定的关键问题。
 
@@ -997,7 +958,7 @@ javascript中，Function.length属性可以获取传入函数指定的参数个�
       } catch (err) {
         next(err);
       }
-    };复制代码
+    };
 
 接着修改Route.dispatch函数。
 
@@ -1019,7 +980,7 @@ javascript中，Function.length属性可以获取传入函数指定的参数个�
         }
 
         next();
-    };复制代码
+    };
 
 当发生错误的时候，Route会一直向后寻找错误处理函数，如果找到则返回，否则执行`done(err)`，将错误抛给Router。
 
@@ -1073,7 +1034,7 @@ express官方给出的解释如下：
         router.use(path, fn);
 
         return this;
-    };复制代码
+    };
 
 因为Application.use支持可选路径，所以需要增加处理路径的重载代码。
 
@@ -1090,7 +1051,7 @@ express官方给出的解释如下：
         router.use(path, fn);
 
         return this;
-    };复制代码
+    };
 
 其实express框架支持的参数不仅仅这两种，但是为了便于理解剔除了一些旁枝末节，便于框架的理解。
 
@@ -1111,7 +1072,7 @@ express官方给出的解释如下：
         this.stack.push(layer);
 
         return this;
-    };复制代码
+    };
 
 内部代码和Application.use差不多，只不过最后不再是调用Router.use，而是直接创建一个Layer对象，将其放到this.stack数组中。
 
@@ -1119,7 +1080,7 @@ express官方给出的解释如下：
 
 对于路由级中间件，首先按照要求导出Router类，便于使用。
 
-    exports.Router = Router;复制代码
+    exports.Router = Router;
 
 上面的代码添加到expross.js文件中，这样就可以按照下面的使用方式创建一个单独的路由系统。
 
@@ -1128,7 +1089,7 @@ express官方给出的解释如下：
 
     router.use(function (req, res, next) {
       console.log('Time:', Date.now());
-    });复制代码
+    });
 
 现在问题来了，如果像上面的代码一样创建一个新的路由系统是无法让路由系统内部的逻辑生效的，因为这个路由系统没法添加到现有的系统中。
 
@@ -1139,7 +1100,7 @@ express官方给出的解释如下：
     var router = express.Router();
 
     // 将路由挂载至应用
-    app.use('/', router);复制代码
+    app.use('/', router);
 
 这确实是一个好方法，现在就来将expross修改成类似的样子。
 
@@ -1159,7 +1120,7 @@ express官方给出的解释如下：
 
             return this;
         };
-    });复制代码
+    });
 
 然后创建一个中间件函数，使用Object.setPrototypeOf函数设置其原型，最后导出一个生成这些过程的函数。
 
@@ -1172,7 +1133,7 @@ express官方给出的解释如下：
 
         router.stack = [];
         return router;
-    };复制代码
+    };
 
 修改测试用例，测试一下效果。
 
@@ -1198,7 +1159,7 @@ express官方给出的解释如下：
 
     app.listen(3000, function() {
         console.log('Example app listening on port 3000!');
-    });复制代码
+    });
 
 结果并不理想，原有的应用程序还有两个地方需要修改。
 
@@ -1222,7 +1183,7 @@ express官方给出的解释如下：
         }
 
         next();
-    };复制代码
+    };
 
 改成：
 
@@ -1249,7 +1210,7 @@ express官方给出的解释如下：
         }
 
         next();
-    };复制代码
+    };
 
 其次是路径匹配的问题。原有的单一路径被拆分成为不同中间的路径组合，这里判断需要多步进行，因为每个中间件只是匹配自己的路径是否通过，不过相对而言目前涉及的匹配都是全等匹配，还没有涉及到类似express框架中的正则匹配，算是非常简单了。
 
@@ -1333,7 +1294,7 @@ express官方给出的解释如下：
         }
 
         next();
-    };复制代码
+    };
 
 这段代码主要处理两种情况：
 
@@ -1347,7 +1308,7 @@ express官方给出的解释如下：
         res.send('second user');
     });
 
-    app.use('/users', router);复制代码
+    app.use('/users', router);
 
 这种情况下，Router.handle顺序匹配到中间的时候，会递归调用Router.handle，所以需要保存当前的路径快照，具体路径相关信息放到req.url、req.originalUrl 和req.baseUrl 这三个参数中。
 
@@ -1359,7 +1320,7 @@ express官方给出的解释如下：
 
     app.get('/books', function(req, res, next) {
         res.send('books');
-    });复制代码
+    });
 
 这种情况下，Router.handle内部主要是按照栈中的次序匹配路径即可。
 
@@ -1381,7 +1342,7 @@ express官方给出的解释如下：
       if(!this.fast_star) {
         this.path = path;
       }
-    }复制代码
+    }
 
 接着修改Layer.match匹配函数。
 
@@ -1412,7 +1373,7 @@ express官方给出的解释如下：
       }
 
       return false;
-    };复制代码
+    };
 
 代码中一共判断四种情况，根据this.route区分中间件和普通路由，然后分开判断。
 
@@ -1422,14 +1383,14 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
 
     if(idx >= stack.length || layerError) {
         return done(layerError);
-    }复制代码
+    }
 
 这里需要修改策略，将其改为继续调用下一个中间件，直到碰到错误中间件为止。
 
     //没有找到
     if(idx >= stack.length) {
         return done(layerError);
-    }复制代码
+    }
 
 原有这一块的代码只保留判断枚举是否完成，将错误判断转移到最后执行处理函数的位置。之所以这样做是因为不管是执行处理函数，或是执行错误处理都需要进行路径匹配操作和路径分析操作，所以放到后面正好合适。
 
@@ -1447,7 +1408,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
     } else if(layer.route._handles_method(method)) {
         //处理路由
         layer.handle_request(req, res, next);
-    }复制代码
+    }
 
 到此为止，expross的错误处理部分算是基本完成了。
 
@@ -1468,7 +1429,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
             });
             res.end(body);
         };
-    }复制代码
+    }
 
 如果需要继续封装，也要类似的结构在代码上添加显然会给人一种很乱的感觉，因为request和response的原始版本是nodejs提供给框架的，框架获取到的是两个对象，并不是类，要想在二者之上提供另一组接口的办法有很多，归根结底就是将新的接口加到该对象上或者加到该对象的原型链上，目前的代码选择了前者，express的代码选择了后者。
 
@@ -1486,7 +1447,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
 
     var res = Object.create(http.ServerResponse.prototype);
 
-    module.exports = res;复制代码
+    module.exports = res;
 
 二者文件的代码都是创建一个对象，分别指向nodejs提供的request和response两个对象的原型，以后expross自定的接口可以统一挂载到这两个对象上。
 
@@ -1503,7 +1464,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
         Object.setPrototypeOf(res, response);
 
         ...
-    };复制代码
+    };
 
 这里将原有的res.send转移到了response.js文件中。
 
@@ -1512,7 +1473,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
             'Content-Type': 'text/plain'
         });
         this.end(body);
-    };复制代码
+    };
 
 注意函数中不在是res.writeHead和res.end，而是this.writeHead和this.end。
 
@@ -1522,7 +1483,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
 
 去除原有Application构造函数的代码。
 
-    function Application() {}复制代码
+    function Application() {}
 
 添加惰性初始化函数。
 
@@ -1532,13 +1493,13 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
 
             this._router.use(middleware.init());
         }
-    };复制代码
+    };
 
 因为是惰性初始化，所以在使用`this._router`对象前，一定要先调用该函数动态创建`this._router`对象。类似如下代码：
 
     //获取router
     this.lazyrouter();
-    router = this._router;复制代码
+    router = this._router;
 
 接下来创建一个叫middleware文件夹，专门放内部中间件的文件，再创建一个init.js文件，放置Application.handle中用来初始化res和req的代码。
 
@@ -1558,7 +1519,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
 
         //继续
         next();
-    };复制代码
+    };
 
 修改原有的Applicaton.handle函数。
 
@@ -1574,7 +1535,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
         } else {
             done();
         }
-    };复制代码
+    };
 
 运行`node test/index.js`走起……
 
@@ -1600,7 +1561,7 @@ req.query 是最常用的方式，例如：
     // => "blue"
 
     req.query.shoe.type
-    // => "converse"复制代码
+    // => "converse"
 
 后台获取这些参数最简单的方式就是通过nodejs自带的querystring模块分析URL。express使用的是另一个npm包，[qs](https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2Fljharb%2Fqs)。并且将其封装为另一个内部中间件，专门负责解析查询字符串，默认加载。
 
@@ -1609,7 +1570,7 @@ req.params 是另一种从URL获取参数的方式，例如：
     //路由规则  /user/:name
     // GET /user/tj
     req.params.name
-    // => "tj"复制代码
+    // => "tj"
 
 这是一种express框架规定的参数获取方式，对于批量处理逻辑非常实用。在expross中并没有实现，因为路径匹配问题过于细节化，如果对此感兴趣可以研究研究[path-to-regexp](https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2Fpillarjs%2Fpath-to-regexp)模块，express也是在其上的封装。
 
@@ -1639,27 +1600,27 @@ express通过`app.engine(ext, callback)` 方法即可创建一个你自己的模
         .replace('#message#', '<h1>'+ options.message +'</h1>');
         return callback(null, rendered);
       })
-    });复制代码
+    });
 
 为了让应用程序可以渲染模板文件，还需要做如下设置：
 
     //views, 放模板文件的目录
     app.set('views', './views')
     //view engine, 模板引擎
-    app.set('view engine', 'jade')复制代码
+    app.set('view engine', 'jade')
 
 一旦 `view engine` 设置成功，就不需要显式指定引擎，或者在应用中加载模板引擎模块，Express 已经在内部加载。下面是如何渲染页面的方法：
 
     app.get('/', function (req, res) {
       res.render('index', { title: 'Hey', message: 'Hello there!'});
-    });复制代码
+    });
 
 要想实现上述功能，首先在Application类中定义两个变量，一个存储app.set 和 app.get 这两个方法存储的值，另一个存储模板引擎中扩展名和渲染函数的对应关系。
 
     function Application() {
         this.settings = {};
         this.engines = {};
-    }复制代码
+    }
 
 然后是实现app.set函数。
 
@@ -1671,7 +1632,7 @@ express通过`app.engine(ext, callback)` 方法即可创建一个你自己的模
 
         this.settings[setting] = val;
         return this;
-    };复制代码
+    };
 
 代码中不仅仅实现了设置，如何传入的参数只有一个等价于get函数。
 
@@ -1687,7 +1648,7 @@ express通过`app.engine(ext, callback)` 方法即可创建一个你自己的模
 
             ...
         };
-    });复制代码
+    });
 
 最后实现app.engine进行扩展名和引擎函数的映射。
 
@@ -1701,7 +1662,7 @@ express通过`app.engine(ext, callback)` 方法即可创建一个你自己的模
         this.engines[extension] = fn;
 
         return this;
-    };复制代码
+    };
 
 扩展名当做key，统一添加“.”。
 
@@ -1724,7 +1685,7 @@ express通过`app.engine(ext, callback)` 方法即可创建一个你自己的模
 
         //渲染
         app.render(view, opts, done);
-    };复制代码
+    };
 
 渲染函数一共有三个参数，view表示模板的名称，options是模板渲染的变量，callback是渲染成功后的回调函数。
 
@@ -1756,13 +1717,13 @@ express通过`app.engine(ext, callback)` 方法即可创建一个你自己的模
 
         // lookup path
         this.path = this.lookup(fileName);
-    }复制代码
+    }
 
 View类内部定义了很多属性，主要包括引擎、根目录、扩展名、文件名等等，为了以后的渲染做准备。
 
     View.prototype.render = function render(options, callback) {
         this.engine(this.path, options, callback);
-    };复制代码
+    };
 
 View的渲染函数内部就是调用一开始注册的引擎渲染函数。
 
@@ -1789,7 +1750,7 @@ View的渲染函数内部就是调用一开始注册的引擎渲染函数。
         } catch (e) {
           callback(e);
         }
-    };复制代码
+    };
 
 _还有一些细节没有在教程中展示出来，可以参考github上传的案例代码。_
 
@@ -1811,7 +1772,7 @@ _还有一些细节没有在教程中展示出来，可以参考github上传的�
 
     app.get('/', function(req, res, next) {
         res.render('index', { title: 'Hey', message: 'Hello there!'});
-    });复制代码
+    });
 
 运行`node test/index.js`，查看效果。
 
@@ -1819,12 +1780,12 @@ _还有一些细节没有在教程中展示出来，可以参考github上传的�
 
 该方法声明如下：
 
-     __express(filePath, options, callback)复制代码
+     __express(filePath, options, callback)
 
 可以参考ejs模板引擎的代码，看看它们是如何写的：
 
     //该行代码在lib/ejs.js文件的355行左右
-    exports.__express = exports.renderFile;复制代码
+    exports.__express = exports.renderFile;
 
 express框架是如何实现这个默认加载的功能的呢？很简单，只需要在View的构造函数中加一个判断即可。
 
@@ -1832,7 +1793,7 @@ express框架是如何实现这个默认加载的功能的呢？很简单，只�
       // load engine
       var mod = this.ext.substr(1);
       opts.engines[this.ext] = require(mod).__express;
-    }复制代码
+    }
 
 代码很简单，如果没有找到引擎对应的渲染函数，那就尝试加载__express函数。
 
@@ -1855,3 +1816,5 @@ express框架是如何实现这个默认加载的功能的呢？很简单，只�
 太多函数了，不一一列举，前文已经提到，涉及的细节太多，正则表达式，http协议层，nodejs本身函数的使用，对于整个框架的理解帮助不大，全部舍弃。不过大多数函数都是自成体系，很好理解。
 
 </div>
+
+代码链接：[github.com/WangZhechao…](https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2FWangZhechao%2Fexpross)
