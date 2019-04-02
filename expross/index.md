@@ -335,19 +335,15 @@
             res.end('404');        
         })];
     };
-
     Router.prototype.handle = function(req, res) {
         var self = this;
-
         for(var i=1,len=self.stack.length; i<len; i++) {
             if(self.stack[i].match(req.url)) {
                 return self.stack[i].handle_request(req, res);
             }
         }
-
         return self.stack[0].handle_request(req, res);
     };
-
     Router.prototype.get = function(path, fn) {
         this.stack.push(new Layer(path, fn));
     };
@@ -363,6 +359,8 @@
     });
 
 程序无法分清PUT和GET的区别。
+
+## 迭代4 - 添加method
 
 所以需要继续完善路由系统中的Layer类中的route属性，这个属性才是真正包含method属性的路由。
 
@@ -382,29 +380,22 @@ route的结构如下：
     var Route = function(path) {
         this.path = path;
         this.stack = [];
-
         this.methods = {};
     };
-
     Route.prototype._handles_method = function(method) {
         var name = method.toLowerCase();
         return Boolean(this.methods[name]);
     };
-
     Route.prototype.get = function(fn) {
         var layer = new Layer('/', fn);
         layer.method = 'get';
-
         this.methods['get'] = true;
         this.stack.push(layer);
-
         return this;
     };
-
     Route.prototype.dispatch = function(req, res) {
         var self = this,
             method = req.method.toLowerCase();
-
         for(var i=0,len=self.stack.length; i<len; i++) {
             if(method === self.stack[i].method) {
                 return self.stack[i].handle_request(req, res);

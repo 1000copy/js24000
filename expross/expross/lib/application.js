@@ -1,30 +1,43 @@
-var Router = function() {
-    this.stack = [{
-        path: '*',
-        method: '*',
-        handle: function(req, res) {
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'
-            });
-            res.end('404');
-        }
-    }];
+function Layer(path, fn) {
+    this.handle = fn;
+    this.name = fn.name || '<anonymous>';
+    this.path = path;
+}
+//简单处理
+Layer.prototype.handle_request = function (req, res) {
+  var fn = this.handle;
+
+  if(fn) {
+      fn(req, res);
+  }
 };
-Router.prototype.get = function(path, fn) {
-    this.stack.push({
-        path: path,
-        method: 'GET',
-        handle: fn
-    });
+//简单匹配
+Layer.prototype.match = function (path) {
+    if(path === this.path || path === '*') {
+        return true;
+    }
+
+    return false;
+};
+var Router = function() {
+    this.stack = [new Layer('*', function(req, res) {
+        res.writeHead(200, {
+            'Content-Type': 'text/plain'
+        });
+        res.end('404');        
+    })];
 };
 Router.prototype.handle = function(req, res) {
-    for(var i=1,len=this.stack.length; i<len; i++) {
-        if((req.url === this.stack[i].path || this.stack[i].path === '*') &&
-            (req.method === this.stack[i].method || this.stack[i].method === '*')) {
-            return this.stack[i].handle && this.stack[i].handle(req, res);
+    var self = this;
+    for(var i=1,len=self.stack.length; i<len; i++) {
+        if(self.stack[i].match(req.url)) {
+            return self.stack[i].handle_request(req, res);
         }
     }
-    return this.stack[0].handle && this.stack[0].handle(req, res);
+    return self.stack[0].handle_request(req, res);
+};
+Router.prototype.get = function(path, fn) {
+    this.stack.push(new Layer(path, fn));
 };
 //
 var http = require("http")
@@ -42,7 +55,7 @@ var app = {
         return this._router.get(path, fn);
     },
     listen:function(port,cb){
-        varself = this
+        var self = this
         var server = http.createServer(function(req, res) {
             if(!res.send) {
                 res.send = function(body) {
