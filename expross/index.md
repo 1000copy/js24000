@@ -410,35 +410,26 @@ route的结构如下：
     Router.prototype.handle = function(req, res) {
         var self = this,
             method = req.method;
-
         for(var i=0,len=self.stack.length; i<len; i++) {
             if(self.stack[i].match(req.url) && 
                 self.stack[i].route && self.stack[i].route._handles_method(method)) {
                 return self.stack[i].handle_request(req, res);
             }
         }
-
         return self.stack[0].handle_request(req, res);
     };
-
     Router.prototype.route = function route(path) {
         var route = new Route(path);
-
         var layer = new Layer(path, function(req, res) {
             route.dispatch(req, res);
         });
-
         layer.route = route;
-
         this.stack.push(layer);
-
         return route;
     };
-
     Router.prototype.get = function(path, fn) {
         var route = this.route(path);
         route.get(fn);
-
         return this;
     };
 
@@ -468,8 +459,11 @@ route的结构如下：
 
 接着，总结一下当前expross各个部分的工作。
 
-application代表一个应用程序，expross是一个工厂类负责创建application对象。Router代表路由组件，负责应用程序的整个路由系统。组件内部由一个Layer数组构成，每个Layer代表一组路径相同的路由信息，具体信息存储在Route内部，每个Route内部也是一个Layer对象，但是Route内部的Layer和Router内部的Layer是存在一定的差异性。
-
+1. application代表一个应用程序
+2. expross是一个工厂类负责创建application对象
+3. Router代表路由组件，负责应用程序的整个路由系统,组件内部由一个Layer数组构成
+4. 每个Layer代表一组路径相同的路由信息，具体信息存储在Route内部
+5. 每个Route内部也是一个Layer对象，但是Route内部的Layer和Router内部的Layer是存在一定的差异性。
 *   Router内部的Layer，主要包含path、route属性。
 *   Route内部的Layer，主要包含method、handle属性。
 
@@ -500,47 +494,14 @@ application代表一个应用程序，expross是一个工厂类负责创建appli
 
 本节是expross的第三次迭代，主要的目标是继续完善路由系统，主要工作有部分：
 
-*   丰富接口，目前只支持get接口。
+*   丰富接口，目前只支持get接口。当前只支持get接口，具体的接口是由expross提供的，内部调用Router.get接口，而其内部是对Route.get的封装。
 *   增加路由系统的流程控制。
 
-当前expross框架只支持get接口，具体的接口是由expross提供的，内部调用Router.get接口，而其内部是对Route.get的封装。
 
-HTTP显然不仅仅只有GET这一个方法，还包括很多，例如：PUT、POST、DELETE等等，每个方法都单独写一个处理函数显然是冗余的，因为函数的内容除了和函数名相关外，其他都是一成不变的。根据JavaScript脚本语言语言的特性，这里可以通过HTTP的方法列表动态生成函数内容。
 
-想要动态生成函数，首先需要确定函数名称。函数名就是nodejs中HTTP服务器支持的方法名称，可以在官方文档中获取，具体参数是`http.METHODS`。这个属性是在v0.11.8新增的，如果nodejs低于该版本，需要手动建立一个方法列表，具体可以参考nodejs代码。
+HTTP显然不仅仅只有GET这一个方法，还包括很多，例如：PUT、POST、DELETE等等，每个方法都单独写一个处理函数显然是冗余的，因为函数的内容除了和函数名相关外，其他都是一成不变的，可以动态生成需要的函数。
 
-express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内部给出了低版本的兼容动词列表。
-
-    function getBasicNodeMethods() {
-      return [
-        'get',
-        'post',
-        'put',
-        'head',
-        'delete',
-        'options',
-        'trace',
-        'copy',
-        'lock',
-        'mkcol',
-        'move',
-        'purge',
-        'propfind',
-        'proppatch',
-        'unlock',
-        'report',
-        'mkactivity',
-        'checkout',
-        'merge',
-        'm-search',
-        'notify',
-        'subscribe',
-        'unsubscribe',
-        'patch',
-        'search',
-        'connect'
-      ];
-    }
+想要动态生成函数，首先需要确定函数名称。函数名就是nodejs中HTTP服务器支持的方法名称，可以在官方文档中获取，具体参数是`http.METHODS`。这个属性是在v0.11.8新增的，如果nodejs低于该版本，需要手动建立一个方法列表。
 
 知道所支持的方法名列表数组后，剩下的只需要一个for循环生成所有的函数即可。
 
@@ -551,10 +512,8 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         Route.prototype[method] = function(fn) {
             var layer = new Layer('/', fn);
             layer.method = method;
-
             this.methods[method] = true;
             this.stack.push(layer);
-
             return this;
         };
     });
@@ -566,7 +525,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         Router.prototype[method] = function(path, fn) {
             var route = this.route(path);
             route[method].call(route, fn);
-
             return this;
         };
     });
@@ -576,17 +534,13 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
     function Application() {
         this._router = new Router();
     }
-
     Application.prototype.listen = function(port, cb) {
         var self = this;
-
         var server = http.createServer(function(req, res) {
             self.handle(req, res);
         });
-
         return server.listen.apply(server, arguments);
     };
-
     Application.prototype.handle = function(req, res) {
         if(!res.send) {
             res.send = function(body) {
@@ -596,7 +550,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
                 res.end(body);
             };
         }
-
         var router = this._router;
         router.handle(req, res);
     };
@@ -614,7 +567,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 因为导出的是Application类，所以修改expross.js文件。
 
     var Application = require('./application');
-
     function createApplication() {
         var app = new Application();
         return app;
@@ -629,7 +581,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
     app.put('/', function(req, res) {
         res.send('put Hello World!');
     });
-
     app.get('/', function(req, res) {
         res.send('get Hello World!');
     });
@@ -673,7 +624,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
      ----- -----------        -------------
         router
 
-之所以会这样是因为路由系统存在这先后顺序的关系，如果你前面的描述结构很有可能会丢失路由顺序这个属性。既然这样，那Route的用处是在哪？
+之所以会这样是因为路由系统存在着先后顺序的关系，如果你前面的描述结构很有可能会丢失路由顺序这个属性。既然这样，那Route的用处是在哪？
 
 因为在express框架中，Route存储的是真正的路由信息，可以当做单独的成员使用，如果想要真正前面的所描述的结果描述，你需要这样创建你的代码：
 
@@ -722,7 +673,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end('first');
     });
-
     app.get('/', function(req, res) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end('second');
@@ -730,17 +680,19 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
 上面的代码如果执行会发现永远都返回`first`，但是有的时候会根据前台传来的参数动态判断是否执行接下来的路由，怎样才能跳过`first`进入`second`？这就涉及到路由系统的流程控制问题。
 
+## 流程控制和错误处理
+
 流程控制分为主动和被动两种模式。
 
-对于expross框架来说，路由绑定的处理逻辑、用户设置的路径参数这些都是不可靠的，在运行过程中很有可能会发生异常，被动流程控制就是当这些异常发生的时候，expross框架要担负起捕获这些异常的工作，因为如果不明确异常的发生位置，会导致js代码无法继续运行，并且无法准确的报出故障。
+被动流程控制就是错误处理。当异常发生的时候，框架要担负起捕获这些异常的工作，否则，会导致js代码无法继续运行，并且无法准确的报出故障。
 
-主动流程控制则是处理函数内部的操作逻辑，以主动调用的方式来跳转路由内部的执行逻辑。
+主动流程控制则是正常的操作逻辑，以主动调用的方式来跳转路由内部的执行逻辑。
 
 目前express通过引入next参数的方式来解决流程控制问题。next是处理函数的一个参数，其本身也是一个函数，该函数有几种使用方式：
 
-*   执行下一个处理函数。执行`next()`。
 *   报告异常。执行`next(err)`。
-*   跳过当前Route，执行Router的下一项。执行`next('route')`。
+*   执行下一个处理函数。执行`next()`。
+*   跳过当前Route，执行Route的下一项。执行`next('route')`。
 *   跳过整个Router。执行`next('router')`。
 
 接下来，我们尝试实现以下这些需求。
@@ -749,7 +701,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
     Layer.prototype.handle_request = function (req, res, next) {
       var fn = this.handle;
-
       try {
         fn(req, res, next);
       } catch (err) {
@@ -763,29 +714,24 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         var self = this,
             method = req.method.toLowerCase(),
             idx = 0, stack = self.stack;
-
         function next(err) {
             //跳过route
             if(err && err === 'route') {
                 return done();
             }
-
             //跳过整个路由系统
             if(err && err === 'router') {
                 return done(err);
             }
-
             //越界
             if(idx >= stack.length) {
                 return done(err);
             }
-
             //不等枚举下一个
             var layer = stack[idx++];
             if(method !== layer.method) {
                 return next(err);
             }
-
             if(err) {
                 //主动报错
                 return done(err);
@@ -793,7 +739,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
                 layer.handle_request(req, res, next);
             }
         }
-
         next();
     };
 
@@ -818,19 +763,15 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         var self = this,
             method = req.method,
             idx = 0, stack = self.stack;
-
         function next(err) {
             var layerError = (err === 'route' ? null : err);
-
             //跳过路由系统
             if(layerError === 'router') {
                 return done(null);
             }
-
             if(idx >= stack.length || layerError) {
                 return done(layerError);
             }
-
             var layer = stack[idx++];
             //匹配，执行
             if(layer.match(req.url) && layer.route &&
@@ -840,7 +781,6 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
                 next(layerError);
             }
         }
-
         next();
     };
 
@@ -888,7 +828,7 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
         router.handle(req, res, done);
     };
 
-这里简单的将done函数处理为返回404页面，其实在express框架中，使用的是一个单独的npm包，叫做`finalhandler`。
+这里简单的将done函数处理为返回404页面。
 
 简单的修改一下测试用例证明一下成果。
 
@@ -915,11 +855,11 @@ express框架HTTP方法名的获取封装到另一个包，叫做`methods`，内
 
     404: Error: error
 
-貌似目前一切都很顺利，不过还有一个需求目前被忽略了。当前处理函数的异常全部是由框架捕获，返回的信息只能是固定的404页面，对于框架使用者显然很不方便，大多数时候，我们都希望可以捕获错误，并按照一定的信息封装返回给浏览器，所以expross需要一个返回错误给上层使用者的接口。
+貌似目前一切都很顺利，不过还有一个需求目前被忽略了。当前处理函数的异常全部是由框架捕获，返回的信息只能是固定的404页面，对于框架使用者显然很不方便。大多数时候，我们都希望可以捕获错误，并按照一定的信息封装返回给浏览器，所以expross需要一个返回错误给上层使用者的接口。
 
 目前和上层对接的处理函数的声明如下：
 
-    function process_fun(req, res, next) {
+    function (req, res, next) {
 
     }
 
@@ -938,12 +878,10 @@ javascript中，Function.length属性可以获取传入函数指定的参数个�
     //错误处理
     Layer.prototype.handle_error = function (error, req, res, next) {
       var fn = this.handle;
-
       //如果函数参数不是标准的4个参数，返回错误信息
       if(fn.length !== 4) {
         return next(error);
       }
-
       try {
         fn(error, req, res, next);
       } catch (err) {
@@ -989,85 +927,68 @@ express官方给出的解释如下：
 
 > Express 是一个自身功能极简，完全是由路由和中间件构成一个的 web 开发框架：从本质上来说，一个 Express 应用就是在调用各种中间件。
 > 
-> _中间件（Middleware）_ 是一个函数，它可以访问请求对象（[request object](https://link.juejin.im?target=http%3A%2F%2Fwww.expressjs.com.cn%2F4x%2Fapi.html%23req) (`req`)）, 响应对象（[response object](https://link.juejin.im?target=http%3A%2F%2Fwww.expressjs.com.cn%2F4x%2Fapi.html%23res) (`res`)）, 和 web 应用中处于请求-响应循环流程中的中间件，一般被命名为 `next` 的变量。
-> 
-> 中间件的功能包括：
-> 
-> *   执行任何代码。
-> *   修改请求和响应对象。
-> *   终结请求-响应循环。
-> *   调用堆栈中的下一个中间件。
-> 
-> 如果当前中间件没有终结请求-响应循环，则必须调用 `next()` 方法将控制权交给下一个中间件，否则请求就会挂起。
-> 
-> Express 应用可使用如下几种中间件：
-> 
-> *   [应用级中间件](https://link.juejin.im?target=http%3A%2F%2Fwww.expressjs.com.cn%2Fguide%2Fusing-middleware.html%23middleware.application)
-> *   [路由级中间件](https://link.juejin.im?target=http%3A%2F%2Fwww.expressjs.com.cn%2Fguide%2Fusing-middleware.html%23middleware.router)
-> *   [错误处理中间件](https://link.juejin.im?target=http%3A%2F%2Fwww.expressjs.com.cn%2Fguide%2Fusing-middleware.html%23middleware.error-handling)
-> *   [内置中间件](https://link.juejin.im?target=http%3A%2F%2Fwww.expressjs.com.cn%2Fguide%2Fusing-middleware.html%23middleware.built-in)
-> *   [第三方中间件](https://link.juejin.im?target=http%3A%2F%2Fwww.expressjs.com.cn%2Fguide%2Fusing-middleware.html%23middleware.third-party)
-> 
-> 使用可选则挂载路径，可在应用级别或路由级别装载中间件。另外，你还可以同时装在一系列中间件函数，从而在一个挂载点上创建一个子中间件栈。
+ _中间件（Middleware）_ 是一个函数，它可以访问请求对象, 响应对象, 和 web 应用中处于请求-响应循环流程中的中间件。
+ 
+ 中间件的功能包括：
+ 
+ *   执行任何代码。
+ *   修改请求和响应对象。
+ *   终结请求-响应循环。
+ *   调用堆栈中的下一个中间件。
+ 
+ 如果当前中间件没有终结请求-响应循环，则必须调用 `next()` 方法将控制权交给下一个中间件，否则请求就会挂起。
+ 
+ Express 应用可使用如下几种中间件：
+ 
+ *   [应用级中间件]
+ *   [路由级中间件]
+ *   [错误处理中间件]
+ *   [内置中间件]
+ *   [第三方中间件]
+ 
+ 使用可选的挂载路径，可在应用级别或路由级别装载中间件。另外，你还可以同时装载一系列中间件函数，从而在一个挂载点上创建一个子中间件栈。
 
 官方给出的定义其实已经足够清晰，一个中间件的样式其实就是上一节所提到的处理函数，只不过并没有正式命名。所以对于代码来说Router类中的this.stack属性内部的每个handle都是一个中间件，根据使用接口不同区别了**应用级中间件**和**路由级中间件**，而四个参数的处理函数就是**错误处理中间件**。
 
 接下来就给expross框架添加中间件的功能。
 
-首先是应用级中间件，其使用方法是Application类上的两种方式：Application.use 和 Application.METHOD (HTTP的各种请求方法），后者其实在前面的小节里已经实现了，前者则是需要新增的。
+首先是应用级中间件，其使用方法是Application类的Application.use。
 
-在前面的小节里的代码已经说明Application.METHOD内部其实是Router.METHOD的代理，Application.use同样如此。
-
-    Application.prototype.use = function(fn) {
-        var path = '/',
-            router = this._router;
-
-        router.use(path, fn);
-
-        return this;
-    };
-
-因为Application.use支持可选路径，所以需要增加处理路径的重载代码。
+在前面的小节里的代码已经说明Application.METHOD内部其实是Router.METHOD的代理，Application.use同样如此。且因为Application.use支持可选路径，所以需要增加处理路径的重载代码：
 
     Application.prototype.use = function(fn) {
         var path = '/',
             router = this._router;
-
         //路径挂载
         if(typeof fn !== 'function') {
             path = fn;
             fn = arguments[1];
         }
-
         router.use(path, fn);
-
         return this;
     };
-
-其实express框架支持的参数不仅仅这两种，但是为了便于理解剔除了一些旁枝末节，便于框架的理解。
 
 接下来实现Router.use函数。
 
     Router.prototype.use = function(fn) {
         var path = '/';
-
         //路径挂载
         if(typeof fn !== 'function') {
             path = fn;
             fn = arguments[1];
         }
-
         var layer = new Layer(path, fn);
         layer.route = undefined;
-
         this.stack.push(layer);
-
         return this;
     };
 
 内部代码和Application.use差不多，只不过最后不再是调用Router.use，而是直接创建一个Layer对象，将其放到this.stack数组中。
 
-在这里段代码里可以看到普通路由和中间件的区别。普通路由放到Route中，且Router.route属性指向Route对象，Router.handle属性指向Route.dispatch函数；中间件的Router.route属性为undefined，Router.handle指向中间件处理函数，被放到Router.stack数组中。
+在这里段代码里可以看到普通路由和中间件的区别：
+
+1. 普通路由放到Route中，且Router.route属性指向Route对象，Router.handle属性指向Route.dispatch函数
+2. 中间件的Router.route属性为undefined，Router.handle指向中间件处理函数，被放到Router.stack数组中。
 
 对于路由级中间件，首先按照要求导出Router类，便于使用。
 
@@ -1076,15 +997,14 @@ express官方给出的解释如下：
 上面的代码添加到expross.js文件中，这样就可以按照下面的使用方式创建一个单独的路由系统。
 
     var app = express();
-    var router = express.Router();
-
+    var router = new express.Router();
     router.use(function (req, res, next) {
       console.log('Time:', Date.now());
     });
 
-现在问题来了，如果像上面的代码一样创建一个新的路由系统是无法让路由系统内部的逻辑生效的，因为这个路由系统没法添加到现有的系统中。
+现在问题来了，如果像上面的代码一样创建一个`新的路由系统`是无法让路由系统内部的逻辑生效的，因为这个路由系统没法添加到现有的系统中。一种办法是增加一个专门添加新路由系统的接口，是完全是可行的。
 
-一种办法是增加一个专门添加新路由系统的接口，是完全是可行的，但是我更欣赏express框架的办法，这可能是Router叫做路由级中间件的原因。express将Router定义成一个特殊的中间件，而不是一个单独的类。
+但是我更欣赏express框架的办法，express将Router定义成一个特殊的中间件。这可能是Router叫做路由级中间件的原因
 
 这样将单独创建的路由系统添加到现有的应用中的代码非常简单通用：
 
@@ -1093,25 +1013,22 @@ express官方给出的解释如下：
     // 将路由挂载至应用
     app.use('/', router);
 
-这确实是一个好方法，现在就来将expross修改成类似的样子。
-
-首先创建一个原型对象，将现有的Router方法转移到该对象上。
+现在就来将expross修改成类似的样子。首先创建一个原型对象，将现有的Router方法转移到该对象上。
 
     var proto = {};
-
-    proto.handle = function(req, res, done) {...};
-    proto.route = function route(path) {...};
-    proto.use = function(fn) { ... };
-
     http.METHODS.forEach(function(method) {
         method = method.toLowerCase();
         proto[method] = function(path, fn) {
             var route = this.route(path);
             route[method].call(route, fn);
-
             return this;
         };
     });
+    // 替换
+    proto.handle = function(req, res, done) {...};
+    proto.route = function route(path) {...};
+    proto.use = function(fn) { ... };
+    
 
 然后创建一个中间件函数，使用Object.setPrototypeOf函数设置其原型，最后导出一个生成这些过程的函数。
 
@@ -1132,27 +1049,22 @@ express官方给出的解释如下：
         console.log('Time：', Date.now());
         next();
     });
-
     app.get('/', function(req, res, next) {
         res.send('first');
     });
-
     router.use(function(req, res, next) {
         console.log('Time: ', Date.now());
         next();
     });
-
     router.use('/', function(req, res, next) {
         res.send('second');
     });
-
     app.use('/user', router);
-
     app.listen(3000, function() {
         console.log('Example app listening on port 3000!');
     });
 
-结果并不理想，原有的应用程序还有两个地方需要修改。
+结果并不理想，期望中间件打印时间，但是没有打印出来。原有的应用程序还有两个地方需要修改。
 
 首先是逻辑处理问题。原有的Router.handle函数中并没有处理中间件的情况，需要进一步修改。
 
@@ -1203,7 +1115,9 @@ express官方给出的解释如下：
         next();
     };
 
-其次是路径匹配的问题。原有的单一路径被拆分成为不同中间的路径组合，这里判断需要多步进行，因为每个中间件只是匹配自己的路径是否通过，不过相对而言目前涉及的匹配都是全等匹配，还没有涉及到类似express框架中的正则匹配，算是非常简单了。
+仅仅如此是不够的，因为代码中的path变量还没有定义。这就涉及到了第二个问题，也就会路径匹配的问题。
+
+原有的单一路径被拆分成为不同中间件的路径组合，这里判断需要多步进行，因为每个中间件只是匹配自己的路径是否通过。不过相对而言目前涉及的匹配都是全等匹配，还没有涉及到类似express框架中的正则匹配，算是非常简单了。
 
 想要实现匹配逻辑就要清楚的知道哪段路径和哪个处理函数匹配，这里定义三个变量：
 
@@ -1218,61 +1132,49 @@ express官方给出的解释如下：
             method = req.method,
             idx = 0, stack = self.stack,
             removed = '', slashAdded = false;
-
         //获取当前父路径
         var parentUrl = req.baseUrl || '';
         //保存父路径
         req.baseUrl = parentUrl;
         //保存原始路径
         req.orginalUrl = req.orginalUrl || req.url;
-
         function next(err) {
             var layerError = (err === 'route' ? null : err);
-
             //如果有移除，复原原有路径
             if(slashAdded) {
                 req.url = '';
                 slashAdded = false;
             }
-
             //如果有移除，复原原有路径信息
             if(removed.length !== 0) {
                 req.baseUrl = parentUrl;
                 req.url = removed + req.url;
                 removed = '';
             }
-
             //跳过路由系统
             if(layerError === 'router') {
                 return done(null);
             }
-
             if(idx >= stack.length || layerError) {
                 return done(layerError);
             }
-
             //获取当前路径
             var path = require('url').parse(req.url).pathname;
-
             var layer = stack[idx++];
             //匹配，执行
             if(layer.match(path)) {
-
                 //处理中间件
                 if(!layer.route) {
                     //要移除的部分路径
                     removed = layer.path;
-
                     //设置当前路径
                     req.url = req.url.substr(removed.length);
                     if(req.url === '') {
                         req.url = '/' + req.url;
                         slashAdded = true;
                     }
-
                     //设置当前路径的父路径
                     req.baseUrl = parentUrl + removed;
-
                     //调用处理函数
                     layer.handle_request(req, res, next);    
                 } else if(layer.route._handles_method(method)) {
@@ -1283,7 +1185,6 @@ express官方给出的解释如下：
                 layer.handle_error(layerError, req, res, next);
             }
         }
-
         next();
     };
 
@@ -1294,14 +1195,12 @@ express官方给出的解释如下：
     router.use('/1', function(req, res, next) {
         res.send('first user');
     });
-
     router.use('/2', function(req, res, next) {
         res.send('second user');
     });
-
     app.use('/users', router);
 
-这种情况下，Router.handle顺序匹配到中间的时候，会递归调用Router.handle，所以需要保存当前的路径快照，具体路径相关信息放到req.url、req.originalUrl 和req.baseUrl 这三个参数中。
+这种情况下，Router.handle顺序匹配到中间件的时候，会递归调用Router.handle，所以需要保存当前的路径快照，具体路径相关信息放到req.url、req.originalUrl 和req.baseUrl 这三个参数中。
 
 第二种，非路由中间件的情况。如：
 
@@ -1315,13 +1214,24 @@ express官方给出的解释如下：
 
 这种情况下，Router.handle内部主要是按照栈中的次序匹配路径即可。
 
+此时可以做一个技术验证会发现，我们的打印时间的中间件已经可以生效了。
+
+    $ node test/index.js
+    $ curl localhost:3000
+
+服务器打印：
+
+    Time： 1554278997816
+    
+
+
 改好了处理函数，还需要修改一下Layer.match这个匹配函数。目前创建Layer可能会有三种情况：
 
 *   不含有路径的中间件。path属性默认为`/`。
 *   含有路径的中间件。
 *   普通路由。如果path属性为`*`，表示任意路径。
 
-修改原有Layer是构造函数，增加一个fast_star 标记用来判断path是否为*。
+修改原有Layer是构造函数，增加一个fast_star 标记用来判断path是否为`*`。
 
     function Layer(path, fn) {
       this.handle = fn;
@@ -1338,37 +1248,32 @@ express官方给出的解释如下：
 接着修改Layer.match匹配函数。
 
     Layer.prototype.match = function(path) {
-
       //如果为*，匹配
       if(this.fast_star) {
         this.path = '';
         return true;
       }
-
       //如果是普通路由，从后匹配
       if(this.route && this.path === path.slice(-this.path.length)) {
         return true;
       }
-
       if (!this.route) {
         //不带路径的中间件
         if (this.path === '/') {
           this.path = '';
           return true;
         }
-
         //带路径中间件
         if(this.path === path.slice(0, this.path.length)) {
           return true;
         }
       }
-
       return false;
     };
 
 代码中一共判断四种情况，根据this.route区分中间件和普通路由，然后分开判断。
 
-express除了普通的中间件外还要一种错误中间件，专门用来处理错误信息。该中间件的声明和上一小节最后介绍的错误处理函数是一样的，同样是四个参数分别是：err、 req、 res和 next。
+express除了普通的中间件外还要一种错误中间件，专门用来处理错误信息。该中间件的声明是四个参数：err、 req、 res和 next。
 
 目前Router.handle中，当遇见错误信息的时候，会直接通过回调函数返回错误信息，显示错误页面。
 
@@ -1403,7 +1308,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
 
 到此为止，expross的错误处理部分算是基本完成了。
 
-路由系统和中间件两个大的概念算是全部讲解完毕，当然还有很多细节没有完善，在剩下的文字里如果有必要会继续完善。
+路由系统和中间件两个大的概念算是全部讲解完毕。
 
 下一节主要的内容是介绍前后端交互的两个重要成员：request和response。express在nodejs的基础之上进行了丰富的扩展，所以很有必要仿制一下。
 
@@ -1470,7 +1375,7 @@ express除了普通的中间件外还要一种错误中间件，专门用来处�
 
 在整个路由系统中，Router.stack每一项其实都是一个中间件，每个中间件都有可能用到req和res这两个对象，所以代码中修改nodejs原生提供的request和response对象的代码放到了Application.handle中，这样做并没有问题，但是有一种更好的方式，expross框架将这部分代码封装成了一个内部中间件。
 
-为了确保框架中每个中间件接收这两个参数的正确性，需要将该内部中间放到Router.stack的首项。这里将原有Application的构造函数中的代码去掉，不再是直接创建Router()路由系统，而是用一种惰性加载的方式，动态创建。
+为了确保框架中每个中间件接收这两个参数的正确性，需要将该内部中间件放到Router.stack的首项。这里将原有Application的构造函数中的代码去掉，不再是直接创建Router()路由系统，而是用一种惰性加载的方式，动态创建。
 
 去除原有Application构造函数的代码。
 
@@ -1806,6 +1711,3 @@ express框架是如何实现这个默认加载的功能的呢？很简单，只�
 
 太多函数了，不一一列举，前文已经提到，涉及的细节太多，正则表达式，http协议层，nodejs本身函数的使用，对于整个框架的理解帮助不大，全部舍弃。不过大多数函数都是自成体系，很好理解。
 
-</div>
-
-代码链接：[github.com/WangZhechao…](https://link.juejin.im?target=https%3A%2F%2Fgithub.com%2FWangZhechao%2Fexpross)
