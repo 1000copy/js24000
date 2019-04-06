@@ -9,19 +9,34 @@ Route.prototype._handles_method = function(method) {
     return Boolean(this.methods[name]);
 };
 Route.prototype.get = function(fn) {
-    var layer = new Layer('/', fn);
+    var layer = new Road('/', 'get',fn);
     layer.method = 'get';
     this.methods['get'] = true;
     this.stack.push(layer);
     return this;
 };
+// var arr = Array.prototype.slice.call(arguments,1)
+function flatten(answer,arr){
+    // var answer = []
+    arr.forEach(function(item){
+        if (Array.isArray(item))
+            flatten(answer,item)
+        else
+            answer.push(item)
+    })
+    return answer
+}
 http.METHODS.forEach(function(method) {
     method = method.toLowerCase();
     Route.prototype[method] = function(fn) {
-        var layer = new Layer('/', fn);
-        layer.method = method;
         this.methods[method] = true;
-        this.stack.push(layer);
+        var fns = Array.prototype.slice.call(arguments)
+        fns = flatten([],fns)
+        // console.log('arguments',fns,arguments)
+        fns.forEach((fn)=>{
+            this.stack.push(new Road('/',method,fn));    
+        })
+        
         return this;
     };
 });
@@ -116,7 +131,8 @@ http.METHODS.forEach(function(method) {
     method = method.toLowerCase();
     proto[method] = function(path, fn) {
         var route = this.route(path);
-        route[method].call(route, fn);
+        // route[method].call(route, fn);
+        route[method].apply(route, Array.prototype.slice.call(arguments,1));
         return this;
     };
 });
@@ -194,9 +210,13 @@ proto.use = function(fn) {
         path = fn;
         fn = arguments[1];
     }
-    var layer = new Layer(path, fn);
-    layer.route = undefined;
-    this.stack.push(layer);
+    var arr = flatten([],Array.prototype.slice.call(arguments))
+    // console.log(arr)
+    arr.forEach((fn)=>{
+        var layer = new Layer(path, fn);
+        layer.route = undefined;
+        this.stack.push(layer);    
+    })
     return this;
 };
 var Router = function() {
@@ -268,3 +288,64 @@ function createApp(){
 }
 exports = module.exports.createApp = createApp
 exports = module.exports.Router = Router
+// Road
+// 5. 每个Route内部也是一个Layer对象，但是Route内部的Layer和Router内部的Layer是存在一定的差异性。
+// *   Router内部的Layer，主要包含path、route属性。
+// *   Route 内部的Layer，主要包含method、handle属性。
+// todo : remove this.route ,这里没有可能使用
+function Road(path, method,fn) {
+    this.handle = fn;
+    this.name = fn.name || '<anonymous>';
+    this.path = path;
+    //
+    this.method = method;
+      //是否为*
+    this.fast_star = (path === '*' ? true : false);
+    if(!this.fast_star) {
+       this.path = path;
+    }
+}
+//简单处理
+Road.prototype.handle_request = function (req, res, next) {
+  var fn = this.handle;
+  try {
+    fn(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+};//简单匹配
+Road.prototype.match = function(path) {
+  //如果为*，匹配
+  if(this.fast_star) {
+    this.path = '';
+    return true;
+  }
+  //如果是普通路由，从后匹配
+  if(this.route && this.path === path.slice(-this.path.length)) {
+    return true;
+  }
+  if (!this.route) {
+    //不带路径的中间件
+    if (this.path === '/') {
+      this.path = '';
+      return true;
+    }
+    //带路径中间件
+    if(this.path === path.slice(0, this.path.length)) {
+      return true;
+    }
+  }
+  return false;
+};
+Road.prototype.handle_error = function (error, req, res, next) {
+  var fn = this.handle;
+  //如果函数参数不是标准的4个参数，返回错误信息
+  if(fn.length !== 4) {
+    return next(error);
+  }
+  try {
+    fn(error, req, res, next);
+  } catch (err) {
+    next(err);
+  }
+};
