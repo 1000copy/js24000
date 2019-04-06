@@ -61,7 +61,7 @@ test('next router', async t => {
 	const app = expross()
 	var router = expross.Router()
 	router.post('/', 
-		function a(req, res,next) {next('router');t.log(1)},
+		function a(req, res,next) {next('router')},
 		function b(req, res) {res.send(str0+1)})
 	router.post('/', 
 		function a(req, res,next) {next()},
@@ -69,7 +69,7 @@ test('next router', async t => {
     app.use(router)
     app.post('/', 
 		function a(req, res,next) {next()},
-		function b(req, res) {res.send(str0);t.log(5)})
+		function b(req, res) {res.send(str0)})
     app.handle(req,res)
 });
 test('router use', t => {
@@ -89,10 +89,10 @@ test('router use', t => {
     }) 
     // a middleware sub-stack shows request info for any type of HTTP request to the /user/id path
     router.use('/user/id', function (req, res, next) {
-      t.log('Request URL:', req.originalUrl)
+      // t.log('Request URL:', req.originalUrl)
       next()
     }, function (req, res, next) {
-      t.log('Request Type:', req.method)
+      // t.log('Request Type:', req.method)
       res.send(str0)
     })
     // mount the router on the app
@@ -122,6 +122,41 @@ test('router get ', t => {
     app.handle(req,res)
 	// t.pass();
 });
+test('error handle ', t => {
+	var str0 = 'Got a POST request'
+	req = Object.assign({},req,{url:'/user',method:'get'})
+    res.send = (str)=>{
+		t.is(str,str0)
+	}	
+	const express = require('./lib/expross')
+	const app = express()
+    app.get('/user', 
+    	function (req, res, next) {
+       		next(new Error('error1**'))
+    	},
+    	function (err,req, res, next) {
+	      t.is(err.message,'error1**')
+	    })
+    // t.log(app._router.stack[0].handle.stack[0])
+    app.handle(req,res)
+	// t.pass();
+});
+test('route params', t => {
+	var str0 = 'Got a POST request'
+	req = Object.assign({},req,{url:'/user/11',method:'get'})
+    res.send = (str)=>{
+		t.is(str,str0)
+	}	
+	const express = require('./lib/expross')
+	const app = express()
+	app.get('/user/:id', function (req, res, next) {
+      next()
+    }, function (req, res, next) {
+      t.is(req.params,11)
+      res.send(str0)
+    })
+    app.handle(req,res)
+});
 // test('foo', t => {
 // 	app.get(/a/, function (req, res) {
 //       res.send('/a/')
@@ -129,15 +164,6 @@ test('router get ', t => {
 // 	t.pass();
 // });
 
-// test('foo', t => {
-// 	app.get('/user/:id', function (req, res, next) {
-//       console.log('ID:', req.params.id)
-//       next()
-//     }, function (req, res, next) {
-//       res.send('User Info')
-//     })
-// 	t.pass();
-// });
 // test('foo', t => {
 // 	app.use(function (err, req, res, next) {
 //       console.error(err.stack)

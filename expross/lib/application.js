@@ -9,7 +9,7 @@ Route.prototype._handles_method = function(method) {
     return Boolean(this.methods[name]);
 };
 Route.prototype.get = function(fn) {
-    var layer = new Road('/', 'get',fn);
+    var layer = new Road('get',fn);
     layer.method = 'get';
     this.methods['get'] = true;
     this.stack.push(layer);
@@ -34,7 +34,7 @@ http.METHODS.forEach(function(method) {
         fns = flatten([],fns)
         // console.log('arguments',fns,arguments)
         fns.forEach((fn)=>{
-            this.stack.push(new Road('/',method,fn));    
+            this.stack.push(new Road(method,fn));    
         })
         
         return this;
@@ -58,15 +58,15 @@ Route.prototype.dispatch = function(req, res, done) {
             return done(err);
         }
         //不等枚举下一个
-        var layer = stack[idx++];
-        if(method !== layer.method) {
+        var road = stack[idx++];
+        if(method !== road.method) {
             return next(err);
         }
         if(err) {
             //主动报错
-            layer.handle_error(err, req, res, next);
+            road.handle_error(err, req, res, next);
         } else {
-            layer.handle_request(req, res, next);
+            road.handle_request(req, res, next);
         }
     }
     next();
@@ -90,7 +90,7 @@ Layer.prototype.handle_request = function (req, res, next) {
     next(err);
   }
 };//简单匹配
-Layer.prototype.match = function(path) {
+Layer.prototype.match1 = function(path) {
   //如果为*，匹配
   if(this.fast_star) {
     this.path = '';
@@ -171,7 +171,7 @@ proto.handle = function(req, res, done) {
         var path = require('url').parse(req.url).pathname;
         var layer = stack[idx++];
         //匹配，执行
-        if(layer.match(path)) {
+        if(layer.match1(path)) {
             //处理中间件
             if(!layer.route) {
                 //要移除的部分路径
@@ -293,17 +293,10 @@ exports = module.exports.Router = Router
 // *   Router内部的Layer，主要包含path、route属性。
 // *   Route 内部的Layer，主要包含method、handle属性。
 // todo : remove this.route ,这里没有可能使用
-function Road(path, method,fn) {
+function Road(method,fn) {
     this.handle = fn;
-    this.name = fn.name || '<anonymous>';
-    this.path = path;
-    //
     this.method = method;
-      //是否为*
-    this.fast_star = (path === '*' ? true : false);
-    if(!this.fast_star) {
-       this.path = path;
-    }
+    this.name = fn.name || '<anonymous>';
 }
 //简单处理
 Road.prototype.handle_request = function (req, res, next) {
@@ -314,29 +307,6 @@ Road.prototype.handle_request = function (req, res, next) {
     next(err);
   }
 };//简单匹配
-Road.prototype.match = function(path) {
-  //如果为*，匹配
-  if(this.fast_star) {
-    this.path = '';
-    return true;
-  }
-  //如果是普通路由，从后匹配
-  if(this.route && this.path === path.slice(-this.path.length)) {
-    return true;
-  }
-  if (!this.route) {
-    //不带路径的中间件
-    if (this.path === '/') {
-      this.path = '';
-      return true;
-    }
-    //带路径中间件
-    if(this.path === path.slice(0, this.path.length)) {
-      return true;
-    }
-  }
-  return false;
-};
 Road.prototype.handle_error = function (error, req, res, next) {
   var fn = this.handle;
   //如果函数参数不是标准的4个参数，返回错误信息
