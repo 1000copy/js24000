@@ -90,15 +90,25 @@ Layer.prototype.handle_request = function (req, res, next) {
     next(err);
   }
 };//简单匹配
-Layer.prototype.match1 = function(path) {
+Layer.prototype.match = function(path,req) {
   //如果为*，匹配
   if(this.fast_star) {
     this.path = '';
     return true;
   }
   //如果是普通路由，从后匹配
-  if(this.route && this.path === path.slice(-this.path.length)) {
-    return true;
+  if(this.route ) {
+    if (this.path === path.slice(-this.path.length))
+        return true
+    else{
+        var rparam = require('./regpath')
+        if (rparam.match(this.path,path)){
+            var p = rparam.getParam(this.path,path)
+            req.params = Object.assign(req.params||{},p)
+            return true
+        }
+        
+    }
   }
   if (!this.route) {
     //不带路径的中间件
@@ -171,7 +181,7 @@ proto.handle = function(req, res, done) {
         var path = require('url').parse(req.url).pathname;
         var layer = stack[idx++];
         //匹配，执行
-        if(layer.match1(path)) {
+        if(layer.match(path,req)) {
             //处理中间件
             if(!layer.route) {
                 //要移除的部分路径

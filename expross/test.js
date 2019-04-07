@@ -141,6 +141,13 @@ test('error handle ', t => {
     app.handle(req,res)
 	// t.pass();
 });
+var rparam = require('./lib/regpath')
+test('path params', t => {
+	var a =rparam.match('/user/:id','/user/reco')
+	var b =rparam.getParam('/user/:id','/user/reco')
+	t.is(a,true)
+	t.is(b.id,'reco' )
+});      
 test('route params', t => {
 	var str0 = 'Got a POST request'
 	req = Object.assign({},req,{url:'/user/11',method:'get'})
@@ -152,17 +159,30 @@ test('route params', t => {
 	app.get('/user/:id', function (req, res, next) {
       next()
     }, function (req, res, next) {
-      t.is(req.params,11)
+      t.is(req.params.id,'11')
       res.send(str0)
     })
     app.handle(req,res)
 });
-// test('foo', t => {
-// 	app.get(/a/, function (req, res) {
-//       res.send('/a/')
-//     })
-// 	t.pass();
-// });
+test('regexp', t => {
+	var r = /a?/
+	t.is(typeof r,'object')
+	t.is('ac'.match(r)[0],'a')
+	t.is('bc'.match(r)[0],'')
+});
+test('regpath', t => {
+	var str0 = 'Got a POST request'
+	req = Object.assign({},req,{url:'/abc',method:'get'})
+    res.send = (str)=>{
+		t.is(str,str0)
+	}	
+	const express = require('./lib/expross')
+	const app = express()
+	app.get(/a?c/, function (req, res) {
+      res.send(str0)
+    })
+	app.handle(req,res)
+});
 
 // test('foo', t => {
 // 	app.use(function (err, req, res, next) {
