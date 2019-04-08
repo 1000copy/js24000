@@ -142,39 +142,62 @@ http.METHODS.forEach(function(method) {
         return this;
     };
 });
+function UrlMonster(req){
+    this.req = req
+    this.removed = ''
+    this.slashAdded = false
+    this.parentUrl = this.req.baseUrl || ''
+}
+UrlMonster.prototype.init = function(){
+    // The URL path on which a router instance was mounted.
+    this.req.baseUrl = this.parentUrl;
+    // This property is much like req.url; however, 
+    // it retains the original request URL, allowing you to rewrite 
+    // req.url freely for internal routing purposes. F
+    this.req.orginalUrl = this.req.orginalUrl || this.req.url;
+}
+UrlMonster.prototype.nextBegin = function(){
+    // 如果添加过slash
+    if(this.slashAdded) {
+        this.req.url = '';
+        this.slashAdded = false;
+    }
+    //如果有移除，复原原有路径信息
+    if(this.removed.length !== 0) {
+        this.req.baseUrl =this.parentUrl;
+        this.req.url = this.removed + this.req.url;
+        this.removed = '';
+    }
+}
+UrlMonster.prototype.beforeMiddlewareHandle=function(layer){
+    //移除上一级路径
+    this.removed = layer.path;
+    this.req.url = this.req.url.substr(this.removed.length);
+    if(this.req.url === '') {
+        this.req.url = '/' + this.req.url;
+        this.slashAdded = true;
+    }
+    //设置当前路径的父路径
+    this.req.baseUrl = this.parentUrl + this.removed;
+}
 proto.handle = function(req, res, done) {
-    var self = this,
-        method = req.method,
-        idx = 0, stack = self.stack;
-    var //
-        removed = '', slashAdded = false;
-    //获取当前父路径
-    var parentUrl = req.baseUrl || '';
-    //保存父路径
-    req.baseUrl = parentUrl;
-    //保存原始路径
-    req.orginalUrl = req.orginalUrl || req.url;
+    var
+        idx = 0, stack = this.stack;
+    var urlm = new UrlMonster(req)
     function next(err) {
-        
-        var layerError = (err === 'route' ? null : err);
-        //如果有移除，复原原有路径
-        if(slashAdded) {
-            req.url = '';
-            slashAdded = false;
-        }
-        //如果有移除，复原原有路径信息
-        if(removed.length !== 0) {
-            req.baseUrl = parentUrl;
-            req.url = removed + req.url;
-            removed = '';
-        }
-        //跳过路由系统
-        if(layerError === 'router') {
+        if(err === 'router') {
             return done(null);
         }
-        if(idx >= stack.length || layerError) {
+        var layerError = (err === 'route' ? null : err);
+        // var layerError = err;
+        //跳过路由系统
+        if(layerError) {
             return done(layerError);
         }
+        if(idx >= stack.length) {
+            return done(layerError);
+        }
+        urlm.nextBegin()
         //获取当前路径
         var path = require('url').parse(req.url).pathname;
         var layer = stack[idx++];
@@ -182,19 +205,10 @@ proto.handle = function(req, res, done) {
         if(layer.match(path,req)) {
             //处理中间件
             if(!layer.route) {
-                //要移除的部分路径
-                removed = layer.path;
-                //设置当前路径
-                req.url = req.url.substr(removed.length);
-                if(req.url === '') {
-                    req.url = '/' + req.url;
-                    slashAdded = true;
-                }
-                //设置当前路径的父路径
-                req.baseUrl = parentUrl + removed;
+                urlm.beforeMiddlewareHandle(layer)
                 //调用处理函数
                 layer.handle_request(req, res, next);    
-            } else if(layer.route._handles_method(method)) {
+            } else if(layer.route._handles_method(req.method)) {
                 //处理路由
                 layer.handle_request(req, res, next);
             }    

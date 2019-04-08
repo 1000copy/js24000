@@ -44,7 +44,7 @@ test('next route', async t => {
 	const app = expross()
 	app.post('/', 
 		function a(req, res,next) {next('route');},
-		function b(req, res) {res.send(str0+1)})
+		function b(err,req, res,next) {res.send(str0+1)})
 	app.post('/', 
 		function a(req, res,next) {next()},
 		function b(req, res) {res.send(str0)})
