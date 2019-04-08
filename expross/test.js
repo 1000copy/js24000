@@ -80,7 +80,7 @@ test('next router', async t => {
 	const app = expross()
 	var router = expross.Router()
 	router.post('/', 
-		function a(req, res,next) {next('router')},
+		function a(req, res,next) {next('router')/*goto app.done()*/},
 		function b(req, res) {res.send(str0+1)})
 	router.post('/', 
 		function a(req, res,next) {next()},
@@ -95,6 +95,7 @@ test('next router', async t => {
 		function a(req, res,next) {next()},
 		function b(req, res) {res.send(str0)})
     function done(){
+    	// t.is(1,2)
     	t.pass()
     }
     app._router.handle(req, res, done);
