@@ -17,7 +17,7 @@ test('post', async t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const expross = require('./lib/expross')
+	const expross = require('./lib')
 	const app = expross()
 	app.post('/', function a(req, res,next) {res.send(str0)})
     app.handle(req,res)
@@ -27,7 +27,7 @@ test('post', async t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const expross = require('./lib/expross')
+	const expross = require('./lib')
 	const app = expross()
 	app.post('/', 
 		function a(req, res,next) {next()},
@@ -40,7 +40,7 @@ test('next route', async t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const expross = require('./lib/expross')
+	const expross = require('./lib')
 	const app = expross()
 	app.post('/', 
 		function a(req, res,next) {next('route');},
@@ -57,7 +57,7 @@ test('next router', async t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const expross = require('./lib/expross')
+	const expross = require('./lib')
 	const app = expross()
 	var router = expross.Router()
 	router.post('/', 
@@ -78,7 +78,7 @@ test('router use', t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const express = require('./lib/expross')
+	const express = require('./lib')
 	const app = express()
 	
     var router = express.Router()
@@ -106,7 +106,7 @@ test('router get ', t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const express = require('./lib/expross')
+	const express = require('./lib')
 	const app = express()
     var router = express.Router()
     // a middleware sub-stack that handles GET requests to the /user/id path
@@ -128,7 +128,7 @@ test('error handle ', t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const express = require('./lib/expross')
+	const express = require('./lib')
 	const app = express()
     app.get('/user', 
     	function (req, res, next) {
@@ -154,7 +154,7 @@ test('route params', t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const express = require('./lib/expross')
+	const express = require('./lib')
 	const app = express()
 	app.get('/user/:id', function (req, res, next) {
       next()
@@ -163,6 +163,13 @@ test('route params', t => {
       res.send(str0)
     })
     app.handle(req,res)
+    app.get('/users/:userId/books/:bookId', function (req, res) {
+      t.is(req.params.userId,'1')
+      t.is(req.params.bookId,'2')
+      res.send(str0)
+    })
+	req.url = '/users/1/books/2'
+	app.handle(req,res)
 });
 test('regexp', t => {
 	var r = /a?/
@@ -176,93 +183,47 @@ test('regpath', t => {
     res.send = (str)=>{
 		t.is(str,str0)
 	}	
-	const express = require('./lib/expross')
+	const express = require('./lib')
 	const app = express()
 	app.get(/a?c/, function (req, res) {
       res.send(str0)
     })
+    app.get(/.*fly$/, function (req, res) {
+      res.send(str0)
+    })
+	app.handle(req,res)
+	req = Object.assign({},req,{url:'/.HORSEfly',method:'get'})
 	app.handle(req,res)
 });
 
-// test('foo', t => {
-// 	app.use(function (err, req, res, next) {
-//       console.error(err.stack)
-//       res.status(500).send('Something broke!')
-//     })
-// 	app.handle()
-// });
-// test('foo', t => {
-// 	app.get('/a_route_behind_paywall',
-//       function checkIfPaidSubscriber (req, res, next) {
-//         if (!req.user.hasPaid) {
-//           // continue handling this request
-//           next('route')
-//         }
-//         else{
-//           next();
-//         }
-//       }, function getPaidContent (req, res, next) {
-//         PaidContent.find(function (err, doc) {
-//           if (err) return next(err)
-//           res.json(doc)
-//         })
-//       })
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	app.get(/.*fly$/, function (req, res) {
-//       res.send('/.*fly$/')
-//     })
-// 	t.pass();
-// });
-// /*Route path: /users/:userId/books/:bookId
-//     Request URL: http://localhost:3000/users/34/books/8989
-//     req.params: { "userId": "34", "bookId": "8989" }
-// */
-// test('foo', t => {
-// 	app.get('/users/:userId/books/:bookId', function (req, res) {
-//       res.send(req.params)
-//     })
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	var express = require('express')
-//     var router = express.Router()
-//     var app = express()
-//     // middleware that is specific to this router
-//     router.use(function timeLog (req, res, next) {
-//       console.log('Time: ', Date.now())
-//       next()
-//     })
-//     // define the home page route
-//     router.get('/', function (req, res) {
-//       res.send('Birds home page')
-//     })
-//     // define the about route
-//     router.get('/about', function (req, res) {
-//       res.send('About birds')
-//     })
-//     app.use(router)
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	t.pass();
-// });
-// test('foo', t => {
-// 	t.pass();
-// });
+test('bird home', t => {
+	var str0 = 'Got a POST request'
+	req = Object.assign({},req,{url:'/',method:'get'})
+    res.send = (str)=>{
+		t.is(str,str0)
+	}	
+	const express = require('./lib')
+    var router = express.Router()
+    var app = express()
+    // middleware that is specific to this router
+    router.use(function timeLog (req, res, next) {
+      // console.log('Time: ', Date.now())
+      next()
+    })
+    // define the home page route
+    router.get('/', function (req, res) {
+      res.send(str0)
+    })
+    // define the about route
+    router.get('/about', function (req, res) {
+      res.send(str0)
+    })
+    app.use('/birds',router)
+    app.handle(req,res)
+    req.url = '/birds/about'
+    app.handle(req,res)
+	t.pass();
+});
 test('foo',t => {
 	function a(path,fn){
 		var arr = Array.prototype.slice.call(arguments,1)

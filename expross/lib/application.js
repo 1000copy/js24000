@@ -71,15 +71,14 @@ Route.prototype.dispatch = function(req, res, done) {
     }
     next();
 };
-function Layer(path, fn) {
-    this.handle = fn;
+// Layer
+function Layer(path, fn,route) {
     this.name = fn.name || '<anonymous>';
+    this.handle = fn;
     this.path = path;
+    this.route = route
       //是否为*
-    this.fast_star = (path === '*' ? true : false);
-    if(!this.fast_star) {
-       this.path = path;
-    }
+    this.fast_star = path === '*' ;
 }
 //简单处理
 Layer.prototype.handle_request = function (req, res, next) {
@@ -96,8 +95,7 @@ Layer.prototype.match = function(path,req) {
     this.path = '';
     return true;
   }
-  //如果是普通路由，从后匹配
-  if(this.route ) {
+  if(this.route ) {//route
     if (this.path === path.slice(-this.path.length))
         return true
     else{
@@ -109,14 +107,12 @@ Layer.prototype.match = function(path,req) {
         }
         
     }
-  }
-  if (!this.route) {
-    //不带路径的中间件
-    if (this.path === '/') {
+  }else{// middleware
+    if (this.path === '/') {// no path
       this.path = '';
       return true;
     }
-    //带路径中间件
+    // have path
     if(this.path === path.slice(0, this.path.length)) {
       return true;
     }
@@ -149,7 +145,8 @@ http.METHODS.forEach(function(method) {
 proto.handle = function(req, res, done) {
     var self = this,
         method = req.method,
-        idx = 0, stack = self.stack,
+        idx = 0, stack = self.stack;
+    var //
         removed = '', slashAdded = false;
     //获取当前父路径
     var parentUrl = req.baseUrl || '';
@@ -158,6 +155,7 @@ proto.handle = function(req, res, done) {
     //保存原始路径
     req.orginalUrl = req.orginalUrl || req.url;
     function next(err) {
+        
         var layerError = (err === 'route' ? null : err);
         //如果有移除，复原原有路径
         if(slashAdded) {
@@ -208,8 +206,8 @@ proto.handle = function(req, res, done) {
 };
 proto.route =  function route(path) {
     var route = new Route(path);
-    var layer = new Layer(path, route.dispatch.bind(route));
-    layer.route = route;
+    var layer = new Layer(path, route.dispatch.bind(route),route);
+    // layer.route = route;
     this.stack.push(layer);
     return route;
 };
@@ -224,7 +222,6 @@ proto.use = function(fn) {
     // console.log(arr)
     arr.forEach((fn)=>{
         var layer = new Layer(path, fn);
-        layer.route = undefined;
         this.stack.push(layer);    
     })
     return this;
