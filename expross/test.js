@@ -10,7 +10,26 @@ var res =new http.ServerResponse(req)
 
 
 import test from 'ava';
-
+test('jsinherited',t=>{
+	function Person(name) {
+	  this.name = name
+	};
+	function Teacher(name,subject) {
+	  Person.call(this, name);
+	  this.subject = subject;
+	}
+	Person.prototype.greeting = function() {
+	  console.log('Hi! I\'m ' + this.name + '.');
+	};
+	Teacher.prototype = Object.create(Person.prototype);
+	Teacher.prototype.greeting = function() {
+	  console.log('Hi! I\'m ' + this.name + ' teacher.');
+	};
+	var teacher = new Teacher('reco','computer programing')
+	t.is(teacher.name,'reco')
+	t.is(teacher.subject,'computer programing')
+	// teacher.greeting()
+})
 test('post', async t => {
 	var str0 = 'Got a POST request'
 	req = Object.assign({},req,{url:'/',method:'post'})
@@ -65,12 +84,20 @@ test('next router', async t => {
 		function b(req, res) {res.send(str0+1)})
 	router.post('/', 
 		function a(req, res,next) {next()},
-		function b(req, res) {res.send(str0+1)})
+		function b(req, res) {res.send(str0)})
     app.use(router)
+    var router1 = expross.Router()
+	router1.post('/', 
+		function a(req, res,next) {next()},
+		function b(req, res) {res.send(str0)})
+    app.use(router1)
     app.post('/', 
 		function a(req, res,next) {next()},
 		function b(req, res) {res.send(str0)})
-    app.handle(req,res)
+    function done(){
+    	t.pass()
+    }
+    app._router.handle(req, res, done);
 });
 test('router use', t => {
 	var str0 = 'Got a POST request'
@@ -208,7 +235,7 @@ test('bird home', t => {
     // middleware that is specific to this router
     router.use(function timeLog (req, res, next) {
       // console.log('Time: ', Date.now())
-      next()
+      next('route')
     })
     // define the home page route
     router.get('/', function (req, res) {
