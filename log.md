@@ -11,6 +11,7 @@ mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit 
 
 
 ## 2018年03月05日
+
 The Unbelievable History of the Express JavaScript Framework
 
 ## 原来5.0.0-alpha.1 / 2014-11-06也在开发了。
@@ -67,7 +68,7 @@ The Unbelievable History of the Express JavaScript Framework
 
 ##  node debug article
 
-# 3天来的代码阅读统计，共400~的提交次数
+# 3天来的代码阅读统计，共400`~`的提交次数
 
  git shortlog -sne --since="01 Jun 2009" --before="31 Dec 2009"
    359  visionmedia <tj@vision-media.ca>
@@ -178,7 +179,8 @@ What is the purpose of .PHONY in a makefile?
 	  return path.split('/').slice(0, -1).join('/')
 	}
 
-### 共用参数的做法很常见，我不会这么做，但是必须得看得懂
+### 一个函数支持多种参数集合的做法很常见
+
 	function route(method) {
 	  return function(path, options, fn){
 	    if (options instanceof Function)
@@ -195,10 +197,12 @@ What is the purpose of .PHONY in a makefile?
 	}
 
 # Milestone 2603bb4 - Starting fresh
-	这里开始完全重写，还引入了class方法，做一个伪装的类，以此为基础开始，以伪类的方式重写代码。因为我知道最终代码的样子，所以，隔段时间还得重写
-	新开发者csausdev 进来，把TJ的文件命名的前缀去掉，放到一个新的目录内，感觉符合我的审美
-	就是express.core.js,express.util.js -> express/core.js ,express/util.js
-	类似jquery的函数命名，header(key,value),只是传入key的话，就做getter，key和value都传入的话，那么就作为setter来用
+
+这里开始完全重写，还引入了class方法，做一个伪装的类，以此为基础开始，以伪类的方式重写代码。因为我知道最终代码的样子，所以，隔段时间还得重写
+	
+新开发者csausdev 进来，把TJ的文件命名的前缀去掉，放到一个新的目录内，感觉符合我的审美
+就是express.core.js,express.util.js -> express/core.js ,express/util.js
+类似jquery的函数命名，header(key,value),只是传入key的话，就做getter，key和value都传入的话，那么就作为setter来用
 
 ### 现成可用的escape
 
@@ -211,46 +215,7 @@ What is the purpose of .PHONY in a makefile?
 	      .replace(/>/g, '&gt;')
 	}
 
-##  2018-02-07 学到了对user/:id类型的url的剖析方法 ，一段带自测试的代码
-
-
-
-    // * Routing (string matching, regexp with captures, param key substitution, etc)
-	// * commit d3023dafcfa4a9e51199a828e1c6aa7ff1507f84
-	class RouteParam {
-	  constructor(){
-	    this.regexpKeys=[]
-	  }
-	  escapeRegexp(string, chars) {
-	    var specials = (chars || '/ . * + ? | ( ) [ ] { } \\').split(' ').join('|\\')
-	    return string.replace(new RegExp('(\\' + specials + ')', 'g'), '\\$1')
-	  } 
-	  pathToRegexp(path) {
-	    var self = this
-	    path = path.replace(/:(\w+)/g, function(_, key){
-	      self.regexpKeys.push(key)
-	      return '(.*?)'
-	    })
-	    return new RegExp('^' + this.escapeRegexp(path, '/ [ ]') + '$', 'i')
-	  }
-	  getParam(route,url){
-	    var route = this.pathToRegexp(route)
-	    var path = url
-	    var f = path.match(route)
-	    var out = {}
-	    for (var i = 0; i < this.regexpKeys.length; i++) {
-	      out[this.regexpKeys[i]] = f[i+1]
-	    }
-	    return out
-	  }
-	}
-	function test(){
-	  var r = new RouteParam()
-	  var p = r.getParam("/user/:id/edit/:eid","/user/1/edit/2")
-	  assert(p.id == 1)
-	  assert(p.eid == 2)
-	}
-	test()
+##  2018-02-07 学到了对user/:id类型的url的剖析方法 
 
 # 2018年02月06日
 

@@ -1,4 +1,4 @@
-var expross = require('../');
+var expross = require('../lib');
 var app = expross();
 // app
 app.use(function(req, res, next) {
