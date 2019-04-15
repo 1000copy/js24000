@@ -3,19 +3,58 @@
   <head>
     <meta charset="UTF-8">
     <title>Tomato Clock</title>
+    <style>
+      body{
+        margin: 0px;
+        padding: 0px;
+         overflow:hidden;/*disabled scrollbar*/
+      }
+      div{
+        background-color: #3498db;
+        padding: 10px;
+        /*display: inline-block;*/
+      }
+      span{
+        font-size: 40px;
+        background-color: #2ecc71;
+        display: block;
+        color: white;
+        width:200px;
+        height: 40px;
+        line-height:40px
+        text-align: center;
+        vertical-align: middle;
+      }
+      span[count]{
+        background-color: #e74c3c;
+        text-align: center;
+        font-size: 70px;
+        height:80px;
+      }
+      button{
+        font-size: 30px;
+        display: inline;
+        /*background-color: #34495e;*/
+        /*color: white;*/
+        width:100px;
+        height: 100px
+      }
+    </style>
   </head>
   <body>
-    <span state>00</span><br/>
-    <span count>00</span><br/>
-    <button start>Start</button><br/>
-    <button stop>Stop</button><br/>
+    <div>
+      <span state>Ready</span><br/>
+      <span count>00:00</span><br/>
+      <button start>Start</button>
+      <button stop>Stop</button><br/>
+    </div>
   </body>
   <script type="text/javascript">
     var timer 
     var options = new class {
       constructor(){
         this.work = 5
-        this.rest = 3
+        this.rest = 2
         this.scale = 1
       }
       get workinsecond(){
@@ -32,7 +71,7 @@
     var state = document.querySelector('[state]')
     let model = new class {
       constructor(){
-        this._state = "ready"
+        this.state = "Ready"
         this._current = 0
       }
       get current(){
@@ -40,7 +79,15 @@
       }
       set current(value){
         this._current = value
-        span.innerHTML = value
+        span.innerHTML = this.format(value)
+      }
+      fix2(value){
+        return ('00'+value).slice(-2)
+      }
+      format(value){
+        var m = this.fix2(Math.round(value/60))
+        var s = this.fix2(value % 60 )
+        return `${m}:${s}`
       }
       get state(){
         return this._state
@@ -48,6 +95,16 @@
       set state(value){
         this._state = value
         state.innerHTML = value
+        if (value == 'Work'){
+          start.disabled = true
+          stop.disabled = false
+        }else if (value == 'Ready'){
+          start.disabled = false
+          stop.disabled = true
+        }else{
+          start.disabled = true
+          stop.disabled = false
+        }
       }
     }
     start.addEventListener('click',()=>{
@@ -55,7 +112,7 @@
     })
     function toWork(){
       let total = options.workinsecond,current = total
-      model.state = "work" 
+      model.state = "Work" 
       model.current = current
       timer = setInterval(()=>{
           model.current -= 1
@@ -70,7 +127,7 @@
     function toRest(){
         let total = options.restinsecond,current = total
         model.current = current
-        model.state = "rest"
+        model.state = "Rest"
         timer = setInterval(()=>{
           model.current -= 1 
           if (model.current == 0){
@@ -82,8 +139,24 @@
     }
     stop.addEventListener('click',()=>{
       clearInterval(timer)
+      model.state = 'Ready'
       span.innerHTML = 0
       model.current = 0
     })
+    if(require){
+      var fs = require('fs')
+      fs.readFile('options.json','UTF-8',function(err,data){
+        if(err){
+          alert(err)
+          return
+        }
+        console.log(data)
+        var foptions = JSON.parse(data)        
+        console.log(foptions)
+        options.work = foptions.work
+        options.rest = foptions.rest
+        options.scale = foptions.scale
+      })
+    }
   </script>
 </html>

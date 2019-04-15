@@ -5,12 +5,12 @@ let win
 function createWindow () {
   // 创建浏览器窗口。
   win = new BrowserWindow({ 
-    width: 800, 
-    height: 600 ,
+    width: 250, 
+    height: 290 ,
     'web-preferences': 
       {'web-security': false,'nodeIntegration':true}})
   // 然后加载应用的 index.html。
-  win.loadFile('tomato.html')
+  win.loadFile('raw.html')
   
   // 打开开发者工具
   // win.webContents.openDevTools()
