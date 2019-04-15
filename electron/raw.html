@@ -150,12 +150,11 @@
           alert(err)
           return
         }
-        console.log(data)
         var foptions = JSON.parse(data)        
-        console.log(foptions)
-        options.work = foptions.work
-        options.rest = foptions.rest
-        options.scale = foptions.scale
+        // options.work = foptions.work
+        // options.rest = foptions.rest
+        // options.scale = foptions.scale
+        Object.assign(options,foptions)
       })
     }
   </script>
