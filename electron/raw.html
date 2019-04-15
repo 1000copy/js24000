@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Tomato Clock</title>
+  </head>
+  <body>
+    <span state>00</span><br/>
+    <span count>00</span><br/>
+    <button start>Start</button><br/>
+    <button stop>Stop</button><br/>
+  </body>
+  <script type="text/javascript">
+    var timer 
+    var options = new class {
+      constructor(){
+        this.work = 5
+        this.rest = 3
+        this.scale = 1
+      }
+      get workinsecond(){
+        return this.work * this.scale
+      }
+      get restinsecond(){
+        return this.rest * this.scale
+      }
+    }
+    // state = ready,work,rest
+    var start = document.querySelector('[start]')
+    var stop = document.querySelector('[stop]')
+    var span = document.querySelector('[count]')
+    var state = document.querySelector('[state]')
+    let model = new class {
+      constructor(){
+        this._state = "ready"
+        this._current = 0
+      }
+      get current(){
+        return this._current
+      }
+      set current(value){
+        this._current = value
+        span.innerHTML = value
+      }
+      get state(){
+        return this._state
+      }
+      set state(value){
+        this._state = value
+        state.innerHTML = value
+      }
+    }
+    start.addEventListener('click',()=>{
+       toWork()
+    })
+    function toWork(){
+      let total = options.workinsecond,current = total
+      model.state = "work" 
+      model.current = current
+      timer = setInterval(()=>{
+          model.current -= 1
+          if (model.current == 0){
+              clearInterval(timer)
+              alert("May I attention you to take rest?")
+              toRest()
+          }
+          // span.innerHTML = model.current
+        },1000)
+    }
+    function toRest(){
+        let total = options.restinsecond,current = total
+        model.current = current
+        model.state = "rest"
+        timer = setInterval(()=>{
+          model.current -= 1 
+          if (model.current == 0){
+              clearInterval(timer)
+              alert("May I attention you to work?")
+              toWork()
+          }
+        },1000)
+    }
+    stop.addEventListener('click',()=>{
+      clearInterval(timer)
+      span.innerHTML = 0
+      model.current = 0
+    })
+  </script>
+</html>

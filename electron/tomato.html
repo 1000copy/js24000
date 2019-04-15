@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Tomato Clock</title>
+  </head>
+  <body>
+    <textarea id="tt" style="display: none"></textarea>
+    <span></span><br/>
+    <button start>Start</button><br/>
+    <button stop>Stop</button><br/>
+    <button rest>Take Rest</button>
+  </body>
+  <script type="text/javascript">
+    var fs = require('fs')
+    fs.readFile('package.json','UTF-8',function(err,data){
+      if(err){
+        alert(err)
+        return
+      }
+      console.log(data)
+      document.getElementById('tt').innerHTML = data
+    })
+    var timer 
+    var options = {work:5,rest:2}
+    var total = options.work,current = total
+    var start = document.querySelector('[start]')
+    var stop = document.querySelector('[stop]')
+    var pause = document.querySelector('[pause]')
+    var span = document.querySelector('span')
+    span.innerHTML = total
+    start.addEventListener('click',()=>{
+       start.style.visibility ='hidden'
+       stop.style.visibility ='visible'
+       timer = setInterval(()=>{
+          current -= 1 
+          if (current == 0){
+              current = total
+              clearInterval(timer)
+              stop.style.visibility ='hidden'
+              start.style.visibility ='visible'
+          }
+          span.innerHTML = current
+       },1000)
+    })
+    stop.addEventListener('click',()=>{
+      stop.style.visibility ='hidden'
+      start.style.visibility ='visible'
+      clearInterval(timer)
+      span.innerHTML = total
+      current = total
+    })
+    pause.addEventListener('click',()=>{
+      clearInterval(timer)
+      span.innerHTML = total
+      current = total
+    })
+  </script>
+</html>
