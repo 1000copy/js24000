@@ -53,9 +53,9 @@
     var timer 
     var options = new class {
       constructor(){
-        this.work = 5
-        this.rest = 2
-        this.scale = 1
+        this.work = 25
+        this.rest = 5
+        this.scale = 60
       }
       get workinsecond(){
         return this.work * this.scale
@@ -145,17 +145,16 @@
     })
     if(require){
       var fs = require('fs')
-      fs.readFile('options.json','UTF-8',function(err,data){
-        if(err){
-          alert(err)
-          return
-        }
-        var foptions = JSON.parse(data)        
-        // options.work = foptions.work
-        // options.rest = foptions.rest
-        // options.scale = foptions.scale
-        Object.assign(options,foptions)
-      })
+        fs.readFile(require('os').homedir()+'/options.json','UTF-8',function(err,data){
+          if(err){
+            return
+          }
+          var foptions = JSON.parse(data)        
+          // options.work = foptions.work
+          // options.rest = foptions.rest
+          // options.scale = foptions.scale
+          Object.assign(options,foptions)
+        })
     }
   </script>
 </html>
