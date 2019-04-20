@@ -17,46 +17,18 @@
 	<li><a href="/book">book </a>|
 	<li>|<a href="/user">user</a></ul>
 <ul>
+<table>
+<th>
+	<td>title</td><td>author</td><td>publisher</td><td>genre</td><td>height</td></th>
 <% books.forEach(function(n){%>
-	<li><%= n.title%>
+	<tr>
+		<td><%= n.title%></td>
+		<td><%= n.author%></td>
+		<td><%= n.publisher%></td>
+		<td><%= n.genre%></td>
+		<td><%= n.height%></td>
+	</tr>
 <% });%>
+</table>
 </ul>
-
-<div class='pagination' current_page='<%= current_page %>'>
-  <ul>
-    <% var base_url = base + (base.indexOf('?') < 0 ? '?' : '&')
-      + 'tab=' + (typeof tab !== 'undefined' ? tab : '') + '&page='; %>
-    <% if (current_page == 1) { %>
-    <li class='disabled'><a>«</a></li>
-    <% } else { %>
-    <li><a href="<%= base_url %>1">«</a></li>
-    <% } %>
-
-    <%
-    var page_start = current_page - 2 > 0 ? current_page - 2 : 1;
-    var page_end = page_start + 4 >= pages ? pages : page_start + 4;
-    %>
-
-    <% if (page_start > 1) { %>
-    <li><a>...</a></li>
-    <% } %>
-
-    <% for(var i = page_start; i <= page_end; i++) { %>
-    <% if (i === current_page) { %>
-    <li class='disabled'><a><%= i %></a></li>
-    <% } else { %>
-    <li><a href='<%= base_url + i %>'><%= i %></a></li>
-    <% } %>
-    <% } %>
-
-    <% if (page_end < pages ) { %>
-    <li><a>...</a></li>
-    <% } %>
-
-    <% if (current_page == pages) { %>
-    <li class='disabled'><a>»</a></li>
-    <% } else { %>
-    <li><a href='<%= base_url + pages %>'>»</a></li>
-    <% } %>
-  </ul>
-</div>
+<%- include('pagination.ejs')%>
