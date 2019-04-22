@@ -11,15 +11,23 @@
   ul.menu li{
   	display:inline-block;
   }
+  thead{
+    background-color:#16a085;
+    color:white;
+  }
 </style>
 <h1>ROME Rebuilt</h1>
 <ul class="menu">
 	<li><a href="/book">book </a>|
 	<li>|<a href="/user">user</a></ul>
 <ul>
+<form method="post">search in title<input type="text" name="search" value="<%=search%>"></form>
 <table>
-<th>
-	<td>title</td><td>author</td><td>publisher</td><td>genre</td><td>height</td></th>
+<thead>
+	<td>title</td><td>author</td><td>publisher</td><td>genre</td><td>height</td>
+	<td>operator</td>
+	<td>operator</td>
+	</thead>
 <% books.forEach(function(n){%>
 	<tr>
 		<td><%= n.title%></td>
@@ -27,6 +35,8 @@
 		<td><%= n.publisher%></td>
 		<td><%= n.genre%></td>
 		<td><%= n.height%></td>
+		<td><a href='/book/delete/<%= n._id%>?page=<%=current_page%>'>delete</a></td>
+		<td><a href='/book/edit/<%= n._id%>?page=<%=current_page%>'>edit</a></td>
 	</tr>
 <% });%>
 </table>
