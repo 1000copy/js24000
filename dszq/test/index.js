@@ -63,3 +63,22 @@ async function populate(UserModel,BookModel,cb){
         cb()
       });
 }
+async function populate(UserModel,BookModel,cb){
+    var deleted = await BookModel.find().deleteMany()
+    for (var i = 0; i < 100; i++) {
+        var bookModel = new BookModel({
+            title:i,
+            author:"",
+            publisher:"",
+            genre:"",
+            height:0
+        });
+        try{
+            await bookModel.save();
+        }catch(e){
+           console.log(e.message)
+        }    
+    }
+    cb()
+    
+}

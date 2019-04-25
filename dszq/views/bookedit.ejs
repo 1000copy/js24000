@@ -1,0 +1,9 @@
+<form method="post" action="/book/edit/<%=book._id%>?page=<%=current_page%>&search=<%=search%>" >
+  <span>title</span><input type="text" value="<%=book._id%>" name="id"/>
+  <span>title</span><input type="text" value="<%=book.title%>" required name="title"/>
+  <span>author</span><input type="text" value="<%=book.author%>" name="author"/>
+  <span>height</span><input type="text" value="<%=book.height%>" name="height"/>
+  <span>genre</span><input type="text" value="<%=book.genre%>" name="genre"/>
+  <span>publisher</span><input type="text" value="<%=book.publisher%>" name="publisher"/>
+  <input type="submit" value="Submit">
+</form>

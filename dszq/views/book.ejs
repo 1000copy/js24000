@@ -35,8 +35,8 @@
 		<td><%= n.publisher%></td>
 		<td><%= n.genre%></td>
 		<td><%= n.height%></td>
-		<td><a href='/book/delete/<%= n._id%>?page=<%=current_page%>'>delete</a></td>
-		<td><a href='/book/edit/<%= n._id%>?page=<%=current_page%>'>edit</a></td>
+		<td><a href='/book/delete/<%= n._id%>?page=<%=current_page%>&search=<%=search%>'>delete</a></td>
+		<td><a href='/book/edit/<%= n._id%>?page=<%=current_page%>&search=<%=search%>'>edit</a></td>
 	</tr>
 <% });%>
 </table>

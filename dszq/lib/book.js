@@ -11,6 +11,11 @@ exports.getPages = async function(req,res){
     var docs =  await BookModel.find({})
     return Math.ceil(docs.length / pageSize)
 }
+exports.pager = async function(req,res,currentPage,search){
+     var docs = await exports.search(req,res,currentPage,search)
+     var pages = await exports.searchPages(req,res,search)
+     return {docs:docs,pages:pages}
+}
 exports.search = async function(req,res,currentPage,search){
 	var pageSize = 10
     if (!currentPage)
