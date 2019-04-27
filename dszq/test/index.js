@@ -79,6 +79,21 @@ async function populate(UserModel,BookModel,cb){
            console.log(e.message)
         }    
     }
+    cb()   
+}
+async function populate(UserModel,BookModel,cb){
+    var deleted = await UserModel.find().deleteMany()
+    for (var i = 0; i < 100; i++) {
+        var bookModel = new UserModel({
+            name:i,
+            age:10,
+        });
+        try{
+            await bookModel.save();
+        }catch(e){
+           console.log(e.message)
+        }    
+    }
     cb()
     
 }

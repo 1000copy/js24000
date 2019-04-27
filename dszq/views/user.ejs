@@ -1,0 +1,41 @@
+<style>
+  .pagination ul{
+  	list-style:none;
+  }
+  .pagination ul li{
+    display:inline-block;
+  }
+  ul.menu{
+  	list-style:none;
+  }
+  ul.menu li{
+  	display:inline-block;
+  }
+  thead{
+    background-color:#16a085;
+    color:white;
+  }
+</style>
+<h1>ROME Rebuilt</h1>
+<ul class="menu">
+	<li><a href="/book">book </a>|
+	<li>|<a href="/user">user</a></ul>
+<ul>
+<form method="post">search in name<input type="text" name="search" value="<%=search%>"></form>
+<table>
+<thead>
+	<td>name</td><td>age</td>
+	<td>operator</td>
+	<td>operator</td>
+	</thead>
+<% books.forEach(function(n){%>
+	<tr>
+		<td><%= n.name%></td>
+		<td><%= n.age%></td>
+		<td><a href='/user/delete/<%= n._id%>'>delete</a></td>
+		<td><a href='/user/edit/<%= n._id%>'>edit</a></td>
+	</tr>
+<% });%>
+</table>
+</ul>
+<%- include('pagination.ejs')%>
