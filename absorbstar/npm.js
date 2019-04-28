@@ -1,16 +1,21 @@
 var urlprefix = 'https://www.npmjs.com/package/'
 var fileprefix = 'stars/npm/'
 var stars = [
-  {url : "passport-github",
-  filename : 'passport-github.md',
+  // {url : "passport-github",
+  // filename : 'passport-github.md',
+  // selector : 'div#readme'},
+  // {url : "passport",
+  // filename : 'passport.md',
+  // selector : 'div#readme'},
+  // {url : "passport-local",
+  // filename : 'passport-local.md',
+  // selector : 'div#readme'},
+  {url : "ejs",
+  filename : 'ejs.md',
   selector : 'div#readme'},
-  {url : "passport",
-  filename : 'passport.md',
+  {url : "ejs-mate",
+  filename : 'ejs-mate.md',
   selector : 'div#readme'},
-  {url : "passport-local",
-  filename : 'passport-local.md',
-  selector : 'div#readme'},
-
 ]
 
 const fs = require('fs')
