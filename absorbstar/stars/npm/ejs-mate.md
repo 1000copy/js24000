@@ -19,7 +19,7 @@ Previously also offered `include` but you should use EJS 1.0.x's own directive f
 [](#installation)Installation
 -----------------------------
 
-$ npm install ejs-mate --save
+	$ npm install ejs-mate --save
 
 (`--save` automatically writes to your `package.json` file, tell your friends)
 
@@ -30,83 +30,49 @@ Run `node app.js` from `examples` and open `localhost:3000` to see a working exa
 
 Given a template, `index.ejs`:
 
-<% layout('boilerplate') -%>
-
-<h1\>I am the <%= what %> template</h1\>
+	<% layout('boilerplate') -%>
+	<h1>I am the <%= what %> template</h1>
 
 And a layout, `boilerplate.ejs`:
 
-<!DOCTYPE html\>
-
-<html\>
-
-<head\>
-
-<title\>It's <%= who %></title\>
-
-</head\>
-
-<body\>
-
-<section\>
-
-      <%- body -%>
-
-</section\>
-
-</body\>
-
-</html\>
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>It's <%= who %></title>
+	</head>
+	<body>
+	<section>
+	      <%- body -%>
+	</section>
+	</body>
+	</html>
 
 When rendered by an Express 4.0 app:
 
-var express \=require('express'),
-
-  engine \=require('ejs-mate'),
-
-  app \=express();
-
-// use ejs-locals for all ejs templates:
-
-app.engine('ejs', engine);
-
-app.set('views',\_\_dirname+'/views');
-
-app.set('view engine','ejs');// so you can render('index')
-
-// render 'index' into 'boilerplate':
-
-app.get('/',function(req,res,next){
-
-res.render('index',{ what:'best', who:'me'});
-
-});
-
-app.listen(3000);
+	var express =require('express'),
+	engine = require('ejs-mate'),
+	app = express();
+	app.engine('ejs', engine);
+	app.set('views',__dirname+'/views');
+	app.set('view engine','ejs');
+	app.get('/',function(req,res,next){
+		res.render('index',{ what:'best', who:'me'});
+	});
+	app.listen(3000);
 
 You get the following result:
 
-<!DOCTYPE html\>
-
-<html\>
-
-<head\>
-
-<title\>It's me</title\>
-
-</head\>
-
-<body\>
-
-<section\>
-
-<h1\>I am the best template</h1\>
-
-</section\>
-
-</body\>
-
-</html\>
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>It's me</title>
+	</head>
+	<body>
+		<section>
+			<h1>I am the best template</h1>
+		</section>
+	</body>
+	</html>
 
 Note, if you haven't seen it before, this example uses trailing dashes in the EJS includes to slurp trailing whitespace and generate cleaner HTML. It's not strictly necessary.
 
@@ -139,31 +105,31 @@ body-template.ejs
 
 And a layout, `boilerplate.ejs`:
 
-<!DOCTYPE html\>
+<!DOCTYPE html>
 
-<html\>
+<html>
 
-<head\>
+<head>
 
-<title\>I'm the layout</title\>
+<title>I'm the layout</title>
 
     <%- block('head').toString() %>
 
-</head\>
+</head>
 
-<body\>
+<body>
 
-<section\>
+<section>
 
       <%-body -%>
 
-</section\>
+</section>
 
     <%= block('footer').toString() %>
 
-</body\>
+</body>
 
-</html\>
+</html>
 
 [](#running-tests)Running Tests
 -------------------------------

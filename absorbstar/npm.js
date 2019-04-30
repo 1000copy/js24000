@@ -10,12 +10,17 @@ var stars = [
   // {url : "passport-local",
   // filename : 'passport-local.md',
   // selector : 'div#readme'},
-  {url : "ejs",
-  filename : 'ejs.md',
+  // {url : "ejs",
+  // filename : 'ejs.md',
+  // selector : 'div#readme'},
+  // {url : "ejs-mate",
+  // filename : 'ejs-mate.md',
+  // selector : 'div#readme'},
+  
+  {url : "method-override",
+  filename : 'method-override.md',
   selector : 'div#readme'},
-  {url : "ejs-mate",
-  filename : 'ejs-mate.md',
-  selector : 'div#readme'},
+
 ]
 
 const fs = require('fs')
