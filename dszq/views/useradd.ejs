@@ -1,0 +1,8 @@
+<%- include header.ejs%>
+<form method="post" action="/user/?_method=PUT" >
+  <span>name</span><input type="text"  required name="name"/>
+  <span>password</span><input type="password" value="" required name="pwd"/>
+  <span>age</span><input type="text"  name="age"/>
+  <input type="submit" value="Submit">
+</form>
+</html>

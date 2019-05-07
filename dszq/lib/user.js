@@ -34,6 +34,51 @@ exports.delete = async function(req,res,id){
 exports.getUser = async function(req,res,id){
     return await UserModel.findById(id)
 }
+exports.getUserWithName = async function(req,res,name){
+    return await UserModel.findOne({name:name})
+}
 exports.update = async function(req,res,id,obj){
-    return await UserModel.findOneAndReplace({_id:id},obj)
+    // console.log('obj*id,',obj)
+    // delete obj._id
+    // console.log('obj-id,',obj)
+
+    var r = await UserModel.findOneAndReplace({_id:obj._id},obj,{returnNewDocument:false})
+    // console.log(r)
+    return r
+}
+
+exports.populatenums = async function(req,res){
+  await populate(UserModel)        
+}
+exports.add = async function(req,res,user){
+    var userModel = new UserModel({
+        name:user.name,
+        pwd:md5(user.pwd),
+        age:user.age
+    });
+    try{
+        await userModel.save();
+    }catch(e){
+       console.log(e.message)
+    }          
+}
+function md5(str){
+    return require('crypto').createHash('md5').update(str).digest("hex")
+}
+
+async function populate(UserModel,cb){
+    var deleted = await UserModel.find().deleteMany()
+    for (var i = 0; i < 23; i++) {
+        var userModel = new UserModel({
+            name:i,
+            pwd:md5(""+i),
+            age:i
+        });
+        try{
+            await userModel.save();
+        }catch(e){
+           console.log(e.message)
+        }    
+    }
+    if (cb)cb()
 }

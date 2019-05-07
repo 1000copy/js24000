@@ -112,9 +112,9 @@ Example call with query override using HTML `<form>`:
 
 <!-- enctype must be set to the type you will parse before methodOverride() -->
 
-	<form method="POST"action="/resource" enctype="application/x-www-form-urlencoded">
-		<inputtype="hidden"name="_method"value="DELETE">
-		<buttontype="submit">Delete resource</button>
+	<form method="POST" action="/resource" enctype="application/x-www-form-urlencoded">
+		<input type="hidden" name="_method" value="DELETE">
+		<button type="submit">Delete resource</button>
 	</form>
 
 [](#license)License

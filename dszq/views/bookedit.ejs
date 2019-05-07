@@ -1,3 +1,5 @@
+
+<%- include header.ejs%>
 <form method="post" action="/book/edit/<%=book._id%>?page=<%=current_page%>&search=<%=search%>" >
   <span>title</span><input type="text" value="<%=book._id%>" name="id"/>
   <span>title</span><input type="text" value="<%=book.title%>" required name="title"/>

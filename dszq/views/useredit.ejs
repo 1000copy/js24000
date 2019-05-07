@@ -1,6 +1,8 @@
-<form method="post" action="/user/edit/<%=user._id%>" >
-  <span>name</span><input type="text" value="<%=user._id%>" name="id"/>
-  <span>name</span><input type="text" value="<%=user.name%>" required name="name"/>
+<%- include header.ejs%>
+<form method="post" action="/user/<%=user._id%>?_method=POST" >
+  <span>name</span><input type="text" value="<%=user.name%>" name="name"/>
+  <span>password</span><input type="text" value="<%=user.pwd%>" required name="pwd"/>
   <span>age</span><input type="text" value="<%=user.age%>" name="age"/>
   <input type="submit" value="Submit">
 </form>
+</html>
