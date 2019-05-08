@@ -1,14 +1,14 @@
 <%- include header.ejs%>
 <form method="post" style="display:inline-block">
-  search in name<input type="text" name="search" value="<%=search%>">
+  <input type="text" name="search" value="<%=search%>" placeholder="search in name">
 </form>
-<a href="/user/add">add</a>
-<table>
-<thead>
-	<td>name</td><td>age</td>
-	<td>-</td>
-	<td>-</td>
-	</thead>
+<a class="button" href="/user/add">add</a>
+<table class="beautytable">
+<tr>
+	<th>name</th><th>age</th>
+	<th>-</th>
+	<th>-</th>
+	</tr>
 <% books.forEach(function(n){%>
 	<tr>
 		<td><%= n.name%></td>
@@ -25,3 +25,4 @@
 </table>
 </ul>
 <%- include('pagination.ejs')%>
+<%- include('footer.ejs')%>
