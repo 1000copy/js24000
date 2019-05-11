@@ -27,7 +27,8 @@ app.all("*",function(req,res,next){
 })
 var router = require('./bookrouter.js')
 var router1 = require('./userrouter.js')
-app.use("/book",auth_required,router)
+app.use("/book",router)
+// app.use("/book",auth_required,router)
 app.use("/user",router1)
 app.get('/login', function(req, res){
     res.render('login.ejs')

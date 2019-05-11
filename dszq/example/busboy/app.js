@@ -4,9 +4,12 @@ var os = require('os');
 var express = require('express');
 var app = express();
 var Busboy = require('busboy');
+var bodyParser = require('body-parser');
 app.get('/', function (req, res) {
     res.send('<html><head></head><body>\
-               <form method="POST" enctype="multipart/form-data">\
+               <form method="POST"  \
+               enctype="application/x-www-form-urlencoded" \
+               \
                 <input type="text" name="textfield"><br />\
                 <input type="file" name="filefield"><br />\
                 <input type="submit">\

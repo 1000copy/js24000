@@ -1,3 +1,13 @@
+
+
+# bodyParser 的使用
+
+app.use(bodyParser.json({limit: '1mb'}));
+// Returns middleware that only parses urlencoded bodies and only looks at requests where the Content-Type header matches the type option
+// A new body object containing the parsed data is populated on the request object after the middleware (i.e. req.body). 
+app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
+
+
 # Nodejs 教程
 
 ## 引入

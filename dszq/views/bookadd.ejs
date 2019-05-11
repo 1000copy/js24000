@@ -1,0 +1,13 @@
+
+<%- include header.ejs%>
+<form method="post" action="/book?_method=PUT" enctype="multipart/form-data" >
+  <span>title</span><input type="text"  name="id"/>
+  <span>title</span><input type="text" required name="title"/>
+  <span>author</span><input type="text"  name="author"/>
+  <span>height</span><input type="text"  name="height"/>
+  <span>genre</span><input type="text" name="genre"/>
+  <span>publisher</span><input type="text" name="publisher"/>
+  <span>cover</span><input type="file"  name="cover"/>
+  <input type="submit" value="Submit">
+</form>
+<%- include('footer.ejs')%>
