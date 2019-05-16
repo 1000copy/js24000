@@ -9,6 +9,15 @@ http.createServer(function(req, res) {
     var result = {}
     busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
       console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
+      function tracePrototypeChainOf(object) {
+          var proto = object.constructor.prototype;
+          var result = '';
+          while (proto) {
+              result += ' -> ' + proto.constructor.name;
+              proto = Object.getPrototypeOf(proto)
+          }
+          return result;
+      }
       // 1. 如何判断对象是一个流？
       function isReadableStream(obj) {
         return typeof obj  === 'object' &&
@@ -16,6 +25,19 @@ http.createServer(function(req, res) {
           typeof obj._readableState === 'object';
       }
       // console.log(isReadableStream(fs.createReadStream('car.jpg')));
+      console.log(file.constructor,Object.getPrototypeOf(file.constructor.prototype).constructor.name)
+      var Stream = require('stream').Stream
+      console.log(Stream)
+      var EventEmitter = require('events')
+      console.log('instanceof:',
+        file instanceof Stream,
+        file instanceof EventEmitter,
+        file instanceof Object,
+        EventEmitter instanceof Object,
+        req instanceof Stream
+        )
+      console.log(tracePrototypeChainOf(file))
+      console.log(tracePrototypeChainOf(req))
       console.log(isReadableStream(file));
       // console.log(file);
       file.on('data', function(data) {
@@ -33,6 +55,8 @@ http.createServer(function(req, res) {
       res.writeHead(303, { Connection: 'close', Location: '/' });
       res.end('folks');
     });
+    // 原来req本来就是一个stream 
+    // req instanceof Stream // true
     req.pipe(busboy);
   } else if (req.method === 'GET') {
     res.writeHead(200, { Connection: 'close' });
