@@ -11,5 +11,7 @@ exports.BookModel = mongoose.model('BookSchema',mongoose.Schema({
 	height: {type: String},
 	publisher:{type: String},
 	genre:{type:String},
-    date: {type: Date}
+    date: {type: Date},
+    mime:{type:String},
+    cover:{type:Buffer}
 }));

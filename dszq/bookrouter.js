@@ -4,16 +4,22 @@ var busboy = require('connect-busboy');
 var path = require('path')
 var fs = require('fs')
 router.put('/',busboy(),async (req,res,next)=>{
+// router.put('/',busboy(),       (req,res,next)=>{
   var result = {}
+  // var result = ''
   req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {    
-    var saveTo = path.join('./', path.basename(fieldname));
+    result['mime'] = filename
+    saveTo = path.join('./', path.basename(fieldname));
     file.pipe(fs.createWriteStream(saveTo));
   });
   req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
     result[key] = value
   });
-  req.busboy.on('finish', function() {
+  req.busboy.on('finish', async function() {
+    result['cover'] = fs.readFileSync(saveTo);
     console.log('finished',result)
+    var book = require('./lib/book')
+    await book.create(req,res,result)    
   })
   req.pipe(req.busboy);
   // console.log("pipe",req.busboy)
@@ -67,5 +73,15 @@ router.post('/edit/:id', async(req,res,next)=>{
 router.get('/add', async(req,res,next)=>{
   res.render("bookadd.ejs")
 })
+router.get('/image/:id', async(req,res,next)=>{
+  var book = require('./lib/book')
+  var book = await book.getBook(req,res,req.params.id)
+  res.send(book.cover)
+})
 
 module.exports = router
+// curl  -F "title=1" -F "filecomment=d" -F "image=@./reco.jpg" localhost:3000/book?_method=PUT
+
+
+
+

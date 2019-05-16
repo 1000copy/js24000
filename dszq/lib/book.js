@@ -37,3 +37,6 @@ exports.getBook = async function(req,res,id){
 exports.update = async function(req,res,id,obj){
     return await BookModel.findOneAndReplace({_id:id},obj)
 }
+exports.create = async function(req,res,obj){
+    return await BookModel.create(obj)
+}
