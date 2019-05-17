@@ -71,5 +71,3 @@ http.createServer(function(req, res) {
 }).listen(3000, function() {
   console.log('Listening for requests');
 });
-// 2. 如何通过curl上传文件？这样就可以不必一遍遍的点击选择文件和submit按钮了
-// curl  -F "userid=1" -F "filecomment=d" -F "image=@./reco.jpg" localhost:3000/

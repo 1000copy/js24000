@@ -3,38 +3,46 @@ var router = express.Router()
 var busboy = require('connect-busboy');
 var path = require('path')
 var fs = require('fs')
-router.put('/',busboy(),async (req,res,next)=>{
+router.put('/',busboy({limits:{fileSize:1*1024*1024}}),async (req,res,next)=>{
 // router.put('/',busboy(),       (req,res,next)=>{
   var result = {}
   var saveTo,saveFile
-  var buffers  = []
-  var buf
   // var result = ''
   req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
     result['mime'] = filename
-    saveTo = path.join('./', path.basename(fieldname));
-    console.log('file into the wild',saveTo)
-    file.pipe(fs.createWriteStream(saveTo))
+    var buffers  = []
+    var exceedLimit = false
+    file.on('limit',function(limit){
+      exceedLimit = true
+      
+    })
+    
+    file.on('data',function(chunk){
+      console.log('chunk,',chunk)
+      buffers.push(chunk)
+    })
+    file.on('end',async function(){
+      if (!exceedLimit){
+        console.log('end.')
+        result['cover'] = Buffer.concat(buffers)
+        var book = require('./lib/book')
+        await book.create(req,res,result)
+        res.redirect('/')
+      }else{
+        res.send('file size limit exceed')
+      }
+    })
   });
   req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
     result[key] = value
   });
   req.busboy.on('finish', async function() {
-    // console.log(require('fs').readFileSync('cover').length);
-    setTimeout(async function(){
-      result['cover'] = fs.readFileSync(saveTo);
-      console.log('finished',result,result.cover,result.cover.length)
-      console.log('saveTo,',saveTo)
-      var book = require('./lib/book')
-      await book.create(req,res,result)
-    },1000)
-      
+    console.log('busboy finished.');
 
-    
   })
   req.pipe(req.busboy);
   // console.log("pipe",req.busboy)
-  res.send('Put')
+  
 })
 router.all('/',async (req,res,next)=>{
   var book = require('./lib/book')

@@ -63,10 +63,10 @@ app.get('/logout', function (req, res) {
     req.session.userName = null; // 删除session
     res.redirect('login');
 });
-app.get('/',  auth_required,function (req, res) {
+// app.get('/',  auth_required,function (req, res) {
+app.get('/',function (req, res) {
     res.redirect('/book');
 });
 app.listen(3000,()=>{
 	console.log('dszq starting...')
 })
-
