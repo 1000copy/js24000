@@ -6,20 +6,31 @@ var fs = require('fs')
 router.put('/',busboy(),async (req,res,next)=>{
 // router.put('/',busboy(),       (req,res,next)=>{
   var result = {}
+  var saveTo,saveFile
+  var buffers  = []
+  var buf
   // var result = ''
-  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {    
+  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
     result['mime'] = filename
     saveTo = path.join('./', path.basename(fieldname));
-    file.pipe(fs.createWriteStream(saveTo));
+    console.log('file into the wild',saveTo)
+    file.pipe(fs.createWriteStream(saveTo))
   });
   req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
     result[key] = value
   });
   req.busboy.on('finish', async function() {
-    result['cover'] = fs.readFileSync(saveTo);
-    console.log('finished',result)
-    var book = require('./lib/book')
-    await book.create(req,res,result)    
+    // console.log(require('fs').readFileSync('cover').length);
+    setTimeout(async function(){
+      result['cover'] = fs.readFileSync(saveTo);
+      console.log('finished',result,result.cover,result.cover.length)
+      console.log('saveTo,',saveTo)
+      var book = require('./lib/book')
+      await book.create(req,res,result)
+    },1000)
+      
+
+    
   })
   req.pipe(req.busboy);
   // console.log("pipe",req.busboy)
@@ -77,6 +88,12 @@ router.get('/image/:id', async(req,res,next)=>{
   var book = require('./lib/book')
   var book = await book.getBook(req,res,req.params.id)
   res.send(book.cover)
+  var fs = require('fs');
+  var wstream = fs.createWriteStream('./myBinaryFile');
+  wstream.write(book.cover)
+  wstream.end()
+  console.log('cover size,',book.cover.length)
+
 })
 
 module.exports = router
