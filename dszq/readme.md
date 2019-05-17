@@ -28,7 +28,7 @@ Web开发过程中，图片上传总是有用的。有人需要提交用户头�
 
 1. 访问`GET /books`获得图片清单
 2. 访问`GET /upload`获取提交书的界面
-3. 访问 `PUT /upload`提交图片。
+3. 访问`PUT /upload`提交图片
 
 我们需要使用一些库，帮助完成服务器端路由分发、分析表单提交信息、以及从Mongodb中保存和提取数据。具体库分别为Express、connect-busboy、mongoose。使用npm安装这些库即可：
 
@@ -104,7 +104,75 @@ Web开发过程中，图片上传总是有用的。有人需要提交用户头�
 
 ## 图片传递到Mongodb
 
-案例使用Mongoose连接Mongodb。使用前需要创建Schema
+图片使用mongoose作为持久存储，分为几个步骤：
+
+1. 引入mongoose
+2. 连接mongodb
+3. 监视mongoose连接事件
+4. 当连接事件发生后，开始express路由设置和监听
+5. 当用户提交文件时，把文件片段拼成一个完整的Buffer
+6. 写入Buffer到mongoose对象，然后保存此对象到mongodb内
+
+代码如下：
+
+	var mongoose = require('mongoose');
+	var Schema = mongoose.Schema;
+	mongoose.connect('mongodb://localhost:27017/book',{useNewUrlParser: true});
+	var schema = new Schema({
+	    book: { cover: Buffer, title: String }
+	});
+	var Book = mongoose.model('book', schema);
+	mongoose.connection.on('open', function () {
+		var express = require('express')
+		var busboy = require('connect-busboy')
+		var app = express()
+		app.get('/books',async function(req,res){
+			var books =  await Book.findOne({})
+			res.setHeader('Content-Type','image/jpeg')
+			res.send(books.book.cover)
+		})
+		app.post("/upload",busboy({  }),function(req,res){
+		  var fields = {}
+		  var buffers = []
+		  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+		  	file.on('data',function(chunk){
+		  		buffers.push(chunk)
+		  	})
+		  	file.on('end',async function(){
+		  		var a = new Book();
+			    a.book.cover = Buffer.concat(buffers)
+			    a.book.title = fields.title;
+			    await a.save()
+		  		res.redirect('/upload')
+		  		console.log('finished with fields:',a.book,'and redirect')
+		  	})
+		  });
+		  req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
+		    fields[key] = value
+		  });
+		  req.pipe(req.busboy);
+		})
+		app.listen(3000,function(){
+			console.log('app listening on 3000')
+		})
+	})
+
+为了使用mongoose，首先定义schema。我们需要两个字段（title和cover），title内存储标题，cover存储封面图片，因此定义模式代码是这样的：
+
+	var schema = new Schema({
+	    book: { cover: Buffer, title: String }
+	});
+
+有了schema定义后，就可以使用save方法，保存一个新的对象到mongodb内，像是这样：
+
+	var a = new Book();
+    a.book.cover = Buffer.concat(buffers)
+    a.book.title = fields.title;
+    await a.save()
+
+也可通过findOne方法查找对象：
+
+	var books =  await Book.findOne({})
 
 
 大量使用命令行，使用命令：
