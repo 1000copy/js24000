@@ -9,7 +9,106 @@
 
 上传4本书
 
-	curl  -F "title=vuejs" -F "cover=@./img/vuejs.jpg" localhost:3000/book?_method=PUT 
-	curl  -F "title=http" -F "cover=@./img/http.jpg" localhost:3000/
-	curl  -F "title=git" -F "cover=@./img/git.jpg" localhost:3000/
-	curl  -F "title=swift" -F "cover=@./img/swift.png" localhost:3000/
+	curl  -F "title=vuejs" -F "cover=@./img/vuejs.jpg" localhost:3000/book?_method=PUT
+	curl  -F "title=http" -F "cover=@./img/http.jpg" localhost:3000/book?_method=PUT
+	curl  -F "title=git" -F "cover=@./img/git.jpg" localhost:3000/book?_method=PUT
+	curl  -F "title=swift" -F "cover=@./img/swift.png" localhost:3000/book?_method=PUT
+
+
+# 使用Mongodb存储图片的方法
+
+Web开发过程中，图片上传总是有用的。有人需要提交用户头像，有些书需要图片作为封面。
+
+本文通过一个案例，演示Nodejs在Web上提交图片和显示图片。案例假设一个书籍清单管理的场景，功能如下：
+
+1. 用户提交书的信息，包括标题和封面图片
+2. 用户可以查看图片列表
+
+只要是Web应用程序，都是需要规划URL的，这里的URL设置为：
+
+1. 访问`GET /books`获得图片清单
+2. 访问`GET /upload`获取提交书的界面
+3. 访问 `PUT /upload`提交图片。
+
+我们需要使用一些库，帮助完成服务器端路由分发、分析表单提交信息、以及从Mongodb中保存和提取数据。具体库分别为Express、connect-busboy、mongoose。使用npm安装这些库即可：
+
+	npm i express connnect-busboy mongoose 
+
+把问题分解到一个个小步骤，可以简化问题。因此，我们把全部过程分解为：
+
+1. 图片提交到Web服务器
+2. 图片提交到mongodb
+3. 图片从mongodb提取并发送到用户代理（也就是浏览器）
+
+## 图片提交到服务器
+
+图片提交字段为title和cover，通过form提交，提交表格的封装类型为`form/multipart`,具体含义请参考HTTP协议相关资料
+。因此也需要特定的包帮助解析，我们使用了`connect-busboy`作为中间件，在自己的自定义流程之前，使用busboy中间件。
+
+	var express = require('express')
+	var busboy = require('connect-busboy')
+	var app = express()
+	app.post("/upload",busboy({  }),function(req,res){
+	  var fields = {}
+	  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+	  	var fs = require('fs')
+	  	var stream = fs.createWriteStream('./output');
+	  	file.on('end',function(){
+	  		console.log('finished with fields:',fields,'and redirect')
+	  		res.redirect('/upload')
+	  	})
+	  	file.pipe(stream)
+	  });
+	  req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
+	    fields[key] = value
+	  });
+	  req.pipe(req.busboy);
+	})
+	app.listen(3000,function(){
+		console.log('app listening on 3000')
+	})
+
+为了方便使用，这里也准备了几张现成的图片，可以通过执行以下命令获得：
+
+	mkdir img 
+	curl http://file.ituring.com.cn/SmallCover/01009e449fbd55d97a7f > img/http.jpg
+	curl http://file.ituring.com.cn/SmallCover/010004e91282aff170b6 > img/git.jpg
+	curl http://file.ituring.com.cn/SmallCover/010061ef0b279fb427bf > img/vuejs.jpg
+	curl http://file.ituring.com.cn/SmallCover/1705fb1c8344451929cc > img/swift.png
+
+可以通过命令行curl来测试代码：
+
+	curl  -F "title=vuejs" -F "cover=@./img/vuejs.jpg" localhost:3000/upload
+
+命令行参数选项`-F`是选项`--form`的简写，表明后面的内容是form的字段。`cover`字段内的@是必须的，它指明是一个文件名，curl会因此读取此文件指定的内容，而不是把字面上的一个值作为字段值。你应该可以看到输出为：
+
+	Found. Redirecting to /upload
+
+并且看到服务器上当前目录有一个新的文件`output`。
+
+也可以使用浏览器，访问`localhost:3000/upload`，手工选择文件，提交表单查看效果。当然前提是加入对`GET /upload`的路由处理：
+
+	app.get("/upload",function(req,res){
+		res.send(`<form method="post" enctype="multipart/form-data">
+			<input type="text" name="title"/>
+			<input type="file" name="cover"/>
+			<input type='submit'/>
+		</form`)
+	})
+
+代码行中需要特别解析的是：
+
+1. 对象req也是一个stream对象，req.busboy也是一个stream对象，因此可以使用代码行`req.pipe(req.busboy);`把两个流连接起来。当req内有新的数据时，会自动的把新的数据导入到req.busboy内，更多信息，请参考[node.stream](https://nodejs.org/api/stream.html)
+2. 当`req.busboy`内有了新的数据时，会发射事件`file`,因此代码通过`req.busboy.on('file'...`监控此事件，在监控代码中可以获得file文件流，并在此通过file.pipe()把数据流导入到新建的文件流内，从而把上传文件存储到指定的服务器文件内
+3. 除了file类型数据外，其他的输入数据，比如`title`，会在发射field事件内传递其`key/value`对
+
+## 图片传递到Mongodb
+
+案例使用Mongoose连接Mongodb。使用前需要创建Schema
+
+
+大量使用命令行，使用命令：
+
+ 	export PS1="$"
+
+可以简化命令行提示符的。
