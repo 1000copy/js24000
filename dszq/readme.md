@@ -1,182 +1,111 @@
-# 2019年05月17日
 
-如何通过curl上传文件？这样就可以不必一遍遍的点击选择文件和submit按钮了
+# CatChen Book Share App 陈三猫共享借阅
 
-	curl  -F "userid=1" -F "filecomment=d" -F "image=@./reco.jpg" localhost:3000/
+这是一个互助借阅app，用户可以通过注册加入，上传共享自己的书供其他用户借阅，并且可以借阅其他用户的共享的书。
 
-如何判断对象是一个流？
+1. 用户注册、登录、登出、上传头像、查看自己的profile
+2. 用户可以提交自己的共享书单
+3. 用户可以查看全部的共享书单、可以搜索自己感兴趣的书
+4. 可以可以借阅
+5. 用户可以批准对自己书单的借阅
+6. 用户可以归还借阅
+7. 用户可以确认归还
 
+## 路由对照 
 
-上传4本书
+用户类 /user
 
-	curl  -F "title=vuejs" -F "cover=@./img/vuejs.jpg" localhost:3000/book?_method=PUT
-	curl  -F "title=http" -F "cover=@./img/http.jpg" localhost:3000/book?_method=PUT
-	curl  -F "title=git" -F "cover=@./img/git.jpg" localhost:3000/book?_method=PUT
-	curl  -F "title=swift" -F "cover=@./img/swift.png" localhost:3000/book?_method=PUT
+1. 用户注册表单 `GET /registion`
+2. 用户注册 `POST /registion`
+3. 用户登录表单 `GET /login`
+4. 用户登录 `POST /login`
+5. 上传头像表单`GET /avatar`
+6. 上传头像`POST /avatar`
+7. 查看profile `GET /:id`
 
+书类 /book
 
-# 使用Mongodb存储图片的方法
+1. 查看书单 `GET /`
+2. 查看书`GET /:id` ，此处可以借阅申请
+3. 查看用户书单 `GET /user/:id`
 
-Web开发过程中，图片上传总是有用的。有人需要提交用户头像，有些书需要图片作为封面。
+借阅 /borrow 只能一次借一本
 
-本文通过一个案例，演示Nodejs在Web上提交图片和显示图片。案例假设一个书籍清单管理的场景，功能如下：
+1. 借阅表单`GET /:id`
+2. 发起借阅`POST /:id`
 
-1. 用户提交书的信息，包括标题和封面图片
-2. 用户可以查看图片列表
+归还 /return 只能一次还一本
 
-只要是Web应用程序，都是需要规划URL的，这里的URL设置为：
+1. 归还表单`GET /:id`
+2. 发起归还`POST /:id`
 
-1. 访问`GET /books`获得图片清单
-2. 访问`GET /upload`获取提交书的界面
-3. 访问`PUT /upload`提交图片
+批准 /permit 
 
-我们需要使用一些库，帮助完成服务器端路由分发、分析表单提交信息、以及从Mongodb中保存和提取数据。具体库分别为Express、connect-busboy、mongoose。使用npm安装这些库即可：
+1. 发起批准`POST /:id`
+2. 撤销批准`PUT /:id`
 
-	npm i express connnect-busboy mongoose 
+确认归还 /cofirm
 
-把问题分解到一个个小步骤，可以简化问题。因此，我们把全部过程分解为：
+1. 发起归还`POST /:id`
+2. 撤销归还`PUT /:id`
 
-1. 图片提交到Web服务器
-2. 图片提交到mongodb
-3. 图片从mongodb提取并发送到用户代理（也就是浏览器）
+## Schema 规划
 
-## 图片提交到服务器
+用户
 
-图片提交字段为title和cover，通过form提交，提交表格的封装类型为`form/multipart`,具体含义请参考HTTP协议相关资料
-。因此也需要特定的包帮助解析，我们使用了`connect-busboy`作为中间件，在自己的自定义流程之前，使用busboy中间件。
+	{
+		name : String,
+		avatar:Buffer,
+		password:String,
+	}
+书
 
-	var express = require('express')
-	var busboy = require('connect-busboy')
-	var app = express()
-	app.post("/upload",busboy({  }),function(req,res){
-	  var fields = {}
-	  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-	  	var fs = require('fs')
-	  	var stream = fs.createWriteStream('./output');
-	  	file.on('end',function(){
-	  		console.log('finished with fields:',fields,'and redirect')
-	  		res.redirect('/upload')
-	  	})
-	  	file.pipe(stream)
-	  });
-	  req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
-	    fields[key] = value
-	  });
-	  req.pipe(req.busboy);
-	})
-	app.listen(3000,function(){
-		console.log('app listening on 3000')
-	})
+	{
+		name : String,
+		cover:Buffer
+	}
 
-为了方便使用，这里也准备了几张现成的图片，可以通过执行以下命令获得：
+Borrow
 
-	mkdir img 
-	curl http://file.ituring.com.cn/SmallCover/01009e449fbd55d97a7f > img/http.jpg
-	curl http://file.ituring.com.cn/SmallCover/010004e91282aff170b6 > img/git.jpg
-	curl http://file.ituring.com.cn/SmallCover/010061ef0b279fb427bf > img/vuejs.jpg
-	curl http://file.ituring.com.cn/SmallCover/1705fb1c8344451929cc > img/swift.png
+    {
+		userId:ID,
+		bookId : ID,
+		bookOwnerId : ID,
+		date:Date,
+		confirmed:Boolean,
+	}
 
-可以通过命令行curl来测试代码：
+Return
 
-	curl  -F "title=vuejs" -F "cover=@./img/vuejs.jpg" localhost:3000/upload
+	{
+		userId:ID,
+		bookId : ID,
+		bookOwnerId : ID
+		date:Date,
+		confirmed:Boolean,
+	}
 
-命令行参数选项`-F`是选项`--form`的简写，表明后面的内容是form的字段。`cover`字段内的@是必须的，它指明是一个文件名，curl会因此读取此文件指定的内容，而不是把字面上的一个值作为字段值。你应该可以看到输出为：
+## 第三方模块使用
 
-	Found. Redirecting to /upload
+	npm install \
+	connect-busboy \
+	express \
+	mongoose \
+	express-session \
+	ejs 
 
-并且看到服务器上当前目录有一个新的文件`output`。
+## 目录规划
 
-也可以使用浏览器，访问`localhost:3000/upload`，手工选择文件，提交表单查看效果。当然前提是加入对`GET /upload`的路由处理：
+   /public 静态HTML
+   /public/img 图片
+   /public/js js
+   /view  ejs模板文件
+   /router 路由文件
+   /test   测试js
+   /app.js 入口文件
 
-	app.get("/upload",function(req,res){
-		res.send(`<form method="post" enctype="multipart/form-data">
-			<input type="text" name="title"/>
-			<input type="file" name="cover"/>
-			<input type='submit'/>
-		</form`)
-	})
-
-代码行中需要特别解析的是：
-
-1. 对象req也是一个stream对象，req.busboy也是一个stream对象，因此可以使用代码行`req.pipe(req.busboy);`把两个流连接起来。当req内有新的数据时，会自动的把新的数据导入到req.busboy内，更多信息，请参考[node.stream](https://nodejs.org/api/stream.html)
-2. 当`req.busboy`内有了新的数据时，会发射事件`file`,因此代码通过`req.busboy.on('file'...`监控此事件，在监控代码中可以获得file文件流，并在此通过file.pipe()把数据流导入到新建的文件流内，从而把上传文件存储到指定的服务器文件内
-3. 除了file类型数据外，其他的输入数据，比如`title`，会在发射field事件内传递其`key/value`对
-
-## 图片传递到Mongodb
-
-图片使用mongoose作为持久存储，分为几个步骤：
-
-1. 引入mongoose
-2. 连接mongodb
-3. 监视mongoose连接事件
-4. 当连接事件发生后，开始express路由设置和监听
-5. 当用户提交文件时，把文件片段拼成一个完整的Buffer
-6. 写入Buffer到mongoose对象，然后保存此对象到mongodb内
-
-代码如下：
-
-	var mongoose = require('mongoose');
-	var Schema = mongoose.Schema;
-	mongoose.connect('mongodb://localhost:27017/book',{useNewUrlParser: true});
-	var schema = new Schema({
-	    book: { cover: Buffer, title: String }
-	});
-	var Book = mongoose.model('book', schema);
-	mongoose.connection.on('open', function () {
-		var express = require('express')
-		var busboy = require('connect-busboy')
-		var app = express()
-		app.get('/books',async function(req,res){
-			var books =  await Book.findOne({})
-			res.setHeader('Content-Type','image/jpeg')
-			res.send(books.book.cover)
-		})
-		app.post("/upload",busboy({  }),function(req,res){
-		  var fields = {}
-		  var buffers = []
-		  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-		  	file.on('data',function(chunk){
-		  		buffers.push(chunk)
-		  	})
-		  	file.on('end',async function(){
-		  		var a = new Book();
-			    a.book.cover = Buffer.concat(buffers)
-			    a.book.title = fields.title;
-			    await a.save()
-		  		res.redirect('/upload')
-		  		console.log('finished with fields:',a.book,'and redirect')
-		  	})
-		  });
-		  req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
-		    fields[key] = value
-		  });
-		  req.pipe(req.busboy);
-		})
-		app.listen(3000,function(){
-			console.log('app listening on 3000')
-		})
-	})
-
-为了使用mongoose，首先定义schema。我们需要两个字段（title和cover），title内存储标题，cover存储封面图片，因此定义模式代码是这样的：
-
-	var schema = new Schema({
-	    book: { cover: Buffer, title: String }
-	});
-
-有了schema定义后，就可以使用save方法，保存一个新的对象到mongodb内，像是这样：
-
-	var a = new Book();
-    a.book.cover = Buffer.concat(buffers)
-    a.book.title = fields.title;
-    await a.save()
-
-也可通过findOne方法查找对象：
-
-	var books =  await Book.findOne({})
+   
 
 
-大量使用命令行，使用命令：
 
- 	export PS1="$"
 
-可以简化命令行提示符的。
