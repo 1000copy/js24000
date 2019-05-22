@@ -104,8 +104,10 @@ Return
    /test   测试js
    /app.js 入口文件
 
-   
+## 建立开发环境
 
-
-
+    mkdir dszq1 
+    cd dszq1
+ 	mkdir public public/img public/js view router test 
+ 	touch app.js   
 

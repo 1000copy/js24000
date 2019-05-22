@@ -1,0 +1,27 @@
+<%- include ../header.html%>
+<h1>Books</h1>
+<form method="GET">
+  <input type='text' name='search' placeholder="search here" />
+</form>
+<%books.forEach(function(item){%>
+  <figure>
+  <img src="/book/cover/<%=item._id%>"/></li>
+  <figcaption><%=item.title%><br><a href='/borrow/<%=item._id%>'>borrow</a></figcaption>
+  </figure>
+<%})%>
+<%- include ../pagination.html%>
+<style>
+figure {
+    display: inline-block;
+    /*border: 1px dotted gray;*/
+    margin: 20px; /* adjust as needed */
+}
+figure img {
+    vertical-align: top;
+}
+figure figcaption {
+    border: 1px dotted blue;
+    text-align: center;
+}
+
+</style>

@@ -1,0 +1,9 @@
+<h1>User Profile</h1>
+<%=username%>
+<p>
+<%if(hasAvatar){%>
+<object data='/user/avataricon.svg' type='image/svg+xml' width="50" height="50"></object>
+<%}else{%>
+<object data='../img/avatar-default.svg' type='image/svg+xml' width="50" height="50"></object>
+<%}%>
+<a href="/user/avatar">Change Avatar</a>
