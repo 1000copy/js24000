@@ -1,5 +1,18 @@
 var mongoose = require('mongoose')
 var BookModel = require('./model').BookModel
+exports.get = async function(id){
+    return await BookModel.findById(id)
+}
+exports.borrow = async function(bookid){
+    var book = await 
+    BookModel.findOneAndUpdate({_id:bookid},{$set:{borrowed:true}},{new:true})
+    return book
+}
+exports.return = async function(bookid){
+    var book = await 
+    BookModel.findOneAndUpdate({_id:bookid},{$set:{borrowed:false}},{new:true})
+    return book
+}
 exports.save = async function(boo){
   var book = new BookModel({title:boo.title,cover:boo.cover})
   try{

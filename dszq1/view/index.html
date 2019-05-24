@@ -1,8 +1,8 @@
 <h1>Welcome ,<%=username%></h1>
 
 	<object data='img/avatar-default.svg' type='image/svg+xml' width="50" height="50"></object>
-<p>
-	<ul>
+<h2>app</h2>
+<ul>
 <%if (isLogin){%>
 <li><a href="/user/logout">logout</a>
 <li><a href="/user/profile">View Profile</a>
@@ -11,6 +11,9 @@
 <%}%>
 <li><a href="/book/list">Books</a>
 <li><a href="/user/registration">Registration</a>
+</ul>
+<h2>sys</h2>
+<ul>
 <li><a href="/sys/populate">Populate Data</a>
 <li><a href="/sys/initbookswithsvg">init books with svg numbers</a>
 </ul>

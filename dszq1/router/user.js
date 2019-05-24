@@ -27,7 +27,8 @@ userRouter.get('/login',function(req,res){
 userRouter.post('/login',bodyparser.urlencoded({ extended: true }),async function(req,res){
 	var result = await User.login(req.body)
 	if (result){
-		req.session.username = req.body.username
+		// console.dir(await User.getByName(req.body.username))
+		req.session.user = await User.getByName(req.body.username)
 		res.redirect('/')
 	}else
 		res.send('login failure')
@@ -75,7 +76,7 @@ userRouter.post('/avatar',busboy(),async function(req,res){
 
 })
 userRouter.get('/logout',function(req,res){
-	req.session.username = ''
+	req.session.user = null
 	res.redirect('/')
 })
 // 7. 查看profile `GET /:id`

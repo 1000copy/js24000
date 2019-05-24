@@ -6,7 +6,8 @@ exports.UserModel = mongoose.model('UserSchema',mongoose.Schema({
 }));
 exports.BookModel = mongoose.model('BookSchema',new mongoose.Schema({
     title: {type: String},
-    cover:{type:Buffer}
+    cover:{type:Buffer},
+    borrowed:{type:Boolean}
 }));
 exports.BorrowModel = mongoose.model('BorrowSchema',new mongoose.Schema({
     comment: {type: String},

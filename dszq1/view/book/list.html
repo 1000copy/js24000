@@ -6,7 +6,13 @@
 <%books.forEach(function(item){%>
   <figure>
   <img src="/book/cover/<%=item._id%>"/></li>
-  <figcaption><%=item.title%><br><a href='/borrow/<%=item._id%>'>borrow</a></figcaption>
+  <figcaption><%=item.title%><br>
+  <%if (item.borrowed){%>
+    <a href='/return/<%=item._id%>'>return</a></a>
+  <%}else{%>
+    <a href='/borrow/<%=item._id%>'>borrow
+  <%}%>
+  </figcaption>
   </figure>
 <%})%>
 <%- include ../pagination.html%>
