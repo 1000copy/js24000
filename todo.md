@@ -1,3 +1,60 @@
+# 更新依赖包到最新版本
+
+一个Nodejs工程项目过一段时间，会发现自己的依赖库的版本过时了。想要简单粗暴的更新到最新包版本吗？
+
+可以使用这个`npm-check-updates`模块，它会查询依赖包的最新版本，并且改写你的package内的所有依赖的版本到最新。
+
+首先安装此模块到全局：
+
+	npm install -g npm-check-updates
+
+然后运行以下命令：
+
+	ncu -u
+
+它会查询全部依赖包包括开发依赖包(devDependencies)到最新主要版本。
+
+此时还没有真的把这些最新的依赖包下载到本地。想要立即更新，请出来我们熟悉的朋友，执行它即可：
+
+	npm update
+
+如果是刚刚下载的项目，还没有本地的node_modules，那么可执行此命令：
+
+	npm install
+
+ref：https://stackoverflow.com/questions/12478679/npm-install-vs-update-whats-the-difference
+
+The difference between npm install and npm update handling of package versions specified in package.json:
+
+{
+  "name":          "my-project",
+  "version":       "1.0",                             // install   update
+  "dependencies":  {                                  // ------------------
+    "already-installed-versionless-module":  "*",     // ignores   "1.0" -> "1.1"
+    "already-installed-semver-module":       "^1.4.3" // ignores   "1.4.3" -> "1.5.2"
+    "already-installed-versioned-module":    "3.4.1"  // ignores   ignores
+    "not-yet-installed-versionless-module":  "*",     // installs  installs
+    "not-yet-installed-semver-module":       "^4.2.1" // installs  installs
+    "not-yet-installed-versioned-module":    "2.7.8"  // installs  installs
+  }
+}
+Summary: The only big difference is that an already installed module with fuzzy versioning ...
+
+gets ignored by npm install
+gets updated by npm update
+Additionally: install and update by default handle devDependencies differently
+
+npm install will install/update devDependencies unless --production flag is added
+npm update will ignore devDependencies unless --dev flag is added
+Why use npm install at all?
+
+Because npm install does more when you look besides handling your dependencies in package.json. As you can see in npm install you can ...
+
+manually install node-modules
+set them as global (which puts them in the shell's PATH) using npm install -g <name>
+install certain versions described by git tags
+install from a git url
+force a reinstall with --force
 
 
 # bodyParser 的使用

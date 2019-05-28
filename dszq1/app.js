@@ -4,11 +4,13 @@ var userRouter = require('./router/user')
 var sysRouter = require('./router/sys')
 var bookRouter = require('./router/book')
 var borrowRouter = require('./router/borrow')
+var cartRouter = require('./router/cart')
 var returnRouter = require('./router/return')
 app.use('/user',userRouter)
 app.use('/sys',sysRouter)
 app.use('/book',bookRouter)
 app.use('/borrow',borrowRouter)
+app.use('/cart',cartRouter)
 app.use('/return',returnRouter)
 app.get('/',function(req,res){
 	var isLogin = req.session.user!= null

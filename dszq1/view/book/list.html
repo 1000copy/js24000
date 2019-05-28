@@ -7,10 +7,11 @@
   <figure>
   <img src="/book/cover/<%=item._id%>"/></li>
   <figcaption><%=item.title%><br>
+  <a href='/cart/<%=item._id%>'>cart</a>
   <%if (item.borrowed){%>
-    <a href='/return/<%=item._id%>'>return</a></a>
+    <a href='/return/<%=item._id%>'>return</a>
   <%}else{%>
-    <a href='/borrow/<%=item._id%>'>borrow
+    <a href='/borrow/<%=item._id%>'>borrow</a>
   <%}%>
   </figcaption>
   </figure>
