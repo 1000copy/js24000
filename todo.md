@@ -38,14 +38,16 @@ The difference between npm install and npm update handling of package versions s
     "not-yet-installed-versioned-module":    "2.7.8"  // installs  installs
   }
 }
-Summary: The only big difference is that an already installed module with fuzzy versioning ...
+Summary: The only big difference is that an already installed module with fuzzy(模糊的)versioning ...
 
-gets ignored by npm install
-gets updated by npm update
+- gets ignored by npm install
+- gets updated by npm update
+
 Additionally: install and update by default handle devDependencies differently
 
 npm install will install/update devDependencies unless --production flag is added
 npm update will ignore devDependencies unless --dev flag is added
+
 Why use npm install at all?
 
 Because npm install does more when you look besides handling your dependencies in package.json. As you can see in npm install you can ...
@@ -55,6 +57,15 @@ set them as global (which puts them in the shell's PATH) using npm install -g <n
 install certain versions described by git tags
 install from a git url
 force a reinstall with --force
+
+# semver 语义版本
+
+Given a version number MAJOR.MINOR.PATCH, increment the:
+
+MAJOR version when you make incompatible API changes,
+MINOR version when you add functionality in a backwards-compatible manner, and
+PATCH version when you make backwards-compatible bug fixes.
+Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 
 # bodyParser 的使用
