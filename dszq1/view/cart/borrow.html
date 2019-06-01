@@ -1,0 +1,9 @@
+<h1>BorrowCart</h1>
+<form method="post" action="/cart/borrow/">
+	<input type='comment' name='comment' placeholder="comment here" />
+	<input type="submit" value="submit">
+</form>
+Total items is <%= cart.length%><br>
+<%cart.forEach(function(item){%>
+  <%=item.title%><img src='/book/cover/<%=item._id%>'>
+<%})%>

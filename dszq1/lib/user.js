@@ -53,6 +53,14 @@ exports.getByName= async function(username){
   }
   return undefined
 }
+exports.get= async function(id){
+  try{
+    return  await UserModel.findOne({_id:id})
+  }catch(e){
+    console.log(e)
+  }
+  return undefined
+}
 exports.hasAvatar= async function(username){
   try{
     return  exports.getByName(username).avator.length > 0
