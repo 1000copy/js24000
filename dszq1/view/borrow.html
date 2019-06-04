@@ -1,6 +1,6 @@
-<h1>Borrow</h1>
-<img src='/book/cover/<%=coverid%>'/>
-<form method="post" action="/borrow/<%=coverid%>">
-	<input type='comment' name='comment' placeholder="comment here" />
-	<input type="submit" value="submit">
-</form>
+<h1>Borrow Bill</h1>
+<span>Comment</span>
+<span><%=bill.comment%></span>
+<%bill.books.forEach(function(item){%>
+	<li><%=item.title%><img src="/book/cover/<%=item._id%>"></li>
+<%})%>

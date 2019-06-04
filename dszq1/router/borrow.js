@@ -7,8 +7,16 @@ var BorrowCart = require('../lib/borrowCart')
 var User = require('../lib/user')
 router.get('/:id',async function(req,res){
 	try{
-		var coverid = req.params.id
-		res.render('borrow.html',{coverid})
+		var id = req.params.id
+		var bill = await BorrowCart.get(id)
+		bill.books = []
+		// console.log(bill.bookids)
+		for(var i = 0 ;i<bill.bookids.length;i++){
+			var book = await Book.get(bill.bookids[i])
+			bill.books.push(book)
+		}
+		// console.log(bill.books)
+		res.render('borrow.html',{bill})
 	}catch(e){
 		console.log(e)
 	}
@@ -43,6 +51,8 @@ router.get('/',async function(req,res){
 		// borrowed[i] = borrowed[i].toObject()
 		borrowed[i] = Object.assign(item,{username:user.username})
 	}
-	res.render('borrowed.html',{borrowed})
+	// res.render('borrowed.html',{borrowed})
+	var isLogin = req.session.user!= null
+	res.render('borrowed.html',Object.assign({borrowed},{username:isLogin?req.session.user.username:"undefined",isLogin}))
 })
 module.exports = router

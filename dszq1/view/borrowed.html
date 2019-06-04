@@ -1,6 +1,7 @@
+<%- include header.html%>
 <h2>borrowed list</h2>
 <ul>
 <%borrowed.forEach(function(item){%>
-  <li><%=item.username%> borrowed <%=item.bookids.length%> book(s)
+  <li><a href="/borrow/<%=item._id%>"><%=item.username%> borrowed <%=item.bookids.length%> book(s) and comment <%=item.comment%></a>
 <%})%>
 </ul>

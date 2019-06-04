@@ -1,4 +1,4 @@
-module.exports = function(){
+module.exports.init = function(){
 	var mongoose = require('mongoose')
 	var dbf = mongoose.connect('mongodb://localhost/dszq',{ useNewUrlParser: true});
 	var db = mongoose.connection;
@@ -31,4 +31,6 @@ module.exports = function(){
 	// 		maxAge:1000*60*3
 	// 	}}))
 
+}
+module.exports.user = function(){
 }

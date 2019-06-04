@@ -49,7 +49,9 @@ Router.get('/',async function(req,res){
 		console.log(e)
 	}
 	// console.log(ans)
-	res.render('cart/index.html',{cart:ans})
+	var isLogin = req.session.user!= null
+	res.render('cart/index.html',Object.assign({cart:ans},{username:isLogin?req.session.user.username:"undefined",isLogin}))
+	// res.render('cart/index.html',{cart:ans})
 })
 function removeFromCart(cart,id){
 	var ans = []

@@ -4,7 +4,9 @@ var bodyparser = require('body-parser')
 var User = require('../lib/user')
 // 1. 用户注册表单 `GET /registion`
 userRouter.get('/registration',function(req,res){
-	res.render('registration.html',{})
+	var isLogin = req.session.user!= null
+	res.render('registration.html',Object.assign({},{username:isLogin?req.session.user.username:"undefined",isLogin}))
+	// res.render('registration.html',{})
 })
 // 2. 用户注册 `POST /registion`
 
@@ -81,7 +83,10 @@ userRouter.get('/logout',function(req,res){
 })
 // 7. 查看profile `GET /:id`
 userRouter.get('/profile',async function(req,res){
-	res.render('profile.html',{username:req.session.username,hasAvatar:User.hasAvatar(req.session.username)})
+	var isLogin = req.session.user != undefined
+	res.render('profile.html',Object.assign(
+			{hasAvatar:User.hasAvatar(req.session.user.username)},
+			{username:isLogin?req.session.user.username:"undefined",isLogin}))
 })
 // 必须是扩展名svg，否则会导致浏览器下载而不是显示此文件
 userRouter.get('/avataricon.svg',async function(req,res){

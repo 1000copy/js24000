@@ -1,4 +1,4 @@
-var init = require('./init')// ejs 
+var init = require('./g').init// ejs 
 var app = init()
 var userRouter = require('./router/user')
 var sysRouter = require('./router/sys')
@@ -14,6 +14,6 @@ app.use('/cart',cartRouter)
 app.use('/return',returnRouter)
 app.get('/',function(req,res){
 	var isLogin = req.session.user!= null
-	res.render('index.html',{username:isLogin?req.session.user.username:"undefined",isLogin})
+	res.render('index.html',Object.assign({},{username:isLogin?req.session.user.username:"undefined",isLogin}))
 })
 app.listen(3000,function(){console.log('listening on 3000')})

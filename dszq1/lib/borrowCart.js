@@ -17,3 +17,10 @@ exports.list = async function(boo){
 	console.log(e)
   }
 }
+exports.get = async function(id){
+  try{
+  	return await BorrowCartModel.findOne({_id:id})
+  }catch(e){
+	console.log(e)
+  }
+}

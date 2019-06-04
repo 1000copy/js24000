@@ -13,7 +13,8 @@ bookRouter.get('/list',async function(req,res){
 	console.log(pages)
 	req.session.currentPage = current_page
 	req.session.search = search
-	res.render('book/list.html',{books,current_page,base:'',pages})
+	var isLogin = req.session.user!= null
+	res.render('book/list.html',Object.assign({books,current_page,base:'',pages},{username:isLogin?req.session.user.username:"undefined",isLogin}))
 })
 bookRouter.get('/cover/:id',async function(req,res){
 	try{
