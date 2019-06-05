@@ -16,7 +16,9 @@ router.get('/:id',async function(req,res){
 			bill.books.push(book)
 		}
 		// console.log(bill.books)
-		res.render('borrow.html',{bill})
+		// res.render('borrow.html',{bill})
+		var isLogin = req.session.user!= null
+		res.render('borrow.html',Object.assign({bill},{username:isLogin?req.session.user.username:"undefined",isLogin}))
 	}catch(e){
 		console.log(e)
 	}

@@ -1,11 +1,11 @@
 # Resume
 
 Name: Liu Chuanjun | English Name: Reco | Email:1000copy@gmail.com | Phone: 18030416656
-Main residential city: Hangzhou | Graduated from: Sichuan University
+Main residential city: Hangzhou,China | Graduated from: Sichuan University
 
 ## Job orientation
 
-Architect, project manager, technical director
+Architect, project manager, technical director and Programmer
 
 ## You should consider hiring me for these five reasons
 
@@ -14,6 +14,14 @@ Architect, project manager, technical director
 3. Can build a team from scratch and have a lot of masters as my friend. if I can't make it myself, I can quickly find a master.
 4. Ideals and perseverance. For example, 10 years to do enterprise-level SaaS ERP development framework and use it in more than 10 products
 5. Love clean code , love extreme programming
+
+## Skills
+
+PHP about two years
+Delphi about ten years
+C# about seven years
+Java about three years
+Javascript about four years
 
 ## Major achievements
 

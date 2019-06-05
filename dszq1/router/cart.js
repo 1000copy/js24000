@@ -23,7 +23,9 @@ Router.get('/borrow',async function(req,res){
 	catch(e){
 		console.log(e)
 	}
-	res.render('cart/borrow.html',{cart:ans})
+	var isLogin = req.session.user!= null
+	// res.render('borrowed.html',)
+	res.render('cart/borrow.html',Object.assign({cart:ans},{username:isLogin?req.session.user.username:"undefined",isLogin}))
 })
 Router.post('/borrow',bodyparser.urlencoded({ extended: false }),async function(req,res){
 	var cart = req.session.cart || []
