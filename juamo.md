@@ -1,25 +1,22 @@
 ## cover letter
 
-Hello, I am Reco. I am a senior computer programmer and I love coding. I feel very much in line with the job opportunities you provide and have the confidence to do it, so I want to try it.
+Hey, I am Reco. I am a senior computer programmer and I love code very much. I think I am very suitable for the job opportunity you provide,so I want to try.
 
-## Why do you want to work with us?
+## Why do you want to work with us?FACE
 
-I love working remotely, and I also want to work with people from different cultures. From your job description , this job is exactly what I want. Besides that you're doing the work of connecting people, it looks cool.
+I love working remotely, and I also want to work with people from different cultures.So it is exactly what I want. Besides that you're doing the work of connecting people, it looks cool.
 
 ## Why do you want to leave your current company? Or what is the motivation behind your career change?
 
 For my family. My wife works in Hangzhou, China, and I work in Chengdu, China. We all love our current work. But in this way, we can get together only twice per month. So I decided to leave Chengdu's work.Besides that Hangzhou is known as China's Silicon Valley. Here I can see more intelligent people.
 
-## Why are you a suitable candidate?
+## Why are you a suitable candidate?FACE
 
-I have been worked remotely about two years and I have strong self-discipline and learning ability.
+In the past ten years, I have made several products as a developer and a team leader.
 
-I have also been written a English books and have good English communication skills. I believe that I can communicate smoothly with you.
+and I have been worked remotely about two years and I have strong discipline to work remotely.
 
-In the past 10 years, I have had multiple identities in the team, one of them is a team manager, but more importantly, I am a programmer. I have been developed several products as  back-end developer role.
-
-I have also read a lot of books on psychology. I like to communicate and collaborate with others. I hope I can use what I have learned in practical work.
-
+I have good English skills by which I can collaborate smoothly with you.
 
 ## What is your typical mission on a normal working day? Please describe your current daily work.
 
@@ -30,6 +27,7 @@ I have also read a lot of books on psychology. I like to communicate and collabo
 5:00PM	code review	
 
 ## Describe your expertise in back-end development
+
 Rate them 1-10 (1 is the starter, 10 is the expert level): PHP, other programming languages, API, SOA, database, Docker, Kafka and other experiences in the stack you like to mention
 
 8 points. I have been develop multiple product in whole life cycle including requirement analysis, system design, code iteration, testing,deploy.
