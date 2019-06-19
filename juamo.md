@@ -2,17 +2,22 @@
 
 Hey, I am Reco. I am a senior computer programmer and I love code very much. I think I am very suitable for the job opportunity you provide,so I want to try.
 
+I love coding,I love working in a remote way. I used to work this way for two years. For the programmer who work remotely,it is hard to protect his time from daily affair.If a programer can solve this problem,then he get freedom.
+
+I want to work with more people from different cultures. I have traveled to 10 countries, including France, Italy, the United States, and Japan. I am able to work while traveling and enjoy it.
+
+
 ## Why do you want to work with us?FACE
 
-I love working remotely, and I also want to work with people from different cultures.So it is exactly what I want. Besides that you're doing the work of connecting people, it looks cool.
+I love working remotely, and I also want to work with people from different cultures.So it's exactly what I want. Besides that you're doing the work of connecting people, it looks cool.
 
 ## Why do you want to leave your current company? Or what is the motivation behind your career change?
 
-For my family. My wife works in Hangzhou, China, and I work in Chengdu, China. We all love our current work. But in this way, we can get together only twice per month. So I decided to leave Chengdu's work.Besides that Hangzhou is known as China's Silicon Valley. Here I can see more intelligent people.
+I leave current company for my family. My wife works in Hangzhou, China, and I work in Chengdu, China. We all love our current work. But in this way, we can get together only twice per month. So I decided to leave Chengdu's work.Besides that Hangzhou is known as China's Silicon Valley. Here I can see more intelligent people.
 
 ## Why are you a suitable candidate?FACE
 
-In the past ten years, I have made several products as a developer and a team leader.
+In the past twenty years, I have made a dozens of products as a developer and a team leader.
 
 and I have been worked remotely about two years and I have strong discipline to work remotely.
 
@@ -75,7 +80,12 @@ No, I hate those evaluation tests.
 
 ## Cover Letter
 
-你好，我是Reco。我是一个程序员，我喜爱编码工作。我觉得和你们提供的工作机会非常匹配，有信心胜任它，因此我想试试。
+你好，我是Reco。我是一个资深的程序员，我觉得和你们提供的工作机会非常匹配，有信心胜任它，因此我想试试。
+
+我喜欢远程方式的工作，我喜欢编码。我曾经有两年的时间尝试过此方式，远程工作需要程序员能够做到自主的安排时间，不被日常事务打搅的专心工作，因此是更加困难的， 与此同时，它也给予能够做到这样困难要求的人以自由。
+
+我希望和更多不同文化背景的人一起工作。我曾经旅行过10个国家，其中包括法国意大利美国和日本等，我能够做到一边旅行一边工作，并且乐在其中。
+
 
 ## 你为什么想和我们一起工作？
 

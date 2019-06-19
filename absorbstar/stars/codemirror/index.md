@@ -1,25 +1,5 @@
 We are rewriting [CodeMirror](https://codemirror.net), the open-source code editor for the browser. The new code will provide solid accessibility, touchscreen support, and a modern interface, while matching the existing code in features and performance. This work is currently, fall 2018, in the prototype stage. We've raised money for another year of work, in which we hope to complete it.
 
-Sponsors
---------
-
-These wonderful companies and organizations helped fund the work on CodeMirror 6:
-
-### Diamond
-
-[![Automattic](logos/automattic-logo-2x.png)](https://automattic.com/) [![Mozilla](logos/mozilla.png)](https://www.mozilla.org/en-US/moss/) [![Bundesministerium für Bildung und Forschung](logos/bmbf.jpg)](https://prototypefund.de/)
-
-### Gold
-
-[![Wikimedia Foundation](logos/wikimedia.png)](https://wikimediafoundation.org/)
-
-### Silver
-
-[![Cargo](logos/cargocollective.png)](https://cargocollective.com/) [![Dataiku](logos/dataiku.png)](https://www.dataiku.com/) [![Overleaf](logos/overleaf.png)](https://www.overleaf.com/)
-
-### Bronze
-
-[Andrew Lee](https://startupandrew.com/) [![Buildkite](logos/buildkite.png)](https://buildkite.com/) [![Nuclino](logos/nuclino.png)](https://www.nuclino.com/) [![Pobox](logos/pobox.png)](https://www.pobox.com/) [![superhi](logos/superhi.png)](https://www.superhi.com/)
 
 The Future of CodeMirror
 ------------------------
